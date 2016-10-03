@@ -53,7 +53,7 @@ export const Clues = ({ clues, content, title, type }) => (
         <ol>
             {clues.map((clue, i) => clue.get(type) === null ? null :
                 <li key={`${type}-${i}`} className="Clues_Clue">
-                    <span class="Clues_Clue_idx">{i + 1}.</span>
+                    <span className="Clues_Clue_idx">{i + 1}.</span>
                     <TextField value={clue.get(type)} hintText={getHintTextForClue(content, type, clue)} />
                 </li>
             )}

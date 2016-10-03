@@ -210,9 +210,9 @@ export const grid = (state = DEFAULT_GRID, action) => {
         }
         case 'SET_SELECT_DIRECTION': {
             const { direction } = action;
-            if (direction !== 'ACROSS' || direction !== 'DOWN') {
+            if (direction !== 'ACROSS' && direction !== 'DOWN') {
                 if (DEBUG) {
-                    console.error('Illegal: unknown direction', direction);
+                    console.error(`Illegal: unknown direction: ${direction}`);
                 }
                 return state;
             }

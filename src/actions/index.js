@@ -28,3 +28,8 @@ export const updateCell = (row, col, updates) => ({
     annotation: updates.annotation,
     value: updates.value
 });
+
+export const setDirection = direction => ({
+    type: 'SET_SELECT_DIRECTION',
+    direction
+});

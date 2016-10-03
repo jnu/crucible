@@ -27,18 +27,16 @@ const showContextMenu = (e, onRequestContext, onLoseContext) => {
 
 export const GridCell = ({ cell, focused, onFocus, onChange, onLoseContext, onRequestContext }) => (
     <div className={ getCellClassName(cell, focused) }
-         onClick={onFocus}
+         onClick={e => {e.target.focus(); onFocus() }}
          onContextMenu={e => showContextMenu(e, onRequestContext, onLoseContext)}>
         {!cell.get('startOfWord') ? null :
             <span className="GridCell_clueIdx">{cell.get('clueIdx') + 1}</span>
         }
         {cell.get('type') === 'BLOCK' ? null :
-            <input type="text"
-                   className="GridCell_value"
-                   onFocus={onFocus}
-                   onChange={e => onChange(e.target.value)}
-                   value={cell.value}
-                   maxLength={1} />
+            <span type="text"
+                  className="GridCell_value">
+                {cell.get('value')}
+            </span>
         }
     </div>
 );

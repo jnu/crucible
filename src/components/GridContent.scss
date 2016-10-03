@@ -26,7 +26,7 @@ $cellSize: 30px;
         background-color: $dark;
 
         &.GridCell-focused {
-            border-color: lighten($dark, 5%);
+            border-color: $medium;
         }
     }
 }
@@ -47,7 +47,7 @@ $cellSize: 30px;
 }
 
 .GridCell_clueIdx {
-    color: $light;
+    color: $medium;
     z-index: $zIndexClueIndex;
     font-size: 8px;
     position: absolute;
