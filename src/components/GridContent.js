@@ -1,4 +1,5 @@
 import React from 'react';
+import { pure } from 'recompose';
 import { GridCell } from './GridCell';
 import { CellContextMenu } from './CellContextMenu';
 import './GridContent.scss';
@@ -17,7 +18,7 @@ const getContentWidthHeight = (content, size) => ({
 });
 
 
-export const GridContent = ({
+const GridContentView = ({
         content,
         selectedCell,
         menuCell,
@@ -55,3 +56,5 @@ export const GridContent = ({
                          onClose={onLoseCellContext} />
     </div>
 );
+
+export const GridContent = pure(GridContentView);

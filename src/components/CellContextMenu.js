@@ -1,4 +1,5 @@
 import React from 'react';
+import { pure } from 'recompose';
 import { connect } from 'react-redux';
 import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
@@ -42,4 +43,4 @@ const CellContextMenuView = ({
     );
 }
 
-export const CellContextMenu = connect()(CellContextMenuView);
+export const CellContextMenu = connect()(pure(CellContextMenuView));

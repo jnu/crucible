@@ -1,10 +1,15 @@
 import React from 'react';
+import { shallowEqual } from 'recompose';
 import { GridContent } from './GridContent';
 import { Clues } from './Clues';
 import './Grid.scss';
 
 
 export class Grid extends React.Component {
+
+    shouldComponentUpdate(props, nextProps) {
+        return !shallowEqual(props, nextProps);
+    }
 
     componentDidMount() {
         const cmp = this;
@@ -76,7 +81,8 @@ export class Grid extends React.Component {
             onFocusCell,
             onUpdateCell,
             onLoseCellContext,
-            onRequestCellContext
+            onRequestCellContext,
+            onChangeClue
         } = this.props;
         const width = grid.get('width');
         const height = grid.get('height');
@@ -98,6 +104,7 @@ export class Grid extends React.Component {
                 <div className="Grid_HorizontalContainer" style={{ height: 50 + cellSize * height }}>
                     <Clues type="across"
                            title="Across"
+                           onChange={onChangeClue}
                            clues={clues}
                            content={content} />
                     <div className="Grid_GridContent-container"
@@ -115,6 +122,7 @@ export class Grid extends React.Component {
                 <div className="Grid_HorizontalContainer">
                     <Clues type="down"
                            title="Down"
+                           onChange={onChangeClue}
                            clues={clues}
                            content={content} />
                 </div>

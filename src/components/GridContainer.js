@@ -6,15 +6,16 @@ import {
     updateCell,
     hideCellContext,
     requestCellContext,
-    setDirection
+    setDirection,
+    updateClue
 } from '../actions';
 import * as Keys from '../lib/keys';
 
 
 const getPreviousCell = (direction, { row, col }) => {
-    if (direction === 'ACROSS') {
+    if (direction === 'DOWN') {
         return { row: row - 1, col };
-    } else if (direction === 'DOWN') {
+    } else if (direction === 'ACROSS') {
         return { row, col: col - 1 };
     } else {
         throw new Error(`Invalid direction: ${direction}`);
@@ -22,9 +23,9 @@ const getPreviousCell = (direction, { row, col }) => {
 }
 
 const getNextCell = (direction, { row, col }) => {
-    if (direction === 'ACROSS') {
+    if (direction === 'DOWN') {
         return { row: row + 1, col };
-    } else if (direction === 'DOWN') {
+    } else if (direction === 'ACROSS') {
         return { row, col: col + 1 };
     } else {
         throw new Error(`Invalid direction: ${direction}`);
@@ -49,6 +50,7 @@ const mapDispatchToProps = dispatch => {
         onUpdateCell: (row, col, updates) => dispatch(updateCell(row, col, updates)),
         onLoseCellContext: () => dispatch(hideCellContext()),
         onRequestCellContext: (row, col) => dispatch(requestCellContext(row, col)),
+        onChangeClue: (type, idx, newValue) => dispatch(updateClue(type, idx, newValue)),
         onKeyDown: (e, selectedCell, selectDirection, content) => {
             if (!selectedCell) {
                 return;

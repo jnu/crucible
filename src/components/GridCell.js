@@ -1,4 +1,5 @@
 import React from 'react';
+import { pure } from 'recompose';
 
 
 const getCellClassName = (cell, focused) => {
@@ -25,7 +26,7 @@ const showContextMenu = (e, onRequestContext, onLoseContext) => {
 }
 
 
-export const GridCell = ({ cell, focused, onFocus, onChange, onLoseContext, onRequestContext }) => (
+const GridCellView = ({ cell, focused, onFocus, onChange, onLoseContext, onRequestContext }) => (
     <div className={ getCellClassName(cell, focused) }
          onClick={e => {e.target.focus(); onFocus() }}
          onContextMenu={e => showContextMenu(e, onRequestContext, onLoseContext)}>
@@ -40,3 +41,5 @@ export const GridCell = ({ cell, focused, onFocus, onChange, onLoseContext, onRe
         }
     </div>
 );
+
+export const GridCell = pure(GridCellView);

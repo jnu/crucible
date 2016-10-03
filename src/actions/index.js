@@ -33,3 +33,10 @@ export const setDirection = direction => ({
     type: 'SET_SELECT_DIRECTION',
     direction
 });
+
+export const updateClue = (type, idx, newValue) => ({
+    type: 'UPDATE_CLUE',
+    direction: type,
+    index: idx,
+    value: newValue
+});

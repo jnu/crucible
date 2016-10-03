@@ -45,7 +45,7 @@ export const updateGridContent = (content, height, width) => {
                                     // the next row might not have been created
                                     // in memory yet, in which case we can
                                     // assume it will have content.
-                                    (hasNextRow && (!nextRow || nextRow.get(j).get('type') !== 'BLOCK'));
+                                    (hasNextRow && (!nextRow || (nextRow.has(j) && nextRow.get(j).get('type') !== 'BLOCK')));
                                 const hasAcrossClue = canHaveClue &&
                                     // Previous row must not have content
                                     (!prevColType || prevColType === 'BLOCK') &&
@@ -195,6 +195,7 @@ export const grid = (state = DEFAULT_GRID, action) => {
             content = content.set(action.row, row);
 
             // Update the grid
+            // TODO full update is expensive and not always necessary.
             const updates = updateGridContent(
                 content,
                 state.get('height'),
@@ -224,6 +225,12 @@ export const grid = (state = DEFAULT_GRID, action) => {
         case 'SHOW_MENU': {
             const { row, col } = action;
             return state.set('menuCell', snapToBounds({ state, row, col }));
+        }
+        case 'UPDATE_CLUE': {
+            const { value, index, direction } = action;
+            const clues = state.get('clues');
+            const clue = clues.get(index);
+            return state.set('clues', clues.set(index, clue.set(direction, value)));
         }
         default:
             return state;
