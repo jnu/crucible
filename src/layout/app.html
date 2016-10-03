@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <!-- Always reload HTML. -->
+        <meta http-equiv="cache-control" content="no-cache" />
+        <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+        <meta http-equiv="pragma" content="no-cache" />
+
+        <title>Experiments</title>
+        <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,300,600'
+              rel='stylesheet'
+              type='text/css'>
+        <link rel="icon"
+              type="image/x-icon"
+              href="/favicon.ico?{%=o.htmlWebpackPlugin.options.ts%}">
+        {% for (var i = 0; i < o.htmlWebpackPlugin.files.css.length; i++) { %}
+        <link rel="stylesheet" type="text/css" href="/{%=o.htmlWebpackPlugin.files.css[i] %}"></script>
+        {% } %}
+    </head>
+    <body>
+
+        <main id="root"></main>
+
+        <script src="/{%=o.htmlWebpackPlugin.files.chunks.app.entry %}" charset="utf8"></script>
+    </body>
+</html>

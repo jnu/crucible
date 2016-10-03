@@ -1,0 +1,57 @@
+$dark: #666;
+$light: #ccc;
+$red: #932;
+$zIndexDefaultCell: 0;
+$zIndexFocusedCell: 1;
+$zIndexClueIndex: 1;
+
+.GridContent {
+    border: thin solid $dark;
+    display: inline-block;
+}
+
+$cellSize: 30px;
+
+.GridRow {
+    display: block;
+    height: $cellSize;
+    white-space: nowrap;
+}
+
+.GridCell {
+    display: inline-block;
+    border: thin solid $dark;
+    width: $cellSize;
+    height: $cellSize;
+    position: relative;
+    z-index: $zIndexDefaultCell;
+
+    &.GridCell-focused {
+        border: 2px solid $red;
+        z-index: $zIndexFocusedCell
+    }
+}
+
+.GridCell_value {
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    color: $dark;
+    border: 0;
+    outline: none;
+    position: absolute;
+    line-height: $cellSize;
+    left: 1px;
+    top: 1px;
+    font-size: 20px;
+    text-align: center;
+    padding: 0;
+}
+
+.GridCell_clueIdx {
+    color: $light;
+    z-index: $zIndexClueIndex;
+    font-size: 8px;
+    position: absolute;
+    left: 2px;
+    top: 2px;
+}
