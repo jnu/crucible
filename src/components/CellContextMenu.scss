@@ -1,0 +1,11 @@
+@import 'constants';
+
+.CellContextMenu {
+    z-index: $zIndexCellContextMenu;
+    position: absolute;
+
+    & > div {
+        display: inline-block;
+        margin: 16px 32px 16px 0;
+    }
+}

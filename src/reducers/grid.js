@@ -20,6 +20,9 @@ export const updateGridContent = (content, height, width) => {
             .withMutations(mutContent => {
                 // Fill in missing rows
                 for (let i = 0; i < height; i++) {
+                    // Set next row metadata
+                    const hasNextRow = i < (height - 1);
+                    const nextRow = content.get(i + 1);
                     const row = (content.get(i) || Immutable.List())
                         .setSize(width)
                         .withMutations(mutRow => {
@@ -29,19 +32,37 @@ export const updateGridContent = (content, height, width) => {
                             // Fill in missing cells
                             for (let j = 0; j < width; j++) {
                                 const cell = mutRow.get(j);
+                                // Next adjacent cell meta data
+                                const hasNextCell = j < (width - 1);
+                                const nextCell = mutRow.get(j + 1);
 
                                 // Check if cell has an associated clue
                                 const canHaveClue = !cell || cell.get('type') === 'CONTENT';
-                                const hasDownClue = canHaveClue && (!prevRow || prevRow.get(j).get('type') === 'BLOCK');
-                                const hasAcrossClue = canHaveClue && (!prevColType || prevColType === 'BLOCK');
+                                const hasDownClue = canHaveClue &&
+                                    // Previous row must not have content
+                                    (!prevRow || prevRow.get(j).get('type') === 'BLOCK') &&
+                                    // Next row must have content. In reality,
+                                    // the next row might not have been created
+                                    // in memory yet, in which case we can
+                                    // assume it will have content.
+                                    (hasNextRow && (!nextRow || nextRow.get(j).get('type') !== 'BLOCK'));
+                                const hasAcrossClue = canHaveClue &&
+                                    // Previous row must not have content
+                                    (!prevColType || prevColType === 'BLOCK') &&
+                                    // Next row must have content. Like with
+                                    // rows, the next cell might not exist yet,
+                                    // in which case we can assume it will have
+                                    // content.
+                                    (hasNextCell && (!nextCell || nextCell.get('type') !== 'BLOCK'));
+                                // Check if the cell has any clue at all.
                                 const hasClue = hasDownClue || hasAcrossClue;
 
                                 if (hasClue) {
                                     clues.push(Immutable.Map({
                                         down: hasDownClue ? '' : null,
                                         across: hasAcrossClue ? '' : null,
-                                        row: j,
-                                        col: i
+                                        row: i,
+                                        col: j
                                     }));
                                 }
 
@@ -61,7 +82,8 @@ export const updateGridContent = (content, height, width) => {
                                     // Update existing cell with new clue info
                                     mutRow.set(
                                         j,
-                                        cell.set('clueIdx', clues.length - 1)
+                                        cell.set('startOfWord', hasClue)
+                                            .set('clueIdx', clues.length - 1)
                                             .set('clueAcross', hasAcrossClue)
                                             .set('clueDown', hasDownClue)
                                     )
@@ -157,13 +179,30 @@ export const grid = (state = DEFAULT_GRID, action) => {
             let content = state.get('content');
             let row = content.get(action.row);
             let col = row.get(action.col);
-            col = col
-                .set('type', action.type)
-                .set('annotation', action.annotation)
-                .set('value', action.value);
+
+            // Apply any changes set in the action
+            if (action.cellType !== undefined) {
+                col = col.set('type', action.cellType);
+            }
+            if (action.annotation !== undefined) {
+                col = col.set('annotation', action.annotation);
+            }
+            if (action.value !== undefined) {
+                col = col.set('value', action.value);
+            }
+
             row = row.set(action.col, col);
             content = content.set(action.row, row);
-            return state.set('content', content);
+
+            // Update the grid
+            const updates = updateGridContent(
+                content,
+                state.get('height'),
+                state.get('width')
+            );
+            return state
+                .set('content', updates.content)
+                .set('clues', updates.clues);
         }
         case 'SELECT_CELL': {
             const { row, col } = action;

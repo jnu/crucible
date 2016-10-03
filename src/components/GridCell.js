@@ -13,17 +13,32 @@ const getCellClassName = (cell, focused) => {
     return cns.join(' ');
 }
 
+const showContextMenu = (e, onRequestContext, onLoseContext) => {
+    e.preventDefault();
 
-export const GridCell = ({ cell, focused, onFocus }) => (
-    <div className={ getCellClassName(cell, focused) }>
-        {cell.get('startOfWord') ?
-            <span className="GridCell_clueIdx">{cell.get('clueIdx') + 1}</span> : null
+    const globalClickHandler = () => {
+        onLoseContext();
+        document.removeEventListener('click', globalClickHandler);
+    };
+    document.addEventListener('click', globalClickHandler);
+    onRequestContext();
+}
+
+
+export const GridCell = ({ cell, focused, onFocus, onChange, onLoseContext, onRequestContext }) => (
+    <div className={ getCellClassName(cell, focused) }
+         onClick={onFocus}
+         onContextMenu={e => showContextMenu(e, onRequestContext, onLoseContext)}>
+        {!cell.get('startOfWord') ? null :
+            <span className="GridCell_clueIdx">{cell.get('clueIdx') + 1}</span>
         }
-        <input type="text"
-               className="GridCell_value"
-               onFocus={onFocus}
-               onClick={onFocus}
-               value={cell.value}
-               maxLength={1} />
+        {cell.get('type') === 'BLOCK' ? null :
+            <input type="text"
+                   className="GridCell_value"
+                   onFocus={onFocus}
+                   onChange={e => onChange(e.target.value)}
+                   value={cell.value}
+                   maxLength={1} />
+        }
     </div>
 );

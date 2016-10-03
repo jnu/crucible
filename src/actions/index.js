@@ -9,3 +9,22 @@ export const focusCell = (row, col) => ({
     row,
     col
 });
+
+export const requestCellContext = (row, col) => ({
+    type: 'SHOW_MENU',
+    row,
+    col
+});
+
+export const hideCellContext = () => ({
+    type: 'HIDE_MENU'
+});
+
+export const updateCell = (row, col, updates) => ({
+    type: 'SET_CELL',
+    row,
+    col,
+    cellType: updates.type,
+    annotation: updates.annotation,
+    value: updates.value
+});

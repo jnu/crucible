@@ -1,22 +1,12 @@
-$dark: #666;
-$light: #ccc;
-$red: #932;
-$zIndexDefaultCell: 0;
-$zIndexFocusedCell: 1;
-$zIndexClueIndex: 1;
+@import 'constants';
 
 .GridContent {
     border: thin solid $dark;
+    position: relative;
     display: inline-block;
 }
 
 $cellSize: 30px;
-
-.GridRow {
-    display: block;
-    height: $cellSize;
-    white-space: nowrap;
-}
 
 .GridCell {
     display: inline-block;
@@ -29,6 +19,15 @@ $cellSize: 30px;
     &.GridCell-focused {
         border: 2px solid $red;
         z-index: $zIndexFocusedCell
+    }
+
+    &.GridCell-type-block {
+        border: thin solid $dark;
+        background-color: $dark;
+
+        &.GridCell-focused {
+            border-color: lighten($dark, 5%);
+        }
     }
 }
 
@@ -54,4 +53,6 @@ $cellSize: 30px;
     position: absolute;
     left: 2px;
     top: 2px;
+    pointer-events: none;
+    user-select: none;
 }

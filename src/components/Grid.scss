@@ -1,4 +1,22 @@
 .Grid_GridContent-container {
-    overflow: auto;
+    overflow: visible;
     position: relative;
+    top: 0;
+    display: inline-block;
+    min-width: 75%;
+    text-align: center;
+}
+
+.Clues.Clues-across {
+    display: inline-block;
+    max-width: 25%;
+    height: 100%;
+    top: 0;
+    overflow-y: auto;
+}
+
+.Grid_HorizontalContainer {
+    width: 100%;
+    overflow: visible;
+    padding: 20px;
 }
