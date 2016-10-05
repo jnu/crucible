@@ -8,39 +8,44 @@ import { hideCellContext, updateCell } from '../actions';
 import './CellContextMenu.scss';
 
 
-const getMenuPosition = (row, col, cellSize) => {
+const getMenuPosition = (index, cellSize, width) => {
+    const x = index % width;
+    const y = ~~(index / width);
     return {
         position: 'absolute',
-        left: col * cellSize + cellSize / 2,
-        top: row * cellSize
+        left: x * cellSize + cellSize / 2,
+        top: y * cellSize
     };
 };
 
 const CellContextMenuView = ({
-        target,
-        content,
-        cellSize,
+        grid,
         dispatch
     }) => {
-    if (!target) {
+    const menuCell = grid.get('menuCell');
+
+    if (menuCell === null || menuCell === undefined) {
         return null;
     }
 
-    const row = target.get('row');
-    const col = target.get('col');
-    const cell = content.get(row).get(col);
+    const width = grid.get('width');
+    const content = grid.get('content');
+    const cellSize = grid.get('cellSize');
+    const cell = content.get(menuCell);
     const toggleToType = cell.get('type') === 'CONTENT' ? 'BLOCK' : 'CONTENT';
 
     return (
-        <div className="CellContextMenu" style={getMenuPosition(row, col, cellSize)}>
+        <div className="CellContextMenu" style={getMenuPosition(menuCell, cellSize, width)}>
             <Paper>
                 <Menu onEscKeyDown={() => dispatch(hideCellContext())}>
                     <MenuItem primaryText="Toggle Block"
-                              onClick={() => dispatch(updateCell(row, col, { type: toggleToType }))} />
+                              onClick={() => dispatch(updateCell(menuCell, { type: toggleToType }))} />
                 </Menu>
             </Paper>
         </div>
     );
 }
 
-export const CellContextMenu = connect()(pure(CellContextMenuView));
+export const CellContextMenu = connect(state => ({
+    grid: state.grid
+}))(pure(CellContextMenuView));

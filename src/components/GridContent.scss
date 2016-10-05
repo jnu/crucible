@@ -6,19 +6,17 @@
     display: inline-block;
 }
 
-$cellSize: 30px;
-
 .GridCell {
     display: inline-block;
     border: thin solid $dark;
-    width: $cellSize;
-    height: $cellSize;
-    position: relative;
     z-index: $zIndexDefaultCell;
 
     &.GridCell-focused {
         border: 2px solid $red;
         z-index: $zIndexFocusedCell
+    }
+    &.GridCell-highlight {
+        background-color: $lightAmber;
     }
 
     &.GridCell-type-block {
@@ -38,7 +36,6 @@ $cellSize: 30px;
     border: 0;
     outline: none;
     position: absolute;
-    line-height: $cellSize;
     left: 1px;
     top: 1px;
     font-size: 20px;

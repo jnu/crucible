@@ -20,41 +20,44 @@ const getContentWidthHeight = (content, size) => ({
 
 const GridContentView = ({
         content,
-        selectedCell,
-        menuCell,
+        width,
+        height,
         cellSize,
+        menuCell,
+        cursor,
+        cursorDirection,
         onFocusCell,
         onUpdateCell,
         onLoseCellContext,
         onRequestCellContext
-    }) => (
-    <div className="GridContent" style={getContentWidthHeight(content, cellSize)}>
-        {content.map((row, i) =>
-            <div className="GridRow" key={i}>
-                {row.map((cell, j) =>
-                    <div key={`${i},${j}`} style={{
-                        position: 'absolute',
-                        left: j * cellSize,
-                        top: i * cellSize,
-                        width: cellSize,
-                        height: cellSize
-                    }}>
-                        <GridCell cell={cell}
-                                  onChange={value => onUpdateCell(i, j, { value })}
-                                  onFocus={() => onFocusCell(i, j)}
-                                  onLoseContext={onLoseCellContext}
-                                  onRequestContext={() => onRequestCellContext(i, j)}
-                                  focused={isSelectedCell(selectedCell, i, j)}>
-                        </GridCell>
-                    </div>
-                )}
-            </div>
-        )}
-        <CellContextMenu target={menuCell}
-                         cellSize={cellSize}
-                         content={content}
-                         onClose={onLoseCellContext} />
-    </div>
-);
-
+    }) => {
+    const cursorCell = cursor !== null && cursor !== undefined && content.get(cursor);
+    const highlightKey = cursorDirection === 'ACROSS' ? 'acrossWord' : 'downWord';
+    const highlightWord = cursorCell && cursorCell.get(highlightKey);
+    const hasHighlight = !!cursorCell && highlightWord !== null && highlightWord !== undefined;
+    return (
+        <div className="GridContent" style={{ width: width * cellSize, height: height * cellSize }}>
+            {content.map((cell, i) => {
+                const y = ~~(i / width);
+                const x = i % width;
+                return (
+                    <GridCell cell={cell}
+                              key={i}
+                              index={i}
+                              left={x}
+                              top={y}
+                              size={cellSize}
+                              onChange={onUpdateCell}
+                              onFocus={onFocusCell}
+                              onLoseContext={onLoseCellContext}
+                              onRequestContext={onRequestCellContext}
+                              focused={cursor === i}
+                              highlight={hasHighlight && highlightWord === cell.get(highlightKey)}>
+                    </GridCell>
+                );
+            })}
+            <CellContextMenu />
+        </div>
+    );
+};
 export const GridContent = pure(GridContentView);

@@ -4,39 +4,41 @@ export const resize = (width, height) => ({
     height
 });
 
-export const focusCell = (row, col) => ({
+export const focusCell = index => ({
     type: 'SELECT_CELL',
-    row,
-    col
+    index
 });
 
-export const requestCellContext = (row, col) => ({
+export const moveCursor = delta => ({
+    type: 'MOVE_CURSOR',
+    delta
+});
+
+export const requestCellContext = index => ({
     type: 'SHOW_MENU',
-    row,
-    col
+    index
 });
 
 export const hideCellContext = () => ({
     type: 'HIDE_MENU'
 });
 
-export const updateCell = (row, col, updates) => ({
+export const updateCell = (index, updates) => ({
     type: 'SET_CELL',
-    row,
-    col,
+    index,
     cellType: updates.type,
     annotation: updates.annotation,
     value: updates.value
 });
 
 export const setDirection = direction => ({
-    type: 'SET_SELECT_DIRECTION',
+    type: 'SET_CURSOR_DIRECTION',
     direction
 });
 
-export const updateClue = (type, idx, newValue) => ({
+export const updateClue = (type, index, newValue) => ({
     type: 'UPDATE_CLUE',
     direction: type,
-    index: idx,
+    index,
     value: newValue
 });

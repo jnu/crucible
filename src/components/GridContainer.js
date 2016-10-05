@@ -4,6 +4,7 @@ import {
     resize,
     focusCell,
     updateCell,
+    moveCursor,
     hideCellContext,
     requestCellContext,
     setDirection,
@@ -12,28 +13,7 @@ import {
 import * as Keys from '../lib/keys';
 
 
-const getPreviousCell = (direction, { row, col }) => {
-    if (direction === 'DOWN') {
-        return { row: row - 1, col };
-    } else if (direction === 'ACROSS') {
-        return { row, col: col - 1 };
-    } else {
-        throw new Error(`Invalid direction: ${direction}`);
-    }
-}
-
-const getNextCell = (direction, { row, col }) => {
-    if (direction === 'DOWN') {
-        return { row: row + 1, col };
-    } else if (direction === 'ACROSS') {
-        return { row, col: col + 1 };
-    } else {
-        throw new Error(`Invalid direction: ${direction}`);
-    }
-}
-
 const getNextDirection = direction => direction === 'ACROSS' ? 'DOWN' : 'ACROSS';
-
 
 const mapStateToProps = state => {
     return {
@@ -44,49 +24,53 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onResize: (width, height) => dispatch(resize(width, height)),
-        onFocusCell: (row, col) => {
-            return dispatch(focusCell(row, col));
+        onFocusCell: (index) => {
+            return dispatch(focusCell(index));
         },
-        onUpdateCell: (row, col, updates) => dispatch(updateCell(row, col, updates)),
+        onUpdateCell: (index, updates) => dispatch(updateCell(index, updates)),
         onLoseCellContext: () => dispatch(hideCellContext()),
-        onRequestCellContext: (row, col) => dispatch(requestCellContext(row, col)),
+        onRequestCellContext: index => dispatch(requestCellContext(index)),
         onChangeClue: (type, idx, newValue) => dispatch(updateClue(type, idx, newValue)),
-        onKeyDown: (e, selectedCell, selectDirection, content) => {
-            if (!selectedCell) {
+        onKeyDown: (e, index, cursorDirection, content) => {
+            if (index === undefined || index === null) {
                 return;
             }
 
-            const row = selectedCell.get('row');
-            const col = selectedCell.get('col');
             const keyCode = e.which || e.keyCode || 0;
 
             switch (keyCode) {
                 case Keys.DELETE:
                 case Keys.BACKSPACE:
-                    if (content.get(row).get(col).get('value')) {
-                        return dispatch(updateCell(row, col, { value: '' }));
+                    if (content.get(index).get('value')) {
+                        return dispatch(updateCell(index, { value: '' }));
                     } else {
-                        const prev = getPreviousCell(selectDirection, { row, col })
-                        return dispatch(focusCell(prev.row, prev.col));
+                        return dispatch(moveCursor(-1));
                     }
                 case Keys.SPACE:
-                    return dispatch(setDirection(getNextDirection(selectDirection)));
+                    return dispatch(setDirection(getNextDirection(cursorDirection)));
                 case Keys.ENTER:
-                case Keys.TAB: {
-                    const next = getNextCell(selectDirection, { row, col });
-                    return dispatch(focusCell(next.row, next.col));
-                }
+                case Keys.TAB:
+                    // TODO implement word skip?
+                    return;
                 case Keys.DOWN:
-                    return dispatch(focusCell(row + 1, col));
-                case Keys.UP:
-                    return dispatch(focusCell(row - 1, col));
-                case Keys.LEFT:
-                    return dispatch(focusCell(row, col - 1));
+                    return (cursorDirection === 'DOWN') ?
+                        dispatch(moveCursor(1)) :
+                        dispatch(setDirection('DOWN'));
                 case Keys.RIGHT:
-                    return dispatch(focusCell(row, col + 1));
+                    return (cursorDirection === 'ACROSS') ?
+                        dispatch(moveCursor(1)) :
+                        dispatch(setDirection('ACROSS'));
+                case Keys.UP:
+                    return (cursorDirection === 'DOWN') ?
+                        dispatch(moveCursor(-1)) :
+                        dispatch(setDirection('DOWN'));
+                case Keys.LEFT:
+                    return (cursorDirection === 'ACROSS') ?
+                        dispatch(moveCursor(-1)) :
+                        dispatch(setDirection('ACROSS'));
                 case Keys.FSLASH: {
-                    const curType = content.get(row).get(col).get('type');
-                    return dispatch(updateCell(row, col, {
+                    const curType = content.get(index).get('type');
+                    return dispatch(updateCell(index, {
                         type: curType === 'BLOCK' ? 'CONTENT' : 'BLOCK'
                     }));
                 }
@@ -95,11 +79,10 @@ const mapDispatchToProps = dispatch => {
                 default: {
                     const value = String.fromCharCode(keyCode);
                     if (!/[^ -~]/.test(value)) {
-                        dispatch(updateCell(row, col, {
+                        dispatch(updateCell(index, {
                             value: value.toUpperCase()
                         }));
-                        const next = getNextCell(selectDirection, { row, col });
-                        return dispatch(focusCell(next.row, next.col));
+                        return dispatch(moveCursor(1));
                     }
                 }
 

@@ -63,8 +63,8 @@ export class Grid extends React.Component {
             }
             handler(
                 e,
-                grid.get('selectedCell'),
-                grid.get('selectedDirection'),
+                grid.get('cursor'),
+                grid.get('cursorDirection'),
                 grid.get('content')
             );
             e.preventDefault();
@@ -89,8 +89,8 @@ export class Grid extends React.Component {
         const clues = grid.get('clues');
         const content = grid.get('content');
         const cellSize = grid.get('cellSize');
-        const selectedDirection = grid.get('selectedDirection');
-        const selectedCell = grid.get('selectedCell');
+        const cursorDirection = grid.get('cursorDirection');
+        const cursor = grid.get('cursor');
         const menuCell = grid.get('menuCell');
 
         const MIN_HEIGHT = 500;
@@ -121,11 +121,14 @@ export class Grid extends React.Component {
                          ref={target => this.gridContentRoot = target}>
                         <div style={puzzleStyle}>
                             <GridContent content={content}
+                                         width={width}
+                                         height={height}
                                          onFocusCell={onFocusCell}
                                          onUpdateCell={onUpdateCell}
                                          onLoseCellContext={onLoseCellContext}
                                          onRequestCellContext={onRequestCellContext}
-                                         selectedCell={selectedCell}
+                                         cursor={cursor}
+                                         cursorDirection={cursorDirection}
                                          menuCell={menuCell}
                                          cellSize={cellSize} />
                         </div>

@@ -1,45 +1,82 @@
 import React from 'react';
-import { pure } from 'recompose';
+import { shallowEqual } from 'recompose';
 
 
-const getCellClassName = (cell, focused) => {
-    const annotation = cell.get('annotation');
-    const cns = ['GridCell', `GridCell-type-${cell.get('type').toLowerCase()}`];
-    if (annotation) {
-        cns.push(`GridCell-annotation-${annotation}`);
+export class GridCell extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.doFocus = this.doFocus.bind(this);
+        this.doContextMenu = this.doContextMenu.bind(this);
     }
-    if (focused) {
-        cns.push('GridCell-focused');
+
+    shouldComponentUpdate(props, nextProps) {
+        return !shallowEqual(props, nextProps);
     }
-    return cns.join(' ');
-}
 
-const showContextMenu = (e, onRequestContext, onLoseContext) => {
-    e.preventDefault();
+    doFocus() {
+        const { index, onFocus } = this.props;
+        onFocus(index);
+    }
 
-    const globalClickHandler = () => {
-        onLoseContext();
-        document.removeEventListener('click', globalClickHandler);
-    };
-    document.addEventListener('click', globalClickHandler);
-    onRequestContext();
-}
+    doContextMenu(e) {
+        const { index, onRequestContext, onLoseContext } = this.props;
+        e.preventDefault();
 
+        const globalClickHandler = () => {
+            onLoseContext();
+            document.removeEventListener('click', globalClickHandler);
+        };
+        document.addEventListener('click', globalClickHandler);
+        onRequestContext(index);
+    }
 
-const GridCellView = ({ cell, focused, onFocus, onChange, onLoseContext, onRequestContext }) => (
-    <div className={ getCellClassName(cell, focused) }
-         onClick={e => {e.target.focus(); onFocus() }}
-         onContextMenu={e => showContextMenu(e, onRequestContext, onLoseContext)}>
-        {!cell.get('startOfWord') ? null :
-            <span className="GridCell_clueIdx">{cell.get('clueIdx') + 1}</span>
+    getCellClassName(cell, focused, highlight) {
+        const annotation = cell.get('annotation');
+        const cns = ['GridCell', `GridCell-type-${cell.get('type').toLowerCase()}`];
+        if (annotation) {
+            cns.push(`GridCell-annotation-${annotation}`);
         }
-        {cell.get('type') === 'BLOCK' ? null :
-            <span type="text"
-                  className="GridCell_value">
-                {cell.get('value')}
-            </span>
+        if (focused) {
+            cns.push('GridCell-focused');
         }
-    </div>
-);
+        if (highlight) {
+            cns.push('GridCell-highlight');
+        }
+        return cns.join(' ');
+    }
 
-export const GridCell = pure(GridCellView);
+    render() {
+        const {
+            cell,
+            focused,
+            highlight,
+            onFocus,
+            left,
+            top,
+            size
+        } = this.props;
+        return (
+            <div className={this.getCellClassName(cell, focused, highlight)}
+                 onClick={this.doFocus}
+                 onContextMenu={this.doContextMenu}
+                 style={{
+                    position: 'absolute',
+                    left: left * size,
+                    top: top * size,
+                    height: size,
+                    width: size
+                }}>
+                {!cell.get('startOfWord') ? null :
+                    <span className="GridCell_clueIdx">{cell.get('startClueIdx') + 1}</span>
+                }
+                {cell.get('type') === 'BLOCK' ? null :
+                    <span type="text"
+                          className="GridCell_value">
+                        {cell.get('value')}
+                    </span>
+                }
+            </div>
+        );
+    }
+}
