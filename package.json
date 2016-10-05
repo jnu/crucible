@@ -4,10 +4,15 @@
   "description": "Crossword constructor",
   "main": "index.js",
   "scripts": {
+    "start": "NODE_ENV=local $(npm bin)/webpack-dev-server --content-base build/ --port 3000 --inline --hot",
+    "build": "NODE_ENV=production $(npm bin)/webpack --bail",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "crossword",
+    "builder",
+    "constructor",
+    "words",
     "cruciverb",
     "puzzle"
   ],

@@ -1,3 +1,7 @@
+@import 'constants';
+
 *, html {
     box-sizing: border-box;
+    font-family: 'Radley', serif;
+    color: $dark;
 }

@@ -50,8 +50,9 @@ const getHintTextForClue = (content, direction, clue) => {
 
 const CluesView = ({ clues, content, title, type, onChange }) => (
     <div className={ `Clues Clues-${type.toLowerCase()}` }>
-        <h1 className="Clues_Title">{ title }</h1>
-        <ol>
+        <h1 className="Clues_header">{ title }</h1>
+        <div className="Clues_spacer" />
+        <ol className="Clues_list">
             {clues.map((clue, i) => clue.get(type) === null ? null :
                 <li key={`${type}-${i}`} className="Clues_Clue">
                     <span className="Clues_Clue_idx">{i + 1}.</span>

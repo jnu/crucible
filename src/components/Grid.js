@@ -93,38 +93,63 @@ export class Grid extends React.Component {
         const selectedCell = grid.get('selectedCell');
         const menuCell = grid.get('menuCell');
 
+        const MIN_HEIGHT = 500;
+        const MIN_WIDTH = 300;
+        const CLUE_COL_MIN_WIDTH = 256;
+        const puzzleHeight = cellSize * height;
+        const puzzleWidth = cellSize * width;
+        const puzzleContainerHeight = Math.max(MIN_HEIGHT, puzzleHeight);
+        const puzzleContainerWidth = Math.max(MIN_WIDTH, puzzleWidth) + 50;
+        const puzzlePadTop = Math.max(0, (puzzleContainerHeight - puzzleHeight) / 2);
+        const puzzlePadLeft = Math.max(0, (puzzleContainerWidth - puzzleWidth) / 2);
+        const gridContainerStyle = {
+            height: puzzleContainerHeight,
+            width: puzzleContainerWidth
+        };
+        const puzzleStyle = {
+            width: puzzleHeight,
+            height: puzzleWidth,
+            marginLeft: puzzlePadLeft,
+            marginTop: puzzlePadTop
+        };
+
         return (
             <div className="Grid">
-                <input type="text"
-                       value={width}
-                       onChange={e => onResize(+e.target.value, height)} />
-                <input type="text"
-                       value={height}
-                       onChange={e => onResize(width, +e.target.value)} />
-                <div className="Grid_HorizontalContainer" style={{ height: 50 + cellSize * height }}>
-                    <Clues type="across"
-                           title="Across"
-                           onChange={onChangeClue}
-                           clues={clues}
-                           content={content} />
-                    <div className="Grid_GridContent-container"
+                <div className="Grid_HorizontalContainer" style={{ height: puzzleContainerHeight }}>
+                    <div className="Grid_GridContent-container Grid_VerticalContainer"
+                         style={gridContainerStyle}
                          ref={target => this.gridContentRoot = target}>
-                        <GridContent content={content}
-                                     onFocusCell={onFocusCell}
-                                     onUpdateCell={onUpdateCell}
-                                     onLoseCellContext={onLoseCellContext}
-                                     onRequestCellContext={onRequestCellContext}
-                                     selectedCell={selectedCell}
-                                     menuCell={menuCell}
-                                     cellSize={cellSize} />
+                        <div style={puzzleStyle}>
+                            <GridContent content={content}
+                                         onFocusCell={onFocusCell}
+                                         onUpdateCell={onUpdateCell}
+                                         onLoseCellContext={onLoseCellContext}
+                                         onRequestCellContext={onRequestCellContext}
+                                         selectedCell={selectedCell}
+                                         menuCell={menuCell}
+                                         cellSize={cellSize} />
+                        </div>
+                    </div>
+                    <div className="Grid_GridClues-container Grid_VerticalContainer">
+                        <Clues type="across"
+                               title="Across"
+                               onChange={onChangeClue}
+                               clues={clues}
+                               content={content} />
+                        <Clues type="down"
+                               title="Down"
+                               onChange={onChangeClue}
+                               clues={clues}
+                               content={content} />
                     </div>
                 </div>
-                <div className="Grid_HorizontalContainer">
-                    <Clues type="down"
-                           title="Down"
-                           onChange={onChangeClue}
-                           clues={clues}
-                           content={content} />
+                <div style={{ paddingTop: 50 }} className="Grid_controls">
+                    <input type="text"
+                           value={width}
+                           onChange={e => onResize(+e.target.value, height)} />
+                    <input type="text"
+                           value={height}
+                           onChange={e => onResize(width, +e.target.value)} />
                 </div>
             </div>
         );
