@@ -2,7 +2,11 @@ import React from 'react';
 import { shallowEqual } from 'recompose';
 import { GridContent } from './GridContent';
 import { Clues } from './Clues';
+import { PuzzleStats } from './PuzzleStats';
 import './Grid.scss';
+
+
+const CLUE_HEADER_HEIGHT = 30;
 
 
 export class Grid extends React.Component {
@@ -82,7 +86,9 @@ export class Grid extends React.Component {
             onUpdateCell,
             onLoseCellContext,
             onRequestCellContext,
-            onChangeClue
+            onChangeClue,
+            viewportWidth,
+            viewportHeight
         } = this.props;
         const width = grid.get('width');
         const height = grid.get('height');
@@ -92,10 +98,14 @@ export class Grid extends React.Component {
         const cursorDirection = grid.get('cursorDirection');
         const cursor = grid.get('cursor');
         const menuCell = grid.get('menuCell');
+        const hasCursor = cursor !== null && cursor !== undefined;
+        const cursorCell = hasCursor && content.get(cursor);
+        const selectedDownWord = cursorCell && cursorCell.get('downWord');
+        const selectedAcrossWord = cursorCell && cursorCell.get('acrossWord');
 
         const MIN_HEIGHT = 500;
         const MIN_WIDTH = 300;
-        const CLUE_COL_MIN_WIDTH = 256;
+        const CLUE_COL_MIN_WIDTH = 180;
         const puzzleHeight = cellSize * height;
         const puzzleWidth = cellSize * width;
         const puzzleContainerHeight = Math.max(MIN_HEIGHT, puzzleHeight);
@@ -113,9 +123,17 @@ export class Grid extends React.Component {
             marginTop: puzzlePadTop
         };
 
+        // Reckon clue container styles
+        const collapseClueCols = viewportWidth < (puzzleContainerWidth + 2 * CLUE_COL_MIN_WIDTH);
+        const clueColHeight = collapseClueCols ? puzzleContainerHeight / 2 : puzzleContainerHeight;
+        const clueContainerStyle = {
+            height: puzzleContainerHeight,
+            width: collapseClueCols ? CLUE_COL_MIN_WIDTH : 2 * CLUE_COL_MIN_WIDTH
+        };
+
         return (
             <div className="Grid">
-                <div className="Grid_HorizontalContainer" style={{ height: puzzleContainerHeight }}>
+                <div className="Grid_HorizontalContainer Grid_MainBuilder" style={{ height: puzzleContainerHeight }}>
                     <div className="Grid_GridContent-container Grid_VerticalContainer"
                          style={gridContainerStyle}
                          ref={target => this.gridContentRoot = target}>
@@ -133,18 +151,32 @@ export class Grid extends React.Component {
                                          cellSize={cellSize} />
                         </div>
                     </div>
-                    <div className="Grid_GridClues-container Grid_VerticalContainer">
+                    <div className="Grid_GridClues-container Grid_VerticalContainer"
+                         style={clueContainerStyle}>
                         <Clues type="across"
-                               title="Across"
-                               onChange={onChangeClue}
-                               clues={clues}
-                               content={content} />
+                                   title="Across"
+                                   selection={selectedAcrossWord}
+                                   isPrimarySelection={cursorDirection === 'ACROSS'}
+                                   topOffset={0}
+                                   leftOffset={0}
+                                   height={clueColHeight}
+                                   onChange={onChangeClue}
+                                   clues={clues}
+                                   content={content} />
                         <Clues type="down"
                                title="Down"
+                               topOffset={collapseClueCols ? clueColHeight : 0}
+                               leftOffset={collapseClueCols ? 0 : CLUE_COL_MIN_WIDTH}
+                               selection={selectedDownWord}
+                               isPrimarySelection={cursorDirection === 'DOWN'}
+                               height={clueColHeight}
                                onChange={onChangeClue}
                                clues={clues}
                                content={content} />
                     </div>
+                </div>
+                <div className="Grid_HorizontalContainer Grid_PuzzleStats-container">
+                    <PuzzleStats />
                 </div>
                 <div style={{ paddingTop: 50 }} className="Grid_controls">
                     <input type="text"

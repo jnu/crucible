@@ -9,13 +9,7 @@
     h1 {
         font-family: 'UnifrakturMaguntia', cursive;
         font-size: 50px;
+        margin-bottom: $marMed;
     }
 
-    .Header_spacer {
-        position: relative;
-        margin: 0 70px;
-        top: -20px;
-        height: 0;
-        border-bottom: 2px solid $dark;
-    }
 }

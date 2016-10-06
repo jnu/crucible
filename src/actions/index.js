@@ -42,3 +42,17 @@ export const updateClue = (type, index, newValue) => ({
     index,
     value: newValue
 });
+
+export const setScreenSize = (width, height) => ({
+    type: 'SCREEN_RESIZE',
+    width,
+    height
+});
+
+export const importGridShape = key => ({
+    type: 'IMPORT_GRID_SHAPE'
+});
+
+export const exportGridShape = () => ({
+    type: 'EXPORT_GRID_SHAPE'
+});

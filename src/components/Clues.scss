@@ -3,25 +3,60 @@
 
 .Clues {
     position: relative;
-    .Clues_header {
-        font-size: 20px;
+    overflow: visible;
+
+    .Clues_header-container {
+        font-size: 18px;
         text-align: center;
-        margin-bottom: 5px;
+        padding-top: 10px;
+        font-weight: bold;
+        width: 100%;
     }
     ol {
         list-style: none;
         padding: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin: 0;
     }
     .Clues_spacer {
-        height: 0px;
+        height: 10px;
         border-bottom: 1px solid $medium;
         margin: 0 25%;
         position: relative;
     }
     .Clues_Clue_idx {
         margin-right: 8px;
+        display: inline-block;
+        width: 15px;
+        text-align: right;
+        color: $medium;
     }
     .Clues_Clue_text {
-        min-width: 170px;
+        display: inline-block;
+        width: calc(100% - 30px);
+    }
+    .Clues_Clue {
+        padding: 2px 0;
+        padding-left: 15px;
+        margin-right: 10px;
+        min-width: 155px;
+        position: relative;
+    }
+    .Clues_Clue-selected {
+        &.Clues_Clue-selected-primary {
+            background-color: $lightAmber;
+        }
+
+        &:before {
+            content: ' ';
+            display: inline-block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background-color: $lightAmber;
+        }
     }
 }

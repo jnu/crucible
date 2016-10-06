@@ -1,0 +1,27 @@
+@import 'constants';
+
+
+.PuzzleLetterCounts {
+    width: 300px;
+    font-size: 12px;
+
+    .PuzzleLetterCounts_List {
+        list-style: none;
+        column-count: auto;
+        column-gap: 5px;
+        column-width: 40px;
+    }
+
+    .PuzzleLetterCounts_Item_letter {
+        display: inline-block;
+        width: 15px;
+        text-align: center;
+        color: $medium;
+    }
+
+    .PuzzleLetterCounts_Item_count {
+        display: inline-block;
+        text-align: right;
+        width: 15px;
+    }
+}

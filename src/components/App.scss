@@ -5,3 +5,29 @@
     font-family: 'Radley', serif;
     color: $dark;
 }
+
+body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+
+.Puzzle {
+    position: relative;
+    border-top: 2px solid $dark;
+}
+
+@media (min-width: 855px) {
+    .Puzzle {
+        margin: 0 auto;
+        width: 855px;
+    }
+}
+
+@media (max-width: 855px) {
+    .Puzzle {
+        margin: 0;
+        width: 100%;
+    }
+}

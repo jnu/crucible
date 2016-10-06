@@ -17,7 +17,9 @@ const getNextDirection = direction => direction === 'ACROSS' ? 'DOWN' : 'ACROSS'
 
 const mapStateToProps = state => {
     return {
-        grid: state.grid
+        grid: state.grid,
+        viewportWidth: state.screen.get('viewportWidth'),
+        viewportHeight: state.screen.get('viewportHeight')
     };
 }
 

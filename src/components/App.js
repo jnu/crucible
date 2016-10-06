@@ -11,7 +11,9 @@ export const App = () => (
     <MuiThemeProvider muiTheme={getMuiTheme(muiCrucibleTheme)}>
         <div>
             <Header />
-            <GridContainer />
+            <div className="Puzzle">
+                <GridContainer />
+            </div>
         </div>
     </MuiThemeProvider>
 );
