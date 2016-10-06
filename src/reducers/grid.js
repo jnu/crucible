@@ -1,8 +1,4 @@
 import Immutable from 'immutable';
-import {
-    gridShapeToBitmap,
-    bitmapToGridShape
-} from '../lib/gridShape';
 
 
 /**
@@ -356,27 +352,17 @@ export const rMoveCursor = (state, action) => {
 };
 
 
-export const rExportGridShape = (state, action) => {
-    const bitmap = gridShapeToBitmap(state.get('content'), {
-        width: state.get('width'),
-        height: state.get('height')
+export const rSetGridShape = (state, action) => {
+    const { content, width, height } = action;
+    const updated = updateGridContent(content, height, width);
+    return state.withMutations(mutState => {
+        return mutState
+            .set('content', updated.content)
+            .set('clues', updated.clues)
+            .set('width', width)
+            .set('height', height);
     });
-
-    console.log(bitmap);
-
-    return state;
-}
-
-
-export const rImportGridShape = (state, action) => {
-    const bitmap = window.prompt('Bitmap:');
-    const gridShape = bitmapToGridShape(bitmap);
-    const content = gridShape.content.map(type => Immutable.Map({ type }));
-    return state
-        .set('content', Immutable.List(content))
-        .set('width', gridShape.width)
-        .set('height', gridShape.height);
-}
+};
 
 
 /**
@@ -400,10 +386,8 @@ export const grid = (state = DEFAULT_GRID, action) => {
             return rUpdateClue(state, action);
         case 'MOVE_CURSOR':
             return rMoveCursor(state, action);
-        case 'EXPORT_GRID_SHAPE':
-            return rExportGridShape(state, action);
-        case 'IMPORT_GRID_SHAPE':
-            return rImportGridShape(state, action);
+        case 'SET_GRID_SHAPE':
+            return rSetGridShape(state, action);
         default:
             return state;
     }

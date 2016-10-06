@@ -1,7 +1,9 @@
 import React from 'react';
+import thunkMiddleware from 'redux-thunk';
+import createLogger from 'redux-logger';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { crucibleApp } from './reducers';
 import { App } from './components/App';
 import { debounce } from 'lodash';
@@ -11,7 +13,15 @@ const injectTapEventPlugin = require("react-tap-event-plugin");
 injectTapEventPlugin();
 
 
-const store = createStore(crucibleApp);
+const loggerMiddleware = createLogger();
+
+const store = createStore(
+    crucibleApp,
+    applyMiddleware(
+        thunkMiddleware,
+        loggerMiddleware
+    )
+);
 
 
 // Monitor screen size for advanced layout calculations.
@@ -31,3 +41,11 @@ render(
     </Provider>,
     document.getElementById('root')
 );
+
+
+if (DEBUG) {
+    window.UTIL = {
+        store,
+        actions: require('./actions')
+    };
+}
