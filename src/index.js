@@ -46,6 +46,7 @@ render(
 if (DEBUG) {
     window.UTIL = {
         store,
-        actions: require('./actions')
+        actions: require('./actions'),
+        storageClient: require('./lib').storageClient
     };
 }

@@ -9,7 +9,7 @@ import './App.scss';
 
 export const App = () => (
     <MuiThemeProvider muiTheme={getMuiTheme(muiCrucibleTheme)}>
-        <div>
+        <div className="AppWidth-">
             <Header />
             <div className="Puzzle">
                 <GridContainer />

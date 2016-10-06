@@ -22,9 +22,13 @@ export class BrowserStorageClient {
     load(domain, key, value) {
         const location = this._getNamespacedKey(domain, key);
         const val = this._storage.getItem(location);
-        return val === null ?
-            Promise.reject({ code: 404 }) :
-            Promise.resolve(JSON.parse(val));
+
+        if (val === null) {
+            return Promise.reject({ code: 404 });
+        }
+
+        const obj = Object.assign(JSON.parse(val), { key });
+        return Promise.resolve(obj);
     }
 
     remove(domain, key) {
@@ -46,7 +50,9 @@ export class BrowserStorageClient {
     index(domain) {
         const location = this._getNamespacedKey(domain);
         const idx = this._storage.getItem(location);
-        return Promise.resolve(idx ? idx.split('\0') : []);
+        const items = idx ? idx.split('\0') : [];
+        // Inflate each item since it's cheap here.
+        return Promise.all(items.map(item => this.load(domain, item)));
     }
 
     _getNamespacedKey(domain, key = null) {

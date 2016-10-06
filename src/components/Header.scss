@@ -4,12 +4,13 @@
 .Header {
     width: 100%;
     color: $dark;
-    text-align: center;
 
     h1 {
+        text-align: center;
         font-family: 'UnifrakturMaguntia', cursive;
-        font-size: 50px;
-        margin-bottom: $marMed;
+        font-size: 40px;
+        margin-bottom: 0;
+        margin-top: $marMed;
     }
 
 }
