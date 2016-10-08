@@ -16,19 +16,19 @@ A rough sketch of future work on Crucible:
     - This should allow blocks to be skipped during nav
 
 ## 0.3
- * Fix small grid layout solution
- * Find a large grid layout solution
+ x Fix small grid layout solution
+ x Find a large grid layout solution
  * Tuned navigation
     - Double click to change direction
     - Tab controls from clue builder
     - Backspace more quickly
- * Improve cell highlight styles
+ x Improve cell highlight styles
  * Improve clue builder styles
 
 ## 0.4
  * Word lists:
     * Default, embedded
-    * Metadata (crucible? rex parker? other?)
+    * Metadata (cruciverb? rex parker? other?)
  * Answer suggestions:
     * Search through word lists
     * Rank by metadata (?)
@@ -42,6 +42,8 @@ A rough sketch of future work on Crucible:
 
 ## 0.6
  * Print view
+ * Extreme case solutions (> 21x21)
+ * Ensure clues containers resize properly
  * Puzzle difficulty grade
 
 ## 1.0

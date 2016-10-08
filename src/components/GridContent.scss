@@ -11,12 +11,13 @@
     border: thin solid $dark;
     z-index: $zIndexDefaultCell;
 
-    &.GridCell-focused {
-        border: 2px solid $red;
-        z-index: $zIndexFocusedCell
-    }
     &.GridCell-highlight {
         background-color: $lightAmber;
+    }
+
+    &.GridCell-focused {
+        background-color: $amber;
+        z-index: $zIndexFocusedCell
     }
 
     &.GridCell-type-block {
@@ -24,7 +25,7 @@
         background-color: $dark;
 
         &.GridCell-focused {
-            border-color: $medium;
+            background-color: $medium;
         }
     }
 }

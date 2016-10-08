@@ -32,9 +32,10 @@ class LayoutView extends React.Component {
             viewportWidth
         } = this.props;
 
-        // Layout computation
-        const puzzleHeight = cellSize * height;
-        const puzzleWidth = cellSize * width;
+        // Layout computation. Puzzle is slightly larger than the sum of its
+        // contents due to the border.
+        const puzzleHeight = cellSize * height + 2;
+        const puzzleWidth = cellSize * width + 2;
         const puzzleContainerHeight = Math.max(MIN_PUZZLE_VIEW_HEIGHT, puzzleHeight + CLUE_BUILDER_HEIGHT);
         const puzzleContainerWidth = Math.max(MIN_PUZZLE_VIEW_WIDTH, puzzleWidth + 50)
         const puzzlePadTop = Math.max(0, (puzzleContainerHeight - CLUE_BUILDER_HEIGHT - puzzleHeight) / 2);

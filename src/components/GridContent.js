@@ -195,11 +195,16 @@ class GridContentView extends React.Component {
         const highlightKey = cursorDirection === 'ACROSS' ? 'acrossWord' : 'downWord';
         const highlightWord = cursorCell && cursorCell.get(highlightKey);
         const hasHighlight = !!cursorCell && highlightWord !== null && highlightWord !== undefined;
+        // Grid is 1px larger than the sum of its cells due to border
+        const gridStyle = {
+            width: width * cellSize + 2,
+            height: height * cellSize + 2
+        };
 
         return (
             <div className="GridContent"
                  ref={target => this.gridContentRoot = target}
-                 style={{ width: width * cellSize, height: height * cellSize }}>
+                 style={gridStyle}>
                 {content.map((cell, i) => {
                     const y = ~~(i / width);
                     const x = i % width;
