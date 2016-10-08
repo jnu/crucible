@@ -19,13 +19,14 @@ A rough sketch of future work on Crucible:
  x Fix small grid layout solution
  x Find a large grid layout solution
  * Tuned navigation
-    - Double click to change direction
+    x Double click to change direction
     - Tab controls from clue builder
     - Backspace more quickly
  x Improve cell highlight styles
  * Improve clue builder styles
 
 ## 0.4
+ * Enhanced meta data (word / letter count)
  * Word lists:
     * Default, embedded
     * Metadata (cruciverb? rex parker? other?)
@@ -37,7 +38,6 @@ A rough sketch of future work on Crucible:
  * Word lists:
     * Load custom
     * Select, deselect
- * Enhanced meta data (word / letter count)
  * Grid validation (options)
 
 ## 0.6

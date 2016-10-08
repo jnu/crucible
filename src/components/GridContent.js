@@ -35,7 +35,8 @@ class GridContentView extends React.Component {
             'onUpdateCell',
             'onLoseCellContext',
             'onRequestCellContext',
-            'onKeyDown'
+            'onKeyDown',
+            'onDoubleClick'
         );
     }
 
@@ -178,6 +179,11 @@ class GridContentView extends React.Component {
                 }
             }
         }
+    }
+
+    onDoubleClick() {
+        const { dispatch, cursorDirection } = this.props;
+        dispatch(setDirection(getNextDirection(cursorDirection)));
     }
 
     render() {
