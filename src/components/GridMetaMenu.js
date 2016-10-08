@@ -103,6 +103,7 @@ class GridMetaMenuView extends React.Component {
                 </Popover>
                 <Dialog title="Import Grid Template"
                         open={meta.get('openDialog') === 'IMPORT_GRID_SHAPE'}
+                        contentStyle={{ width: 400 }}
                         onRequestClose={this.closeDialog}
                         autoScrollBodyContent={true}
                         actions={<FlatButton label="Cancel" primary={false} onTouchTap={this.closeDialog} />}>
@@ -123,6 +124,7 @@ class GridMetaMenuView extends React.Component {
                 </Dialog>
                 <Dialog title="Save Grid Template"
                         open={meta.get('openDialog') === 'EXPORT_GRID_SHAPE'}
+                        contentStyle={{ width: 400 }}
                         onRequestClose={this.closeDialog}
                         actions={
                         <div>
