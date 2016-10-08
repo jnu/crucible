@@ -6,7 +6,8 @@ import {
     importGridShape,
     openMetaDialog,
     closeMetaDialog,
-    fetchGridStateIndex
+    fetchGridStateIndex,
+    toggleSymmetricalGrid
 } from '../actions';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
@@ -30,7 +31,8 @@ class GridMetaMenuView extends React.Component {
             'closeDialog',
             'importGrid',
             'exportGrid',
-            'updateExportName'
+            'updateExportName',
+            'toggleSymmetricalGrid'
         );
         this.state = {
             exportGridName: '',
@@ -81,8 +83,14 @@ class GridMetaMenuView extends React.Component {
         this.setState({ exportGridName: e.target.value });
     }
 
+    toggleSymmetricalGrid() {
+        const { dispatch } = this.props;
+        dispatch(toggleSymmetricalGrid());
+        this.closeDialog();
+    }
+
     render() {
-        const { meta } = this.props;
+        const { meta, grid } = this.props;
 
         return (
             <div className="GridMetaMenu">
@@ -98,6 +106,10 @@ class GridMetaMenuView extends React.Component {
                         </MenuItem>
                         <MenuItem onClick={this.openImportGridShapeDialog}>
                             Load Grid Template
+                        </MenuItem>
+                        <MenuItem onClick={this.toggleSymmetricalGrid}
+                                  checked={grid.get('symmetrical')}>
+                            Symmetrical
                         </MenuItem>
                     </Menu>
                 </Popover>
@@ -145,5 +157,6 @@ class GridMetaMenuView extends React.Component {
 }
 
 export const GridMetaMenu = connect(state => ({
-    meta: state.meta
+    meta: state.meta,
+    grid: state.grid
 }))(GridMetaMenuView);

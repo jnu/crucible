@@ -126,3 +126,7 @@ export const importGridShape = uuid => {
             })
     };
 };
+
+export const toggleSymmetricalGrid = () => ({
+    type: 'TOGGLE_SYMMETRICAL_GRID'
+});

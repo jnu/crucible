@@ -196,8 +196,7 @@ const DEFAULT_GRID = Immutable.fromJS({
     // Meta state
     title: '',
     description: '',
-    // TODO not supported yet
-    symmetrical: false,
+    symmetrical: true,
 
     // UX State
     cursor: null,
@@ -235,15 +234,28 @@ export const rSetCell = (state, action) => {
     const { index } = action;
     let cell = content.get(index);
 
+    const {
+        cellType,
+        annotation,
+        value
+    } = action;
+
     // Apply any changes set in the action
-    if (action.cellType !== undefined) {
-        cell = cell.set('type', action.cellType);
+    if (cellType !== undefined) {
+        cell = cell.set('type', cellType);
+        // Apply symmetrical cell as well
+        if (state.get('symmetrical')) {
+            const contentMid = (content.size - 1) / 2;
+            const mirrorIdx = ~~(contentMid + (contentMid - index));
+            const mirrorCell = content.get(mirrorIdx);
+            content = content.set(mirrorIdx, mirrorCell.set('type', cellType));
+        }
     }
-    if (action.annotation !== undefined) {
-        cell = cell.set('annotation', action.annotation);
+    if (annotation !== undefined) {
+        cell = cell.set('annotation', annotation);
     }
-    if (action.value !== undefined) {
-        cell = cell.set('value', action.value);
+    if (value !== undefined) {
+        cell = cell.set('value', value);
     }
 
     content = content.set(index, cell);
@@ -365,6 +377,11 @@ export const rSetGridShape = (state, action) => {
 };
 
 
+export const rToggleSymmetricalGrid = (state, action) => {
+    return state.set('symmetrical', !state.get('symmetrical'));
+};
+
+
 /**
  * Grid state reducer. Applies action transformations to state.
  */
@@ -388,6 +405,8 @@ export const grid = (state = DEFAULT_GRID, action) => {
             return rMoveCursor(state, action);
         case 'SET_GRID_SHAPE':
             return rSetGridShape(state, action);
+        case 'TOGGLE_SYMMETRICAL_GRID':
+            return rToggleSymmetricalGrid(state, action);
         default:
             return state;
     }
