@@ -30,16 +30,28 @@ class ClueBuilderView extends React.Component {
     }
 
     render() {
-        const { index, direction, value, hasClue } = this.props;
-        if (!hasClue) {
-            return null;
-        }
+        const {
+            index,
+            direction,
+            value,
+            hasClue,
+            style
+        } = this.props;
+
+        const dirAbbr = (direction || '').substr(0, 1).toUpperCase();
+        const label = `${index + 1}-${dirAbbr}`;
+
         return (
-            <div className="ClueBuilder">
-                <span>{index + 1}{(direction || '').substr(0, 1)}.</span>
-                <TextField name="ClueBuiler_Input"
-                           value={value}
-                           onChange={this.updateClueState} />
+            <div className="ClueBuilder"
+                 style={style} >
+                { !hasClue ? null :
+                    <div>
+                        <span className="ClueBuilder_Label">{label}</span>
+                        <TextField name="ClueBuiler_Input"
+                                   value={value}
+                                   onChange={this.updateClueState} />
+                    </div>
+                }
             </div>
         );
     }
@@ -54,10 +66,11 @@ const mapStateToProps = state => {
     const cell = grid.get('content').get(cursor);
     const index = cell ? cell.get(`${direction}Word`) : -1;
     const clue = grid.get('clues').get(index);
-    const value = (cell && clue) ? clue.get(direction) : '';
+    const hasClue = !!(cell && clue && clue.has(direction));
+    const value = hasClue ? clue.get(direction) : null;
 
     return {
-        hasClue: !!cell,
+        hasClue,
         index,
         direction,
         value

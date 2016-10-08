@@ -1,25 +1,19 @@
 @import 'constants';
 
 
-.Grid_GridContent-container {
+.Layout_GridContent-container {
     overflow: visible;
-    position: relative;
-    top: 0;
     display: inline-block;
     text-align: center;
-    border-right: 1px solid $veryLight;
+    vertical-align: top;
 }
 
-.Grid_PuzzleStats-container {
-    border-top: 1px solid $veryLight;
-}
-
-.Grid_GridClues-container {
+.Layout_GridClues-container {
     margin-left: $marMed;
     position: relative;
 }
 
-.Grid_GridClues-container_col {
+.Layout_GridClues-container_col {
     display: inline-block;
 }
 
@@ -27,18 +21,16 @@
     display: inline-block;
 }
 
-.Grid_HorizontalContainer {
+.Layout_HorizontalContainer {
     width: 100%;
     overflow: visible;
     white-space: nowrap;
+    position: relative;
 }
 
-.Grid_MainBuilder {
-    margin-bottom: $marBig;
-}
-
-.Grid_VerticalContainer {
+.Layout_VerticalContainer {
     display: inline-block;
     height: 100%;
     overflow: visible;
+    position: relative;
 }

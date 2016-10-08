@@ -4,12 +4,15 @@
 .PuzzleLetterCounts {
     width: 300px;
     font-size: 12px;
+    margin-left: $marMed;
 
     .PuzzleLetterCounts_List {
         list-style: none;
         column-count: auto;
         column-gap: 5px;
         column-width: 40px;
+        margin: 0;
+        padding: 0;
     }
 
     .PuzzleLetterCounts_Item_letter {

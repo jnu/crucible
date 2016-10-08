@@ -24,11 +24,18 @@ const store = createStore(
 );
 
 
+/**
+ * Maximum width of the app. Enforced by stylesheet.
+ * @constant {Number}
+ */
+const MAX_APP_WIDTH = 900;
+
+
 // Monitor screen size for advanced layout calculations.
 const doResize = () => {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    store.dispatch(setScreenSize(width, height))
+    store.dispatch(setScreenSize(Math.min(width, MAX_APP_WIDTH), height))
 }
 window.addEventListener('resize', debounce(doResize, 50));
 // Trigger once on init.

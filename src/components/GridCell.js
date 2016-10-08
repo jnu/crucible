@@ -1,22 +1,22 @@
 import React from 'react';
 import { shallowEqual } from 'recompose';
+import { bindAll } from 'lodash';
 
 
 export class GridCell extends React.Component {
 
     constructor(props) {
         super(props);
-        this.doFocus = this.doFocus.bind(this);
-        this.doContextMenu = this.doContextMenu.bind(this);
+        bindAll(this, 'doFocus', 'doContextMenu', 'doDoubleClick');
     }
 
     shouldComponentUpdate(props, nextProps) {
         return !shallowEqual(props, nextProps);
     }
 
-    doFocus() {
+    doFocus(e) {
         const { index, onFocus } = this.props;
-        onFocus(index);
+        onFocus(index, e);
     }
 
     doContextMenu(e) {
@@ -29,6 +29,11 @@ export class GridCell extends React.Component {
         };
         document.addEventListener('click', globalClickHandler);
         onRequestContext(index);
+    }
+
+    doDoubleClick(e) {
+        const { index, onDoubleClick } = this.props;
+        onDoubleClick(index, e);
     }
 
     getCellClassName(cell, focused, highlight) {
@@ -59,6 +64,7 @@ export class GridCell extends React.Component {
         return (
             <div className={this.getCellClassName(cell, focused, highlight)}
                  onClick={this.doFocus}
+                 onDoubleClick={this.doDoubleClick}
                  onContextMenu={this.doContextMenu}
                  style={{
                     position: 'absolute',

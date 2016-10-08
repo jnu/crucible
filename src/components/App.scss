@@ -18,14 +18,14 @@ body {
     border-top: 2px solid $dark;
 }
 
-@media (min-width: 855px) {
+@media (min-width: 900px) {
     .AppWidth- {
         margin: 0 auto;
-        width: 855px;
+        width: 900px;
     }
 }
 
-@media (max-width: 855px) {
+@media (max-width: 900px) {
     .AppWidth- {
         margin: 0;
         width: 100%;

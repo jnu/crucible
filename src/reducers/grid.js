@@ -146,7 +146,9 @@ export const updateGridContent = (content, clues, height, width) => {
                         if (hasAcrossClue || hasDownClue) {
                             newClues.push(Immutable.Map({
                                 across: hasAcrossClue ? '' : null,
-                                down: hasDownClue ? '' : null
+                                acrossStartIdx: hasAcrossClue ? i : null,
+                                down: hasDownClue ? '' : null,
+                                downStartIdx: hasDownClue ? i : null
                             }));
                         }
 

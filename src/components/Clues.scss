@@ -45,10 +45,12 @@
         margin-right: 10px;
         width: 170px;
         position: relative;
+        cursor: pointer;
     }
     .Clues_Clue-selected {
         &.Clues_Clue-selected-primary {
             background-color: $lightAmber;
+            cursor: default;
         }
 
         &:before {
