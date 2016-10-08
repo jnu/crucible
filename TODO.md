@@ -5,16 +5,25 @@ Roadmap
 A rough sketch of future work on Crucible:
 
 ## 0.1
- * Clue builder
- * Auto-join clues when grid changes
+ x Clue builder
+ x Auto-join clues when grid changes
+ x Symmetrical grid building
 
 ## 0.2
  * Save grid with clues/answers
  * Load grid with clues/answers
+ * Lock the grid while editing puzzles
+    - This should allow blocks to be skipped during nav
 
 ## 0.3
  * Fix small grid layout solution
  * Find a large grid layout solution
+ * Tuned navigation
+    - Double click to change direction
+    - Tab controls from clue builder
+    - Backspace more quickly
+ * Improve cell highlight styles
+ * Improve clue builder styles
 
 ## 0.4
  * Word lists:
@@ -28,7 +37,8 @@ A rough sketch of future work on Crucible:
  * Word lists:
     * Load custom
     * Select, deselect
- * Enhanced meta data (word count)
+ * Enhanced meta data (word / letter count)
+ * Grid validation (options)
 
 ## 0.6
  * Print view

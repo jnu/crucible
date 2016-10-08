@@ -46,7 +46,7 @@ const CluesView = ({
             {clues.map((clue, i) => clue.get(type) === null ? null :
                 <li key={`${type}-${i}`} className={getClueClassName(i, selection, isPrimarySelection)}>
                     <span className="Clues_Clue_idx">{i + 1}.</span>
-                    <span className="Clues_Clue_text">{clue.get(type) || 'Write clue'}</span>
+                    <span className="Clues_Clue_text">{clue.get(type)}</span>
                 </li>
             )}
         </ol>

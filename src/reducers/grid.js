@@ -24,13 +24,36 @@ const BLOCK_CELL = Immutable.Map({
 
 
 /**
+ * Get a clue of a given type at the given index, but return an empty string if
+ * that clue is undefined.
+ * @param  {ClueType} type - either `down` or `across``
+ * @param  {Immutable.List} clues - list of clues
+ * @param  {Number} index - index of clue to get
+ * @return {String}
+ */
+const safeGetClue = (type, clues, index) => {
+    if (index === null || index === undefined) {
+        return '';
+    }
+
+    const clue = clues.get(index);
+    if (!clue) {
+        return '';
+    }
+
+    return clue.get(type) || '';
+};
+
+
+/**
  * Grow/shrink the grid based on new size, filling in empty cells as needed.
  */
-export const updateGridContent = (content, height, width) => {
+export const updateGridContent = (content, clues, height, width) => {
     const n = height * width;
-    const clues = [];
+    const newClues = [];
     const clueAcrossProjection = {};
     const clueDownProjection = {};
+
     content = content
             .setSize(n)
             .withMutations(mutContent => {
@@ -66,7 +89,7 @@ export const updateGridContent = (content, height, width) => {
                         const nextIsOpenAcross = hasRightCell && (!rightCellType || rightCellType === 'CONTENT');
                         const hasAcrossClue = firstOpenAcross && nextIsOpenAcross;
                         const acrossWord = nextIsOpenAcross ?
-                            firstOpenAcross ? clues.length : cellLeftWord :
+                            firstOpenAcross ? newClues.length : cellLeftWord :
                             cellLeftWord;
                         // Do same determination for down words.
                         const cellAboveWord = rowAboveWords[colIdx];
@@ -74,18 +97,21 @@ export const updateGridContent = (content, height, width) => {
                         const nextIsOpenDown = hasBelowCell && (!belowCellType || belowCellType === 'CONTENT');
                         const hasDownClue = firstOpenDown && nextIsOpenDown;
                         const downWord = nextIsOpenDown ?
-                            firstOpenDown ? clues.length : cellAboveWord :
+                            firstOpenDown ? newClues.length : cellAboveWord :
                             cellAboveWord;
 
                         // Useful derived props
                         const startOfWord = hasAcrossClue || hasDownClue;
                         const startClueIdx = hasAcrossClue ? acrossWord : hasDownClue ? downWord : null
 
+                        let currentAcrossWord = null;
+                        let currentDownWord = null;
+
                         // Now create/update the cell with this info.
                         if (cell) {
                             // Update an existing cell.
-                            const currentAcrossWord = cell.get('acrossWord');
-                            const currentDownWord = cell.get('downWord');
+                            currentAcrossWord = cell.get('acrossWord');
+                            currentDownWord = cell.get('downWord');
                             mutContent.set(i, cell.withMutations(mutCell => {
                                 return mutCell
                                     .set('acrossWord', acrossWord)
@@ -94,21 +120,14 @@ export const updateGridContent = (content, height, width) => {
                                     .set('startClueIdx', startClueIdx);
                             }));
 
-                            // Project existing clues into the new grid space.
-                            // In the case of splitting (i.e., a block was added
-                            // that splits an existing word in two), only the
-                            // first half should get the original clue. The
-                            // latter half will have an empty clue.
-                            if (currentAcrossWord !== null && currentAcrossWord !== undefined && currentAcrossWord !== acrossWord) {
-                                if (!clueAcrossProjection.hasOwnProperty(currentAcrossWord)) {
-                                    clueAcrossProjection[currentAcrossWord] = acrossWord
-                                }
+                            // Mark existing clue as projected to prevent
+                            // duplicates when a block splits a word.
+                            if (!clueAcrossProjection.hasOwnProperty(currentAcrossWord)) {
+                                clueAcrossProjection[currentAcrossWord] = acrossWord
                             }
 
-                            if (currentDownWord !== null && currentDownWord !== undefined && currentDownWord !== downWord) {
-                                if (!clueDownProjection.hasOwnProperty(currentDownWord)) {
-                                    clueDownProjection[currentDownWord] = downWord;
-                                }
+                            if (!clueDownProjection.hasOwnProperty(currentDownWord)) {
+                                clueDownProjection[currentDownWord] = downWord;
                             }
                         } else {
                             // Create a new CONTENT cell.
@@ -125,7 +144,7 @@ export const updateGridContent = (content, height, width) => {
 
                         // Add a new clue if necessary
                         if (hasAcrossClue || hasDownClue) {
-                            clues.push(Immutable.Map({
+                            newClues.push(Immutable.Map({
                                 across: hasAcrossClue ? '' : null,
                                 down: hasDownClue ? '' : null
                             }));
@@ -153,11 +172,30 @@ export const updateGridContent = (content, height, width) => {
                 return mutContent;
             });
 
+    // Project old clues into new clues. There are some tricky cases here where
+    // clues can just disappear, e.g. if the old grid's CONTENT squares have
+    // been shrunk to a single cell width. There might be a better way to
+    // handle these, but for now they are just dropped.
+    clues.forEach((clue, i) => {
+        if (clueAcrossProjection.hasOwnProperty(i)) {
+            const newIdx = clueAcrossProjection[i];
+            const newClue = newClues[newIdx];
+            if (newClue) {
+                newClues[newIdx] = newClue.set('across', clue.get('across') || '');
+            }
+        }
 
-    // TODO: project clues using maps
+        if (clueDownProjection.hasOwnProperty(i)) {
+            const newIdx = clueDownProjection[i];
+            const newClue = newClues[newIdx];
+            if (newClue) {
+                newClues[newIdx] = newClue.set('down', clue.get('down') || '');
+            }
+        }
+    });
 
 
-    return { clues: Immutable.List(clues), content };
+    return { clues: Immutable.List(newClues), content };
 };
 
 
@@ -181,7 +219,12 @@ const DEFAULT_HEIGHT = 15;
 /**
  * Default content grid.
  */
-const DEFAULT_GRID_INFO = updateGridContent(Immutable.List(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+const DEFAULT_GRID_INFO = updateGridContent(
+    Immutable.List(),
+    Immutable.List(),
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH
+);
 
 /**
  * Default grid state.
@@ -216,6 +259,7 @@ export const rResize = (state, action) => state.withMutations(mutState => {
     // Update the grid
     const { clues, content } = updateGridContent(
         mutState.get('content'),
+        mutState.get('clues'),
         action.height,
         action.width
     );
@@ -264,6 +308,7 @@ export const rSetCell = (state, action) => {
     // TODO full update is expensive and not always necessary.
     const updates = updateGridContent(
         content,
+        state.get('clues'),
         state.get('height'),
         state.get('width')
     );
@@ -319,7 +364,9 @@ export const rUpdateClue = (state, action) => {
     const { value, index, direction } = action;
     const clues = state.get('clues');
     const clue = clues.get(index);
-    return state.set('clues', clues.set(index, clue.set(direction, value)));
+    return state.set('clues', clues.set(
+        index, clue.set((direction || '').toLowerCase(), value))
+    );
 };
 
 
@@ -366,7 +413,7 @@ export const rMoveCursor = (state, action) => {
 
 export const rSetGridShape = (state, action) => {
     const { content, width, height } = action;
-    const updated = updateGridContent(content, height, width);
+    const updated = updateGridContent(content, state.get('clues'), height, width);
     return state.withMutations(mutState => {
         return mutState
             .set('content', updated.content)

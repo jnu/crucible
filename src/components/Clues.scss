@@ -31,16 +31,19 @@
         width: 15px;
         text-align: right;
         color: $medium;
+        vertical-align: top;
     }
     .Clues_Clue_text {
         display: inline-block;
         width: calc(100% - 30px);
+        white-space: normal;
+        overflow-wrap: break-word;
     }
     .Clues_Clue {
         padding: 2px 0;
         padding-left: 15px;
         margin-right: 10px;
-        min-width: 155px;
+        width: 170px;
         position: relative;
     }
     .Clues_Clue-selected {

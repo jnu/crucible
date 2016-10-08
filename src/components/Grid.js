@@ -3,6 +3,7 @@ import { shallowEqual } from 'recompose';
 import { GridContent } from './GridContent';
 import { Clues } from './Clues';
 import { PuzzleStats } from './PuzzleStats';
+import { ClueBuilder } from './ClueBuilder';
 import './Grid.scss';
 
 
@@ -135,9 +136,12 @@ export class Grid extends React.Component {
             <div className="Grid">
                 <div className="Grid_HorizontalContainer Grid_MainBuilder" style={{ height: puzzleContainerHeight }}>
                     <div className="Grid_GridContent-container Grid_VerticalContainer"
-                         style={gridContainerStyle}
-                         ref={target => this.gridContentRoot = target}>
-                        <div style={puzzleStyle}>
+                         style={gridContainerStyle}>
+                        <div>
+                            <ClueBuilder />
+                        </div>
+                        <div style={puzzleStyle}
+                             ref={target => this.gridContentRoot = target}>
                             <GridContent content={content}
                                          width={width}
                                          height={height}
