@@ -26,7 +26,8 @@ Items may jump around and work may not be completed exactly in the planned order
     x Copyright
     x Description
     ? Checksum
- * Load grid with clues/answers
+ x Load grid with clues/answers
+ x Autosave puzzles in progress
  * Lock the grid while editing puzzles
     - This should allow blocks to be skipped during nav
 
@@ -41,7 +42,7 @@ Items may jump around and work may not be completed exactly in the planned order
  * Improve clue builder styles
 
 ## 0.4
- * Enhanced meta data (word / letter count)
+ x Enhanced meta data (word / letter count)
  * Word lists:
     * Default, embedded
     * Metadata (cruciverb? rex parker? other?)

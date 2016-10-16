@@ -32,4 +32,5 @@ export {
     autoSaveStart,
     autoSaveSuccess,
     autoSaveError,
+    loadEmptyPuzzle,
 } from './storage';

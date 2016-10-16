@@ -40,7 +40,7 @@ export class BrowserStorageClient {
         if (hasItem) {
             const idxKey = this._getNamespacedKey(domain, key);
             const idx = this._storage.getItem(idxKey);
-            const newIdx = idx.split('\0').filter(key => key !== key).join('\0');
+            const newIdx = idx.split('\0').filter(id => id !== key).join('\0');
             this._storage.setItem(idxKey, newIdx);
         }
 

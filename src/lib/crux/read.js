@@ -1,4 +1,3 @@
-import Immutable from 'immutable';
 import { HDR_VERSION_WIDTH } from './constants';
 import { castValue } from './types';
 import { getCruxFileInterface } from './versions';

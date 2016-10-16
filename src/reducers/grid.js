@@ -26,28 +26,6 @@ const BLOCK_CELL = Immutable.Map({
 
 
 /**
- * Get a clue of a given type at the given index, but return an empty string if
- * that clue is undefined.
- * @param  {ClueType} type - either `down` or `across``
- * @param  {Immutable.List} clues - list of clues
- * @param  {Number} index - index of clue to get
- * @return {String}
- */
-const safeGetClue = (type, clues, index) => {
-    if (index === null || index === undefined) {
-        return '';
-    }
-
-    const clue = clues.get(index);
-    if (!clue) {
-        return '';
-    }
-
-    return clue.get(type) || '';
-};
-
-
-/**
  * Grow/shrink the grid based on new size, filling in empty cells as needed.
  */
 export const updateGridContent = (content, clues, height, width) => {
@@ -128,12 +106,23 @@ export const updateGridContent = (content, clues, height, width) => {
 
                             // Mark existing clue as projected to prevent
                             // duplicates when a block splits a word.
-                            if (!clueAcrossProjection.hasOwnProperty(currentAcrossWord)) {
-                                clueAcrossProjection[currentAcrossWord] = acrossWord;
+                            if (isDefined(currentAcrossWord)) {
+                                if (!clueAcrossProjection.hasOwnProperty(currentAcrossWord)) {
+                                    clueAcrossProjection[currentAcrossWord] = acrossWord;
+                                }
+                            } else {
+                                // If `currentAcrossWord` is not defined,
+                                // assume the mapping to be 1:1.
+                                clueAcrossProjection[acrossWord] = acrossWord;
                             }
 
-                            if (!clueDownProjection.hasOwnProperty(currentDownWord)) {
-                                clueDownProjection[currentDownWord] = downWord;
+                            // Do same for `downWord`
+                            if (isDefined(currentDownWord)) {
+                                if (!clueDownProjection.hasOwnProperty(currentDownWord)) {
+                                    clueDownProjection[currentDownWord] = downWord;
+                                }
+                            } else {
+                                clueDownProjection[downWord] = downWord;
                             }
                         } else {
                             // Create a new CONTENT cell.
@@ -450,13 +439,18 @@ export const rReplaceGrid = (state, action) => {
     return emptyGrid.withMutations(mutState => {
         if (grid) {
             mutState.merge(grid);
-            const updated = updateGridContent(
-                mutState.get('content'),
-                mutState.get('clues'),
-                mutState.get('height'),
-                mutState.get('width')
+            const { content, clues } = updateGridContent(
+                grid.get('content'),
+                grid.get('clues'),
+                grid.get('height'),
+                grid.get('width')
             );
-            mutState.merge(updated);
+            // The update procedure doesn't do a good job migrating clues when
+            // no metadata is present yet (which it isn't when restoring from
+            // a file). Just overwrite for now. TODO fix update procedure.
+            // updated.set('clues', originalClues);
+            mutState.set('content', content);
+            mutState.set('clues', clues);
         }
 
         if (id) {

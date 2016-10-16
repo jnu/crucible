@@ -9,7 +9,8 @@ import {
     fetchGridStateIndex,
     fetchPuzzleIndex,
     toggleSymmetricalGrid,
-    loadPuzzle
+    loadPuzzle,
+    loadEmptyPuzzle
 } from '../actions';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
@@ -35,6 +36,7 @@ class GridMetaMenuView extends React.Component {
             'importGrid',
             'exportGrid',
             'loadPuzzle',
+            'makeNewPuzzle',
             'updateExportName',
             'toggleSymmetricalGrid'
         );
@@ -95,6 +97,12 @@ class GridMetaMenuView extends React.Component {
         this.closeDialog();
     }
 
+    makeNewPuzzle() {
+        const { dispatch } = this.props;
+        dispatch(loadEmptyPuzzle());
+        this.closeDialog();
+    }
+
     updateExportName(e) {
         this.setState({ exportGridName: e.target.value });
     }
@@ -117,6 +125,9 @@ class GridMetaMenuView extends React.Component {
                          targetOrigin={{ horizontal: 'left', vertical: 'top' }}
                          onRequestClose={this.closeDialog}>
                     <Menu>
+                        <MenuItem onClick={this.makeNewPuzzle}>
+                            New Puzzle
+                        </MenuItem>
                         <MenuItem onClick={this.openLoadPuzzleDialog}>
                             Load Puzzle
                         </MenuItem>
@@ -173,6 +184,7 @@ class GridMetaMenuView extends React.Component {
                 <Dialog title="Load Puzzle"
                         open={meta.get('openDialog') === 'LOAD_PUZZLE'}
                         contentStyle={{ width: 400 }}
+                        autoScrollBodyContent={true}
                         onRequestClose={this.closeDialog}
                         actions={<FlatButton label="Cancel" primary={false} onTouchTap={this.closeDialog} />}>
                     {!meta.get('requestingPuzzleIndex') ?

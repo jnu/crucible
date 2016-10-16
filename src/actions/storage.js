@@ -55,6 +55,10 @@ export const loadBitmap = (bitmap, id=null) => {
     };
 };
 
+export const loadEmptyPuzzle = () => ({
+    type: 'REPLACE_GRID'
+});
+
 export const importGridShape = uuid => {
     return (dispatch, getState) => {
         dispatch({ type: 'REQUEST_IMPORT_GRID_SHAPE' });

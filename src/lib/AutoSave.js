@@ -1,5 +1,5 @@
 import * as crux from './crux';
-
+window.crux = crux;
 
 const NOOP = () => {};
 
