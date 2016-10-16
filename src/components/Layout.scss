@@ -1,6 +1,14 @@
 @import 'constants';
 
 
+.Layout {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+         -o-user-select: none;
+            user-select: none;
+}
+
 .Layout_GridContent-container {
     overflow: visible;
     display: inline-block;

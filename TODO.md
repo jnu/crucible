@@ -1,8 +1,15 @@
 Roadmap
 ===
 
-# Planned work:
-A rough sketch of future work on Crucible:
+Past, present, and future work on Crucible.
+
+Items may jump around and work may not be completed exactly in the planned order.
+
+## 0.0
+ x Basic interactive grid implementation
+ x Load / save grid templates
+ x Basic frequency counts
+ x Clue highlighting
 
 ## 0.1
  x Clue builder
@@ -10,7 +17,15 @@ A rough sketch of future work on Crucible:
  x Symmetrical grid building
 
 ## 0.2
- * Save grid with clues/answers
+ x Save grid with clues/answers
+    ? Unique ID
+    x Date created
+    x Last edited
+    x Title
+    x Author
+    x Copyright
+    x Description
+    ? Checksum
  * Load grid with clues/answers
  * Lock the grid while editing puzzles
     - This should allow blocks to be skipped during nav
@@ -21,7 +36,7 @@ A rough sketch of future work on Crucible:
  * Tuned navigation
     x Double click to change direction
     - Tab controls from clue builder
-    - Backspace more quickly
+    x Backspace more quickly
  x Improve cell highlight styles
  * Improve clue builder styles
 
@@ -50,17 +65,11 @@ A rough sketch of future work on Crucible:
  * Server-side persistence
  * Unit testing
  * Deployment bundling
+ * PUZ format support
+    - Import
+    - Export
 
 ## 2.0
  * "Play" mode - for solving
- * PUZ format support (?)
  * Accounts / auth / whatever
  * Sharing, commenting, collaborating (?)
-
-
-# Current features
-
- * Basic interactive grid implementation
- * Load / save grid templates
- * Basic frequency counts
- * Clue highlighting

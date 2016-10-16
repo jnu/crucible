@@ -6,7 +6,12 @@ const DEFAULT_META_STATE = Immutable.fromJS({
     requestingExport: false,
     requestingImport: false,
     requestingGridShapeIndex: false,
-    gridShapeIndex: []
+    gridShapeIndex: [],
+    requestingPuzzle: false,
+    puzzleRequestError: null,
+    requestingPuzzleIndex: false,
+    puzzleIndexRequestError: null,
+    puzzleIndex: []
 });
 
 export const meta = (state = DEFAULT_META_STATE, action) => {
@@ -29,6 +34,27 @@ export const meta = (state = DEFAULT_META_STATE, action) => {
             return state
                 .set('requestingGridShapeIndex', false)
                 .set('gridShapeIndex', Immutable.fromJS(action.data));
+        case 'REQUEST_PUZZLE_INDEX':
+            return state.set('requestingPuzzleIndex', true);
+        case 'RECEIVE_PUZZLE_INDEX_SUCCESS':
+            return state
+                .set('requestingPuzzleIndex', false)
+                .set('puzzleIndexRequestError', null)
+                .set('puzzleIndex', Immutable.fromJS(action.data));
+        case 'RECEIVE_PUZZLE_INDEX_ERROR':
+            return state
+                .set('requestingPuzzleIndex', false)
+                .set('puzzleIndexRequestError', action.error);
+        case 'REQUEST_PUZZLE':
+            return state.set('requestingPuzzle', true);
+        case 'RECEIVE_PUZZLE_SUCCESS':
+            return state
+                .set('requestingPuzzle', false)
+                .set('requestPuzzleError', null);
+        case 'RECEIVE_PUZZLE_ERROR':
+            return state
+                .set('requestingPuzzle', false)
+                .set('puzzleRequestError', action.error);
         default:
             return state;
     }

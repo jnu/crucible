@@ -1,0 +1,304 @@
+{
+  "menuCell": null,
+  "symmetrical": true,
+  "cellSize": 30,
+  "width": 5,
+  "height": 5,
+  "copyright": "",
+  "cursorDirection": "ACROSS",
+  "author": "",
+  "cursor": 12,
+  "title": "",
+  "content": [
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "A",
+      "acrossWord": 0,
+      "downWord": 0,
+      "startOfWord": true,
+      "startClueIdx": 0
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "B",
+      "acrossWord": 0,
+      "downWord": 1,
+      "startOfWord": true,
+      "startClueIdx": 1
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 2,
+      "downWord": 2,
+      "startOfWord": true,
+      "startClueIdx": 2
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 2,
+      "downWord": 3,
+      "startOfWord": true,
+      "startClueIdx": 3
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 2,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 2,
+      "downWord": 1,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 2,
+      "downWord": 4,
+      "startOfWord": true,
+      "startClueIdx": 4
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "C",
+      "acrossWord": 5,
+      "downWord": 2,
+      "startOfWord": true,
+      "startClueIdx": 5
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 5,
+      "downWord": 3,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "D",
+      "acrossWord": 6,
+      "downWord": 1,
+      "startOfWord": true,
+      "startClueIdx": 6
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 6,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 7,
+      "downWord": 2,
+      "startOfWord": true,
+      "startClueIdx": 7
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 7,
+      "downWord": 3,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "F",
+      "acrossWord": 7,
+      "downWord": 8,
+      "startOfWord": true,
+      "startClueIdx": 8
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "G",
+      "acrossWord": 7,
+      "downWord": 1,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "H",
+      "acrossWord": 7,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 9,
+      "downWord": 3,
+      "startOfWord": true,
+      "startClueIdx": 9
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "J",
+      "acrossWord": 9,
+      "downWord": 8,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    }
+  ],
+  "clues": [
+    {
+      "across": "",
+      "acrossStartIdx": 2,
+      "down": "",
+      "downStartIdx": 2
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "",
+      "downStartIdx": 3
+    },
+    {
+      "across": "",
+      "acrossStartIdx": 5,
+      "down": "",
+      "downStartIdx": 5
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "",
+      "downStartIdx": 6
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "",
+      "downStartIdx": 9
+    },
+    {
+      "across": "",
+      "acrossStartIdx": 10,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "",
+      "acrossStartIdx": 13,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "",
+      "acrossStartIdx": 15,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "",
+      "downStartIdx": 17
+    },
+    {
+      "across": "",
+      "acrossStartIdx": 21,
+      "down": null,
+      "downStartIdx": null
+    }
+  ],
+  "dateCreated": 1476256537220,
+  "description": "",
+  "lastModified": 1476256570034
+}

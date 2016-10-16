@@ -9,6 +9,7 @@ import {
     focusCell,
     setDirection,
     moveCursor,
+    moveCursorAndUpdate,
     requestCellContext,
     hideCellContext
 } from '../actions';
@@ -17,13 +18,6 @@ import './GridContent.scss';
 
 
 const getNextDirection = direction => direction === 'ACROSS' ? 'DOWN' : 'ACROSS';
-
-const isSelectedCell = (selectedCell, row, col) => {
-    if (!selectedCell) {
-        return false;
-    }
-    return selectedCell.get('row') === row && selectedCell.get('col') === col;
-};
 
 
 class GridContentView extends React.Component {
@@ -60,7 +54,7 @@ class GridContentView extends React.Component {
             } else {
                 cmp.removeKeyListener(cmp);
             }
-        }
+        };
 
         window.addEventListener('click', cmp.mouseClickListener);
     }
@@ -97,7 +91,7 @@ class GridContentView extends React.Component {
                 content
             );
             e.preventDefault();
-        }
+        };
 
         window.addEventListener('keydown', cmp.keyDownListener);
     }
@@ -137,7 +131,7 @@ class GridContentView extends React.Component {
                 if (content.get(index).get('value')) {
                     return dispatch(updateCell(index, { value: '' }));
                 } else {
-                    return dispatch(moveCursor(-1));
+                    return dispatch(moveCursorAndUpdate(-1, { value: '' }));
                 }
             case Keys.SPACE:
                 return dispatch(setDirection(getNextDirection(cursorDirection)));
@@ -192,7 +186,6 @@ class GridContentView extends React.Component {
             width,
             height,
             cellSize,
-            menuCell,
             cursor,
             cursorDirection
         } = this.props;

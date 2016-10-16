@@ -1,21 +1,9 @@
 /**
- * Extract a window of bits from a Base64 encoded sequence
- * @param  {String} binary - base64 encoded sequence
- * @param  {Number} start - first bit to read
- * @param  {Number} len - number of bits to read
- * @return {Number} - bits from string, as number
- */
-function readBits(binary, start, len) {
-
-}
-
-
-/**
  * @file Provide an interface for writing binary data into a Base64-encoded
  * string.
  */
 
-import floor_log2 from './floor_log2';
+import { fast_floor_log2 } from './log2';
 import {
     BASE64_INT_TO_CHAR,
     BASE64_CHAR_TO_INT
@@ -33,7 +21,7 @@ class BinaryString {
      * @constructor
      * @return {BinaryString}
      */
-    constructor(data) {
+    constructor() {
         /**
          * Data buffer
          * @type {Number?}
@@ -53,13 +41,13 @@ class BinaryString {
          * Encoded data as a string of base64 characters
          * @type {String}
          */
-        this.data = data || '';
+        this.data = '';
 
         /**
          * Data is read-only if the instance was initialized with a string.
          * @type {Boolean}
          */
-        this.canWrite = !data;
+        this.canWrite = true;
     }
 
     /**
@@ -77,7 +65,7 @@ class BinaryString {
         }
 
         let buf = this.buffer;
-        let len = width || floor_log2(val) + 1;
+        let len = width || fast_floor_log2(val) + 1;
 
         if (width && val >= (0x1 << width)) {
             throw new Error(`Can't write ${val} in only ${width} bits`);
@@ -123,38 +111,6 @@ class BinaryString {
     }
 
     /**
-     * Read a number of bits from the binary string.
-     * @param  {Number} start - bit at which to start reading
-     * @param  {Number} [len=1] - number of bits to read
-     * @return {Number} Integer representing what was read.
-     */
-    read(start, len = 1) {
-        if (this.canWrite) {
-            throw new Error('BinaryString is write-only');
-        }
-        const binary = this.data;
-
-        let startChar = ~~(start / 6);
-        let startBitOffset = start % 6;
-        let endBit = startBitOffset + len;
-        let charLen = Math.ceil(endBit / 6);
-        let mask = (0x1 << len) - 1;
-        let chunk = 0;
-
-        for (let i = 0; i < charLen; i++) {
-            chunk <<= 6;
-            chunk |= BASE64_CHAR_TO_INT[binary[startChar + i]];
-        }
-
-        let rightPadding = endBit % 6;
-        if (rightPadding) {
-            chunk >>= (6 - rightPadding);
-        }
-
-        return chunk & mask;
-    }
-
-    /**
      * Write values from the buffer into the binary encoded string until the
      * pointer is below 6. Use @link BinaryString#flush to print out all values
      * regardless of whether they are complete and return the pointer to 0.
@@ -182,3 +138,65 @@ class BinaryString {
 }
 
 export default BinaryString;
+
+
+export class BinaryStringReader extends BinaryString {
+
+    constructor(data) {
+        super();
+        this.data = data;
+        this.canWrite = false;
+
+        if (data === undefined) {
+            throw new Error('Data must be provided');
+        }
+
+        this.cursor = 0;
+    }
+
+    /**
+     * Read a number of bits from data at the current cursor position. Cursor
+     * is incremented by this number of bits.
+     * @param  {Number} width
+     * @return {Number}
+     */
+    read(width = 1) {
+        const { cursor } = this;
+        const value = this.readRange(cursor, width);
+        this.cursor += width;
+        return value;
+    }
+
+    /**
+     * Read a number of bits from the binary string.
+     * @param  {Number} start - bit at which to start reading
+     * @param  {Number} [len=1] - number of bits to read
+     * @return {Number} Integer representing what was read.
+     */
+    readRange(start, len = 1) {
+        if (this.canWrite) {
+            throw new Error('BinaryString is write-only');
+        }
+        const binary = this.data;
+
+        let startChar = ~~(start / 6);
+        let startBitOffset = start % 6;
+        let endBit = startBitOffset + len;
+        let charLen = Math.ceil(endBit / 6);
+        let mask = (0x1 << len) - 1;
+        let chunk = 0;
+
+        for (let i = 0; i < charLen; i++) {
+            chunk <<= 6;
+            chunk |= BASE64_CHAR_TO_INT[binary[startChar + i]];
+        }
+
+        let rightPadding = endBit % 6;
+        if (rightPadding) {
+            chunk >>= (6 - rightPadding);
+        }
+
+        return chunk & mask;
+    }
+
+}

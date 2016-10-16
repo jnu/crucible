@@ -1,0 +1,2398 @@
+{
+  "menuCell": null,
+  "symmetrical": true,
+  "cellSize": 30,
+  "width": 15,
+  "height": 15,
+  "copyright": "Çœpÿrīgh† © 2016",
+  "cursorDirection": "DOWN",
+  "author": "Иосиф Нудел",
+  "cursor": 191,
+  "title": "ƒûłł †ešt πûzżłë",
+  "content": [
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "A",
+      "acrossWord": 0,
+      "downWord": 0,
+      "startOfWord": true,
+      "startClueIdx": 0
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "B",
+      "acrossWord": 0,
+      "downWord": 1,
+      "startOfWord": true,
+      "startClueIdx": 1
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "C",
+      "acrossWord": 0,
+      "downWord": 2,
+      "startOfWord": true,
+      "startClueIdx": 2
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "D",
+      "acrossWord": 0,
+      "downWord": 3,
+      "startOfWord": true,
+      "startClueIdx": 3
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 0,
+      "downWord": 4,
+      "startOfWord": true,
+      "startClueIdx": 4
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "F",
+      "acrossWord": 5,
+      "downWord": 5,
+      "startOfWord": true,
+      "startClueIdx": 5
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "G",
+      "acrossWord": 5,
+      "downWord": 6,
+      "startOfWord": true,
+      "startClueIdx": 6
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "H",
+      "acrossWord": 5,
+      "downWord": 7,
+      "startOfWord": true,
+      "startClueIdx": 7
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 5,
+      "downWord": 8,
+      "startOfWord": true,
+      "startClueIdx": 8
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "J",
+      "acrossWord": 5,
+      "downWord": 9,
+      "startOfWord": true,
+      "startClueIdx": 9
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "K",
+      "acrossWord": 5,
+      "downWord": 10,
+      "startOfWord": true,
+      "startClueIdx": 10
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "L",
+      "acrossWord": 11,
+      "downWord": 0,
+      "startOfWord": true,
+      "startClueIdx": 11
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "M",
+      "acrossWord": 11,
+      "downWord": 1,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "N",
+      "acrossWord": 11,
+      "downWord": 2,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "O",
+      "acrossWord": 11,
+      "downWord": 3,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "P",
+      "acrossWord": 11,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Q",
+      "acrossWord": 12,
+      "downWord": 12,
+      "startOfWord": true,
+      "startClueIdx": 12
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "R",
+      "acrossWord": 12,
+      "downWord": 5,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "S",
+      "acrossWord": 12,
+      "downWord": 6,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "T",
+      "acrossWord": 12,
+      "downWord": 7,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "U",
+      "acrossWord": 12,
+      "downWord": 8,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "V",
+      "acrossWord": 12,
+      "downWord": 9,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "W",
+      "acrossWord": 12,
+      "downWord": 10,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "X",
+      "acrossWord": 13,
+      "downWord": 13,
+      "startOfWord": true,
+      "startClueIdx": 13
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Y",
+      "acrossWord": 13,
+      "downWord": 14,
+      "startOfWord": true,
+      "startClueIdx": 14
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Z",
+      "acrossWord": 13,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "A",
+      "acrossWord": 13,
+      "downWord": 1,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "B",
+      "acrossWord": 13,
+      "downWord": 2,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "C",
+      "acrossWord": 13,
+      "downWord": 3,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "D",
+      "acrossWord": 13,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 15,
+      "downWord": 12,
+      "startOfWord": true,
+      "startClueIdx": 15
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "F",
+      "acrossWord": 15,
+      "downWord": 5,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "G",
+      "acrossWord": 15,
+      "downWord": 6,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "H",
+      "acrossWord": 15,
+      "downWord": 7,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 15,
+      "downWord": 8,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "J",
+      "acrossWord": 15,
+      "downWord": 9,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "K",
+      "acrossWord": 15,
+      "downWord": 10,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "L",
+      "acrossWord": 16,
+      "downWord": 13,
+      "startOfWord": true,
+      "startClueIdx": 16
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "M",
+      "acrossWord": 16,
+      "downWord": 14,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "N",
+      "acrossWord": 16,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "O",
+      "acrossWord": 17,
+      "downWord": 2,
+      "startOfWord": true,
+      "startClueIdx": 17
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "P",
+      "acrossWord": 17,
+      "downWord": 3,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Q",
+      "acrossWord": 17,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "R",
+      "acrossWord": 18,
+      "downWord": 12,
+      "startOfWord": true,
+      "startClueIdx": 18
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "S",
+      "acrossWord": 18,
+      "downWord": 5,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "T",
+      "acrossWord": 18,
+      "downWord": 6,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "U",
+      "acrossWord": 19,
+      "downWord": 13,
+      "startOfWord": true,
+      "startClueIdx": 19
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "V",
+      "acrossWord": 19,
+      "downWord": 14,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "W",
+      "acrossWord": 19,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "X",
+      "acrossWord": 19,
+      "downWord": 20,
+      "startOfWord": true,
+      "startClueIdx": 20
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Y",
+      "acrossWord": 21,
+      "downWord": 3,
+      "startOfWord": true,
+      "startClueIdx": 21
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Z",
+      "acrossWord": 21,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "A",
+      "acrossWord": 21,
+      "downWord": 22,
+      "startOfWord": true,
+      "startClueIdx": 22
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "B",
+      "acrossWord": 21,
+      "downWord": 12,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "C",
+      "acrossWord": 21,
+      "downWord": 5,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "D",
+      "acrossWord": 21,
+      "downWord": 6,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 23,
+      "downWord": 23,
+      "startOfWord": true,
+      "startClueIdx": 23
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "F",
+      "acrossWord": 23,
+      "downWord": 24,
+      "startOfWord": true,
+      "startClueIdx": 24
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "G",
+      "acrossWord": 23,
+      "downWord": 25,
+      "startOfWord": true,
+      "startClueIdx": 25
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "H",
+      "acrossWord": 26,
+      "downWord": 13,
+      "startOfWord": true,
+      "startClueIdx": 26
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 26,
+      "downWord": 14,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "J",
+      "acrossWord": 26,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "K",
+      "acrossWord": 26,
+      "downWord": 20,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "L",
+      "acrossWord": 26,
+      "downWord": 27,
+      "startOfWord": true,
+      "startClueIdx": 27
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "M",
+      "acrossWord": 26,
+      "downWord": 3,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "N",
+      "acrossWord": 26,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "O",
+      "acrossWord": 26,
+      "downWord": 22,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "P",
+      "acrossWord": 26,
+      "downWord": 12,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Q",
+      "acrossWord": 26,
+      "downWord": 5,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "R",
+      "acrossWord": 26,
+      "downWord": 6,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "S",
+      "acrossWord": 28,
+      "downWord": 23,
+      "startOfWord": true,
+      "startClueIdx": 28
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "T",
+      "acrossWord": 28,
+      "downWord": 24,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "U",
+      "acrossWord": 28,
+      "downWord": 25,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "V",
+      "acrossWord": 29,
+      "downWord": 14,
+      "startOfWord": true,
+      "startClueIdx": 29
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "W",
+      "acrossWord": 29,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "X",
+      "acrossWord": 29,
+      "downWord": 20,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Y",
+      "acrossWord": 29,
+      "downWord": 27,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Z",
+      "acrossWord": 29,
+      "downWord": 3,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "A",
+      "acrossWord": 29,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "B",
+      "acrossWord": 29,
+      "downWord": 22,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "C",
+      "acrossWord": 29,
+      "downWord": 12,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "D",
+      "acrossWord": 30,
+      "downWord": 30,
+      "startOfWord": true,
+      "startClueIdx": 30
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 30,
+      "downWord": 23,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "F",
+      "acrossWord": 30,
+      "downWord": 24,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "G",
+      "acrossWord": 30,
+      "downWord": 25,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "H",
+      "acrossWord": 31,
+      "downWord": 14,
+      "startOfWord": true,
+      "startClueIdx": 31
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 31,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "J",
+      "acrossWord": 31,
+      "downWord": 20,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "K",
+      "acrossWord": 31,
+      "downWord": 27,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "L",
+      "acrossWord": 31,
+      "downWord": 3,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "M",
+      "acrossWord": 31,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "N",
+      "acrossWord": 32,
+      "downWord": 12,
+      "startOfWord": true,
+      "startClueIdx": 32
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "O",
+      "acrossWord": 32,
+      "downWord": 33,
+      "startOfWord": true,
+      "startClueIdx": 33
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "P",
+      "acrossWord": 32,
+      "downWord": 34,
+      "startOfWord": true,
+      "startClueIdx": 34
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Q",
+      "acrossWord": 32,
+      "downWord": 30,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "R",
+      "acrossWord": 32,
+      "downWord": 23,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "S",
+      "acrossWord": 32,
+      "downWord": 24,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "T",
+      "acrossWord": 35,
+      "downWord": 35,
+      "startOfWord": true,
+      "startClueIdx": 35
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "U",
+      "acrossWord": 35,
+      "downWord": 14,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "V",
+      "acrossWord": 35,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "W",
+      "acrossWord": 35,
+      "downWord": 20,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "X",
+      "acrossWord": 36,
+      "downWord": 4,
+      "startOfWord": true,
+      "startClueIdx": 36
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Y",
+      "acrossWord": 36,
+      "downWord": 37,
+      "startOfWord": true,
+      "startClueIdx": 37
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Z",
+      "acrossWord": 36,
+      "downWord": 12,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "A",
+      "acrossWord": 36,
+      "downWord": 33,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "B",
+      "acrossWord": 36,
+      "downWord": 34,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "C",
+      "acrossWord": 36,
+      "downWord": 30,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "D",
+      "acrossWord": 36,
+      "downWord": 23,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 36,
+      "downWord": 24,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "F",
+      "acrossWord": 38,
+      "downWord": 35,
+      "startOfWord": true,
+      "startClueIdx": 38
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "G",
+      "acrossWord": 38,
+      "downWord": 14,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "H",
+      "acrossWord": 38,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 39,
+      "downWord": 39,
+      "startOfWord": true,
+      "startClueIdx": 39
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "J",
+      "acrossWord": 39,
+      "downWord": 40,
+      "startOfWord": true,
+      "startClueIdx": 40
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "K",
+      "acrossWord": 39,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "L",
+      "acrossWord": 39,
+      "downWord": 37,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "M",
+      "acrossWord": 39,
+      "downWord": 12,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "N",
+      "acrossWord": 39,
+      "downWord": 33,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "O",
+      "acrossWord": 39,
+      "downWord": 34,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "P",
+      "acrossWord": 39,
+      "downWord": 30,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Q",
+      "acrossWord": 39,
+      "downWord": 23,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "R",
+      "acrossWord": 39,
+      "downWord": 24,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "S",
+      "acrossWord": 39,
+      "downWord": 41,
+      "startOfWord": true,
+      "startClueIdx": 41
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "T",
+      "acrossWord": 42,
+      "downWord": 35,
+      "startOfWord": true,
+      "startClueIdx": 42
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "U",
+      "acrossWord": 42,
+      "downWord": 14,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "V",
+      "acrossWord": 42,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "W",
+      "acrossWord": 43,
+      "downWord": 39,
+      "startOfWord": true,
+      "startClueIdx": 43
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "X",
+      "acrossWord": 43,
+      "downWord": 40,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Y",
+      "acrossWord": 43,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Z",
+      "acrossWord": 43,
+      "downWord": 37,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "A",
+      "acrossWord": 43,
+      "downWord": 12,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "B",
+      "acrossWord": 43,
+      "downWord": 33,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "C",
+      "acrossWord": 44,
+      "downWord": 30,
+      "startOfWord": true,
+      "startClueIdx": 44
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "D",
+      "acrossWord": 44,
+      "downWord": 23,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 44,
+      "downWord": 24,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "F",
+      "acrossWord": 44,
+      "downWord": 41,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "G",
+      "acrossWord": 45,
+      "downWord": 39,
+      "startOfWord": true,
+      "startClueIdx": 45
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "H",
+      "acrossWord": 45,
+      "downWord": 40,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 45,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "J",
+      "acrossWord": 46,
+      "downWord": 12,
+      "startOfWord": true,
+      "startClueIdx": 46
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "K",
+      "acrossWord": 46,
+      "downWord": 33,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "L",
+      "acrossWord": 46,
+      "downWord": 47,
+      "startOfWord": true,
+      "startClueIdx": 47
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "M",
+      "acrossWord": 48,
+      "downWord": 23,
+      "startOfWord": true,
+      "startClueIdx": 48
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "N",
+      "acrossWord": 48,
+      "downWord": 24,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "O",
+      "acrossWord": 48,
+      "downWord": 41,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "P",
+      "acrossWord": 49,
+      "downWord": 49,
+      "startOfWord": true,
+      "startClueIdx": 49
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Q",
+      "acrossWord": 49,
+      "downWord": 50,
+      "startOfWord": true,
+      "startClueIdx": 50
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "R",
+      "acrossWord": 49,
+      "downWord": 51,
+      "startOfWord": true,
+      "startClueIdx": 51
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "S",
+      "acrossWord": 49,
+      "downWord": 52,
+      "startOfWord": true,
+      "startClueIdx": 52
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "T",
+      "acrossWord": 49,
+      "downWord": 39,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "U",
+      "acrossWord": 49,
+      "downWord": 40,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "V",
+      "acrossWord": 49,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "W",
+      "acrossWord": 53,
+      "downWord": 12,
+      "startOfWord": true,
+      "startClueIdx": 53
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "X",
+      "acrossWord": 53,
+      "downWord": 33,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Y",
+      "acrossWord": 53,
+      "downWord": 47,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Z",
+      "acrossWord": 53,
+      "downWord": 54,
+      "startOfWord": true,
+      "startClueIdx": 54
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "A",
+      "acrossWord": 53,
+      "downWord": 23,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "B",
+      "acrossWord": 53,
+      "downWord": 24,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "C",
+      "acrossWord": 53,
+      "downWord": 41,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "D",
+      "acrossWord": 55,
+      "downWord": 49,
+      "startOfWord": true,
+      "startClueIdx": 55
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 55,
+      "downWord": 50,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "F",
+      "acrossWord": 55,
+      "downWord": 51,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "G",
+      "acrossWord": 55,
+      "downWord": 52,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "H",
+      "acrossWord": 55,
+      "downWord": 39,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 55,
+      "downWord": 40,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "J",
+      "acrossWord": 55,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "K",
+      "acrossWord": 56,
+      "downWord": 12,
+      "startOfWord": true,
+      "startClueIdx": 56
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "L",
+      "acrossWord": 56,
+      "downWord": 33,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "M",
+      "acrossWord": 56,
+      "downWord": 47,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "N",
+      "acrossWord": 56,
+      "downWord": 54,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "O",
+      "acrossWord": 56,
+      "downWord": 23,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "P",
+      "acrossWord": 57,
+      "downWord": 49,
+      "startOfWord": true,
+      "startClueIdx": 57
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Q",
+      "acrossWord": 57,
+      "downWord": 50,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "R",
+      "acrossWord": 57,
+      "downWord": 51,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "S",
+      "acrossWord": 57,
+      "downWord": 52,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "T",
+      "acrossWord": 57,
+      "downWord": 39,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "U",
+      "acrossWord": 57,
+      "downWord": 40,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "V",
+      "acrossWord": 58,
+      "downWord": 12,
+      "startOfWord": true,
+      "startClueIdx": 58
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "W",
+      "acrossWord": 58,
+      "downWord": 33,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "X",
+      "acrossWord": 58,
+      "downWord": 47,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Y",
+      "acrossWord": 58,
+      "downWord": 54,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Z",
+      "acrossWord": 58,
+      "downWord": 23,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    }
+  ],
+  "clues": [
+    {
+      "across": "First five, round 1",
+      "acrossStartIdx": 2,
+      "down": "Starting on the downs",
+      "downStartIdx": 2
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Also have 50 of these, or so.",
+      "downStartIdx": 3
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "SOOOO MANY CLUES!!!!",
+      "downStartIdx": 4
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "You can write anything here",
+      "downStartIdx": 5
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Даже по русски можно писать",
+      "downStartIdx": 6
+    },
+    {
+      "across": "Six more!!!",
+      "acrossStartIdx": 9,
+      "down": "Надеюсь что и читать по русски возможно",
+      "downStartIdx": 9
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Blah, yep.",
+      "downStartIdx": 10
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Ta ta ta tat ta.",
+      "downStartIdx": 11
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Clue fo' sho'.",
+      "downStartIdx": 12
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "I wonder how large this file will be",
+      "downStartIdx": 13
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Make for a good test",
+      "downStartIdx": 14
+    },
+    {
+      "across": "L through P",
+      "acrossStartIdx": 17,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Q through W",
+      "acrossStartIdx": 23,
+      "down": "This is a really long answer!",
+      "downStartIdx": 23
+    },
+    {
+      "across": "End of the first alphabet, start of the second",
+      "acrossStartIdx": 30,
+      "down": "Alaska",
+      "downStartIdx": 30
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Tee, hee.",
+      "downStartIdx": 31
+    },
+    {
+      "across": "Азбука по русски",
+      "acrossStartIdx": 38,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Как сказать \"crossword\"",
+      "acrossStartIdx": 45,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "What is this madness",
+      "acrossStartIdx": 49,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Moar ûñíçœdē!¡",
+      "acrossStartIdx": 53,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Blah blah blah",
+      "acrossStartIdx": 60,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Almost half way done!",
+      "downStartIdx": 63
+    },
+    {
+      "across": "This is tedious",
+      "acrossStartIdx": 65,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Really, three-fourths done.",
+      "downStartIdx": 67
+    },
+    {
+      "across": "More alphabet",
+      "acrossStartIdx": 72,
+      "down": "Because I already did the acrosses",
+      "downStartIdx": 72
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "This is a time-consuming hobby!",
+      "downStartIdx": 73
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "More so than just solving.",
+      "downStartIdx": 74
+    },
+    {
+      "across": "These clues can be arbitrarily long.",
+      "acrossStartIdx": 75,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "I wonder how this compares to the other software",
+      "downStartIdx": 79
+    },
+    {
+      "across": "Or very short.",
+      "acrossStartIdx": 87,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "I wonder about formatting",
+      "acrossStartIdx": 91,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Autofill would be nice",
+      "acrossStartIdx": 101,
+      "down": "The license is only $50.",
+      "downStartIdx": 101
+    },
+    {
+      "across": "I thought clue writing would be the easy part!",
+      "acrossStartIdx": 106,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Crosswords are fun",
+      "acrossStartIdx": 113,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "That's not much, given the time it takes to develop a program :D",
+      "downStartIdx": 114
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "But this way is way more fun!",
+      "downStartIdx": 115
+    },
+    {
+      "across": "La-La-La",
+      "acrossStartIdx": 120,
+      "down": "Круто",
+      "downStartIdx": 120
+    },
+    {
+      "across": "This is a great test",
+      "acrossStartIdx": 126,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "To do: Unicode in the grid",
+      "downStartIdx": 127
+    },
+    {
+      "across": "Not bad for a Saturday",
+      "acrossStartIdx": 135,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Garbage clue",
+      "acrossStartIdx": 139,
+      "down": "For our international friends",
+      "downStartIdx": 139
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Международные друзья",
+      "downStartIdx": 140
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "So close to being finished",
+      "downStartIdx": 149
+    },
+    {
+      "across": "You'll never guess this one!",
+      "acrossStartIdx": 150,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "You couldn't if you tried",
+      "acrossStartIdx": 154,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Don't take it so hard",
+      "acrossStartIdx": 161,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "another short answer",
+      "acrossStartIdx": 169,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "I wish I could hit tab to move to the next clue",
+      "acrossStartIdx": 173,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "This is great",
+      "downStartIdx": 175
+    },
+    {
+      "across": "That would speed this process up",
+      "acrossStartIdx": 177,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "I think I'll do that, soon.",
+      "acrossStartIdx": 180,
+      "down": "Moâr ÜŃÏĆÓDÉ!!!!!!",
+      "downStartIdx": 180
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Four more",
+      "downStartIdx": 181
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Three more",
+      "downStartIdx": 182
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Penultimate",
+      "downStartIdx": 183
+    },
+    {
+      "across": "Almost finished with the across section!",
+      "acrossStartIdx": 188,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "This is the last clue in the test.",
+      "downStartIdx": 191
+    },
+    {
+      "across": "I also need to do auto-scrolling to clues.",
+      "acrossStartIdx": 195,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Yea, like the NYT.",
+      "acrossStartIdx": 203,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Last row!",
+      "acrossStartIdx": 210,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "Last clue in the acrosses!",
+      "acrossStartIdx": 218,
+      "down": null,
+      "downStartIdx": null
+    }
+  ],
+  "dateCreated": 1476557788441,
+  "description": "Крутая загадка - Just a little test púžžłë!",
+  "lastModified": 1476558823676
+}

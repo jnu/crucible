@@ -46,9 +46,13 @@ class ClueBuilderView extends React.Component {
                  style={style} >
                 { !hasClue ? null :
                     <div>
-                        <span className="ClueBuilder_Label">{label}</span>
+                        <span className="ClueBuilder_Label"
+                              style={{ paddingRight: 12 }}>
+                              {label}
+                        </span>
                         <TextField name="ClueBuiler_Input"
                                    value={value}
+                                   hintText="Enter clue"
                                    onChange={this.updateClueState} />
                     </div>
                 }
@@ -75,6 +79,6 @@ const mapStateToProps = state => {
         direction,
         value
     };
-}
+};
 
 export const ClueBuilder = connect(mapStateToProps)(ClueBuilderView);

@@ -7,7 +7,9 @@ import {
     openMetaDialog,
     closeMetaDialog,
     fetchGridStateIndex,
-    toggleSymmetricalGrid
+    fetchPuzzleIndex,
+    toggleSymmetricalGrid,
+    loadPuzzle
 } from '../actions';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
@@ -27,10 +29,12 @@ class GridMetaMenuView extends React.Component {
         bindAll(this,
             'openImportGridShapeDialog',
             'openExportGridShapeDialog',
+            'openLoadPuzzleDialog',
             'openGridMenu',
             'closeDialog',
             'importGrid',
             'exportGrid',
+            'loadPuzzle',
             'updateExportName',
             'toggleSymmetricalGrid'
         );
@@ -53,6 +57,12 @@ class GridMetaMenuView extends React.Component {
     openExportGridShapeDialog() {
         const { dispatch } = this.props;
         dispatch(openMetaDialog('EXPORT_GRID_SHAPE'));
+    }
+
+    openLoadPuzzleDialog() {
+        const { dispatch } = this.props;
+        dispatch(fetchPuzzleIndex());
+        dispatch(openMetaDialog('LOAD_PUZZLE'));
     }
 
     openGridMenu(e) {
@@ -79,6 +89,12 @@ class GridMetaMenuView extends React.Component {
         this.closeDialog();
     }
 
+    loadPuzzle(uuid) {
+        const { dispatch } = this.props;
+        dispatch(loadPuzzle(uuid));
+        this.closeDialog();
+    }
+
     updateExportName(e) {
         this.setState({ exportGridName: e.target.value });
     }
@@ -101,6 +117,9 @@ class GridMetaMenuView extends React.Component {
                          targetOrigin={{ horizontal: 'left', vertical: 'top' }}
                          onRequestClose={this.closeDialog}>
                     <Menu>
+                        <MenuItem onClick={this.openLoadPuzzleDialog}>
+                            Load Puzzle
+                        </MenuItem>
                         <MenuItem onClick={this.openExportGridShapeDialog}>
                             Save Grid Template
                         </MenuItem>
@@ -150,6 +169,26 @@ class GridMetaMenuView extends React.Component {
                         }>
                     <TextField hintText="Enter a name for this template"
                                onChange={this.updateExportName} />
+                </Dialog>
+                <Dialog title="Load Puzzle"
+                        open={meta.get('openDialog') === 'LOAD_PUZZLE'}
+                        contentStyle={{ width: 400 }}
+                        onRequestClose={this.closeDialog}
+                        actions={<FlatButton label="Cancel" primary={false} onTouchTap={this.closeDialog} />}>
+                    {!meta.get('requestingPuzzleIndex') ?
+                        <List>
+                            {meta.get('puzzleIndex').map(obj => {
+                                const id = obj.get('id');
+                                const title = obj.get('title');
+                                return (
+                                    <ListItem key={id} onTouchTap={() => this.loadPuzzle(id)}>
+                                        {title ? title : <span>(Untitled)</span>}
+                                    </ListItem>
+                                );
+                            })}
+                        </List> :
+                        <CircularProgress />
+                    }
                 </Dialog>
             </div>
         );

@@ -1,4 +1,6 @@
 import Immutable from 'immutable';
+import UUID from 'pure-uuid';
+import { isDefined } from '../lib/isDefined';
 
 
 /**
@@ -61,7 +63,7 @@ export const updateGridContent = (content, clues, height, width) => {
                 const rowAboveWords = new Array(width);
                 let cellLeftWord = null;
                 let colIdx = 0;
-                let rightCell = null
+                let rightCell = null;
                 let rightCellType = null;
 
                 for (let i = 0; i < n; i++) {
@@ -85,7 +87,7 @@ export const updateGridContent = (content, clues, height, width) => {
                         // have a number depending on its surroundings. Or, the
                         // number may be the same as the previous word. Or, it
                         // may be a new number.
-                        const firstOpenAcross = cellLeftWord === null || cellLeftWord === undefined;
+                        const firstOpenAcross = !isDefined(cellLeftWord);
                         const nextIsOpenAcross = hasRightCell && (!rightCellType || rightCellType === 'CONTENT');
                         const hasAcrossClue = firstOpenAcross && nextIsOpenAcross;
                         const acrossWord = nextIsOpenAcross ?
@@ -93,7 +95,7 @@ export const updateGridContent = (content, clues, height, width) => {
                             cellLeftWord;
                         // Do same determination for down words.
                         const cellAboveWord = rowAboveWords[colIdx];
-                        const firstOpenDown = cellAboveWord === null || cellAboveWord === undefined;
+                        const firstOpenDown = !isDefined(cellAboveWord);
                         const nextIsOpenDown = hasBelowCell && (!belowCellType || belowCellType === 'CONTENT');
                         const hasDownClue = firstOpenDown && nextIsOpenDown;
                         const downWord = nextIsOpenDown ?
@@ -102,7 +104,9 @@ export const updateGridContent = (content, clues, height, width) => {
 
                         // Useful derived props
                         const startOfWord = hasAcrossClue || hasDownClue;
-                        const startClueIdx = hasAcrossClue ? acrossWord : hasDownClue ? downWord : null
+                        const startClueIdx = hasAcrossClue ?
+                            acrossWord :
+                            hasDownClue ? downWord : null;
 
                         let currentAcrossWord = null;
                         let currentDownWord = null;
@@ -114,6 +118,8 @@ export const updateGridContent = (content, clues, height, width) => {
                             currentDownWord = cell.get('downWord');
                             mutContent.set(i, cell.withMutations(mutCell => {
                                 return mutCell
+                                    .set('type', 'CONTENT')
+                                    .set('value', mutCell.get('value') || '')
                                     .set('acrossWord', acrossWord)
                                     .set('downWord', downWord)
                                     .set('startOfWord', startOfWord)
@@ -123,7 +129,7 @@ export const updateGridContent = (content, clues, height, width) => {
                             // Mark existing clue as projected to prevent
                             // duplicates when a block splits a word.
                             if (!clueAcrossProjection.hasOwnProperty(currentAcrossWord)) {
-                                clueAcrossProjection[currentAcrossWord] = acrossWord
+                                clueAcrossProjection[currentAcrossWord] = acrossWord;
                             }
 
                             if (!clueDownProjection.hasOwnProperty(currentDownWord)) {
@@ -210,6 +216,7 @@ export const snapToBounds = ({ state, index }) => {
 };
 
 
+
 /**
  * Default width
  */
@@ -231,24 +238,33 @@ const DEFAULT_GRID_INFO = updateGridContent(
 /**
  * Default grid state.
  */
-const DEFAULT_GRID = Immutable.fromJS({
-    // Grid state
-    width: DEFAULT_WIDTH,
-    height: DEFAULT_HEIGHT,
-    content: DEFAULT_GRID_INFO.content,
-    clues: DEFAULT_GRID_INFO.clues,
+const createNewGrid = () => {
+    const ts = Date.now();
+    const id = new UUID(4);
+    return Immutable.fromJS({
+        // Grid state
+        width: DEFAULT_WIDTH,
+        height: DEFAULT_HEIGHT,
+        content: DEFAULT_GRID_INFO.content,
+        clues: DEFAULT_GRID_INFO.clues,
 
-    // Meta state
-    title: '',
-    description: '',
-    symmetrical: true,
+        // Meta state
+        title: '',
+        author: '',
+        description: '',
+        copyright: '',
+        dateCreated: ts,
+        lastModified: ts,
+        symmetrical: true,
+        id: id,
 
-    // UX State
-    cursor: null,
-    cursorDirection: 'ACROSS',
-    menuCell: null,
-    cellSize: 30
-});
+        // UX State
+        cursor: null,
+        cursorDirection: 'ACROSS',
+        menuCell: null,
+        cellSize: 30
+    });
+};
 
 
 
@@ -341,7 +357,7 @@ export const rSetCursorDirection = (state, action) => {
         return state;
     }
     return state.set('cursorDirection', direction);
-}
+};
 
 
 /**
@@ -425,16 +441,48 @@ export const rSetGridShape = (state, action) => {
     });
 };
 
+/**
+ * Create a new grid and merge the given state into it (if any).
+ */
+export const rReplaceGrid = (state, action) => {
+    const { grid, id } = action;
+    const emptyGrid = createNewGrid();
+    return emptyGrid.withMutations(mutState => {
+        if (grid) {
+            mutState.merge(grid);
+            const updated = updateGridContent(
+                mutState.get('content'),
+                mutState.get('clues'),
+                mutState.get('height'),
+                mutState.get('width')
+            );
+            mutState.merge(updated);
+        }
+
+        if (id) {
+            mutState.set('id', new UUID(id));
+        }
+        return mutState;
+    });
+};
+
 
 export const rToggleSymmetricalGrid = (state, action) => {
     return state.set('symmetrical', !state.get('symmetrical'));
+};
+
+/**
+ * Set puzzle info key (e.g., action.key="title"; action.value="New title")
+ */
+export const rUpdatePuzzleInfo = (state, action) => {
+    return state.set(action.key, action.value);
 };
 
 
 /**
  * Grid state reducer. Applies action transformations to state.
  */
-export const grid = (state = DEFAULT_GRID, action) => {
+const dispatchGridAction = (state, action) => {
     switch (action.type) {
         case 'RESIZE':
             return rResize(state, action);
@@ -454,9 +502,28 @@ export const grid = (state = DEFAULT_GRID, action) => {
             return rMoveCursor(state, action);
         case 'SET_GRID_SHAPE':
             return rSetGridShape(state, action);
+        case 'REPLACE_GRID':
+            return rReplaceGrid(state, action);
         case 'TOGGLE_SYMMETRICAL_GRID':
             return rToggleSymmetricalGrid(state, action);
+        case 'UPDATE_PUZZLE_INFO':
+            return rUpdatePuzzleInfo(state, action);
         default:
             return state;
     }
+};
+
+
+/**
+ * Wrapper for reducer.
+ *
+ * NB: the default argument for `state` is evaluated only when state is
+ * undefined, not on each reducer evaluation.
+ */
+export const grid = (state = createNewGrid(), action) => {
+    const newState = dispatchGridAction(state, action);
+    // Update last modified time as necessary
+    return (newState !== state) ?
+        newState.set('lastModified', Date.now()) :
+        newState;
 };

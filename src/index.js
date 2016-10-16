@@ -7,9 +7,15 @@ import { createStore, applyMiddleware } from 'redux';
 import { crucibleApp } from './reducers';
 import { App } from './components/App';
 import { debounce } from 'lodash';
-import { setScreenSize } from './actions';
-import * as bmp from './lib/gridShape';
-const injectTapEventPlugin = require("react-tap-event-plugin");
+import {
+    setScreenSize,
+    autoSaveStart,
+    autoSaveSuccess,
+    autoSaveError
+} from './actions';
+import { AutoSave } from './lib/AutoSave';
+import { storageClient } from './lib';
+const injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
 
@@ -35,11 +41,25 @@ const MAX_APP_WIDTH = 900;
 const doResize = () => {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    store.dispatch(setScreenSize(Math.min(width, MAX_APP_WIDTH), height))
-}
+    store.dispatch(setScreenSize(Math.min(width, MAX_APP_WIDTH), height));
+};
 window.addEventListener('resize', debounce(doResize, 50));
 // Trigger once on init.
 doResize();
+
+
+// Set up auto-saver
+const autosaver = new AutoSave({
+    getState: () => {
+        const { grid } = store.getState();
+        return grid;
+    },
+    storageClient,
+    onSaveStart: () => store.dispatch(autoSaveStart()),
+    onSaveSuccess: grid => store.dispatch(autoSaveSuccess(grid)),
+    onSaveError: e => store.dispatch(autoSaveError(e))
+});
+autosaver.start();
 
 
 render(

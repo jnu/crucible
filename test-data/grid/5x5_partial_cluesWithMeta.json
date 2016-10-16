@@ -1,0 +1,292 @@
+{
+  "menuCell": null,
+  "symmetrical": true,
+  "cellSize": 30,
+  "width": 5,
+  "height": 5,
+  "copyright": "Copyright © PuŽzL£ Dúdē",
+  "cursorDirection": "DOWN",
+  "author": "pûžzłëµeïśtęr",
+  "cursor": 5,
+  "title": "Краткое имя",
+  "content": [
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 0,
+      "downWord": 0,
+      "startOfWord": true,
+      "startClueIdx": 0
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "",
+      "acrossWord": 0,
+      "downWord": 1,
+      "startOfWord": true,
+      "startClueIdx": 1
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "S",
+      "acrossWord": 0,
+      "downWord": 2,
+      "startOfWord": true,
+      "startClueIdx": 2
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "D",
+      "acrossWord": 3,
+      "downWord": 3,
+      "startOfWord": true,
+      "startClueIdx": 3
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "O",
+      "acrossWord": 3,
+      "downWord": 4,
+      "startOfWord": true,
+      "startClueIdx": 4
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "N",
+      "acrossWord": 3,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "U",
+      "acrossWord": 3,
+      "downWord": 1,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "T",
+      "acrossWord": 3,
+      "downWord": 2,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 5,
+      "downWord": 3,
+      "startOfWord": true,
+      "startClueIdx": 5
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "M",
+      "acrossWord": 5,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 5,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "L",
+      "acrossWord": 5,
+      "downWord": 1,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "Y",
+      "acrossWord": 5,
+      "downWord": 2,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "L",
+      "acrossWord": 6,
+      "downWord": 3,
+      "startOfWord": true,
+      "startClueIdx": 6
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 6,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "T",
+      "acrossWord": 6,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "M",
+      "acrossWord": 6,
+      "downWord": 1,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "E",
+      "acrossWord": 6,
+      "downWord": 2,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "I",
+      "acrossWord": 7,
+      "downWord": 3,
+      "startOfWord": true,
+      "startClueIdx": 7
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "N",
+      "acrossWord": 7,
+      "downWord": 4,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "CONTENT",
+      "annotation": null,
+      "value": "S",
+      "acrossWord": 7,
+      "downWord": 0,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    },
+    {
+      "type": "BLOCK",
+      "annotation": null,
+      "value": null,
+      "acrossWord": null,
+      "downWord": null,
+      "startOfWord": false,
+      "startClueIdx": null
+    }
+  ],
+  "clues": [
+    {
+      "across": "",
+      "acrossStartIdx": 2,
+      "down": "",
+      "downStartIdx": 2
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "",
+      "downStartIdx": 3
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "",
+      "downStartIdx": 4
+    },
+    {
+      "across": "Homer's habit",
+      "acrossStartIdx": 5,
+      "down": "Purveyor of cold meats",
+      "downStartIdx": 5
+    },
+    {
+      "across": null,
+      "acrossStartIdx": null,
+      "down": "Bad sign",
+      "downStartIdx": 6
+    },
+    {
+      "across": "Dickinson, for one",
+      "acrossStartIdx": 10,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "",
+      "acrossStartIdx": 15,
+      "down": null,
+      "downStartIdx": null
+    },
+    {
+      "across": "",
+      "acrossStartIdx": 20,
+      "down": null,
+      "downStartIdx": null
+    }
+  ],
+  "dateCreated": 1476511738959,
+  "description": "",
+  "lastModified": 1476512361719
+}

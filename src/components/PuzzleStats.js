@@ -3,17 +3,23 @@ import { pure } from 'recompose';
 import { connect } from 'react-redux';
 import './PuzzleStats.scss';
 import { resize } from '../actions';
+import { isDefined } from '../lib/isDefined';
 
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 
-const PuzzleLetterCounts = pure(({ content }) => {
+const PuzzleCounts = pure(({ content, clues }) => {
+    let total = 0;
+    let blocks = 0;
+
     const counts = content.reduce((stats, cell) => {
         const type = cell.get('type');
         if (type !== 'CONTENT') {
+            blocks++;
             return stats;
         }
+        total++;
         const letter = cell.get('value');
         if (!letter) {
             return stats;
@@ -22,15 +28,33 @@ const PuzzleLetterCounts = pure(({ content }) => {
         stats[letter] = (currentStat || 0) + 1;
         return stats;
     }, {});
+
+    const clueCount = clues.reduce((n, clue) => {
+        return n + isDefined(clue.get('across')) + isDefined(clue.get('down'));
+    }, 0);
+
     return (
-        <div className="PuzzleLetterCounts">
-            <ol className="PuzzleLetterCounts_List">
+        <div className="PuzzleCounts">
+            <ol className="PuzzleCounts_List">
                 {ALPHABET.map(letter =>
-                    <li className="PuzzleLetterCounts_Item" key={letter}>
-                        <span className="PuzzleLetterCounts_Item_letter">{letter}</span>
-                        <span className="PuzzleLetterCounts_Item_count">{counts[letter] || '-'}</span>
+                    <li className="PuzzleCounts_Item" key={letter}>
+                        <span className="PuzzleCounts_Item_letter">{letter}</span>
+                        <span className="PuzzleCounts_Item_count">{counts[letter] || '-'}</span>
                     </li>
                 )}
+                <hr />
+                <li className="PuzzleCounts_Item" key="cntTotal">
+                    <span className="PuzzleCounts_Item_letter">&#x25A1;</span>
+                    <span className="PuzzleCounts_Item_count">{total}</span>
+                </li>
+                <li className="PuzzleCounts_Item" key="cntBlocks">
+                    <span className="PuzzleCounts_Item_letter">&#x25A0;</span>
+                    <span className="PuzzleCounts_Item_count">{blocks}</span>
+                </li>
+                <li className="PuzzleCounts_Item" key="cntWords">
+                    <span className="PuzzleCounts_Item_letter">Σ</span>
+                    <span className="PuzzleCounts_Item_count">{clueCount}</span>
+                </li>
             </ol>
         </div>
     );
@@ -52,11 +76,10 @@ const PuzzleSize = ({ width, height, onChange }) => (
 );
 
 
-
 const PuzzleStatsView = pure(({ grid, onResize }) => {
     return (
         <div className="PuzzleStats">
-            <PuzzleLetterCounts content={grid.get('content')} />
+            <PuzzleCounts content={grid.get('content')} clues={grid.get('clues')} />
             <PuzzleSize width={grid.get('width')} height={grid.get('height')} onChange={onResize} />
         </div>
     );
