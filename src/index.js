@@ -15,6 +15,7 @@ import {
 } from './actions';
 import { AutoSave } from './lib/AutoSave';
 import { storageClient } from './lib';
+import { WordBank } from './lib/readcross';
 const injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 

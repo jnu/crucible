@@ -9,7 +9,11 @@ parser: babel-eslint
 
 globals:
     Promise: false
+    require: false
     DEBUG: false
+
+env:
+    es6: true
 
 plugins:
     - react

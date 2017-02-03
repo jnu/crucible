@@ -54,7 +54,7 @@ var webpackConfig = {
         loaders: [
             {
                 test: /\.jsx?$/,
-                include: SRC_ROOT,
+                include: [SRC_ROOT, /tiny-trie/],
                 loaders: ['babel?cacheDirectory']
             },
             {

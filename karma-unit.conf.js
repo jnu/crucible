@@ -39,18 +39,7 @@ module.exports = function(config) {
         // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
         logLevel: config.LOG_INFO,
 
-        // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: true,
-
-        // Start these browsers, currently available:
-        // - Chrome
-        // - ChromeCanary
-        // - Firefox
-        // - Opera
-        // - Safari (only Mac)
-        // - PhantomJS
-        // - PhantomJS2
-        // - IE (only Windows)
+        // Start these browsers
         browsers: ['PhantomJS2'],
 
         // If browser does not capture in given timeout [ms], kill it
@@ -66,7 +55,7 @@ module.exports = function(config) {
                 loaders: [
                     {
                         test: /\.jsx?$/,
-                        include: [SRC_DIR],
+                        include: [SRC_DIR, /tiny-trie/],
                         loaders: ['babel?cacheDirectory']
                     },
                     {
@@ -89,11 +78,11 @@ module.exports = function(config) {
         },
 
         plugins: [
-          'karma-mocha',
-          'karma-mocha-reporter',
-          'karma-sinon',
-          'karma-webpack',
-          'karma-phantomjs2-launcher'
+            'karma-mocha',
+            'karma-mocha-reporter',
+            'karma-sinon',
+            'karma-webpack',
+            'karma-phantomjs2-launcher'
         ]
     });
 };

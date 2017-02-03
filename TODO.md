@@ -69,6 +69,8 @@ Items may jump around and work may not be completed exactly in the planned order
  * PUZ format support
     - Import
     - Export
+ * Performance fixes for WordBank (see benchmarks)
+    - Improve tail / low information over naive RegEx search
 
 ## 2.0
  * "Play" mode - for solving
