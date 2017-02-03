@@ -4,13 +4,14 @@
   "description": "Crossword constructor",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=local $(npm bin)/webpack-dev-server --content-base build/ --port 3000 --inline --hot",
-    "build": "NODE_ENV=production $(npm bin)/webpack --bail",
-    "lint": "eslint ./src",
-    "test": "npm run lint && karma start karma-unit.conf.js",
-    "test-watch": "karma start karma-unit.conf.js --auto-watch",
-    "benchmark": "karma start karma-perf.conf.js",
-    "benchmark-watch": "karma start karma-perf.conf.js --auto-watch"
+    "checknode": "([[ \"$(node -v)\" == \"v4.\"* ]] || (echo \"\\033[97m\\033[41m>>> Crucible requires node v4. <<<\\033[0m\"; false))",
+    "start": "npm run checknode && NODE_ENV=local $(npm bin)/webpack-dev-server --content-base build/ --port 3000 --inline --hot",
+    "build": "npm run checknode && NODE_ENV=production $(npm bin)/webpack --bail",
+    "lint": "npm run checknode && eslint ./src",
+    "test": "npm run checknode && npm run lint && karma start karma-unit.conf.js",
+    "test-watch": "npm run checknode && karma start karma-unit.conf.js --auto-watch",
+    "benchmark": "npm run checknode && karma start karma-perf.conf.js",
+    "benchmark-watch": "npm run checknode && karma start karma-perf.conf.js --auto-watch"
   },
   "keywords": [
     "crossword",
