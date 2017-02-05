@@ -38,13 +38,20 @@ export class AbstractFixedLengthWordIndex {
      * @return {String[]}
      */
     match(pattern) {
-        const { _allWildPattern, _allWords } = this;
+        const { _allWildPattern, _allWords, _cardinality } = this;
+
+        // Since this index only contains words of a certain length, bail if
+        // the search string doesn't also have that length.
+        if (!pattern || pattern.length !== _cardinality) {
+            return [];
+        }
 
         // Optimize special case to match everything.
         if (pattern === _allWildPattern) {
             return Array.from(_allWords);
         }
 
+        // Otherwise defer to subclass implementation.
         return this._matchWords(pattern);
     }
 

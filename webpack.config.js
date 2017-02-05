@@ -25,6 +25,7 @@ var NODE_ENV = process.env.NODE_ENV || 'development';
 var DEBUG = NODE_ENV !== 'production';
 var PROD = NODE_ENV === 'production';
 var SRC_ROOT = path.resolve(__dirname, 'src');
+var DATA_ROOT = path.resolve(__dirname, 'data');
 
 
 // Asset bundles. Prod-like environments get fingerprinted for cache busting,
@@ -74,6 +75,11 @@ var webpackConfig = {
                     'style',
                     'css?sourceMap'
                 )
+            },
+            {
+                test: /\.dawg$/,
+                loader: 'raw',
+                include: [DATA_ROOT]
             }
         ]
     },
@@ -123,7 +129,9 @@ var webpackConfig = {
         extensions: ['', '.js', '.jsx'],
         root: path.resolve(SRC_ROOT, 'app'),
         modulesDirectories: ['node_modules'],
-        alias: {}
+        alias: {
+            data: DATA_ROOT
+        }
     }
 
 };

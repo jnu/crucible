@@ -1,4 +1,9 @@
 import { BrowserStorageClient } from './BrowserStorageClient';
 
 
-export const storageClient = new BrowserStorageClient(window.localStorage);
+const browserStorageClient = new BrowserStorageClient(window.localStorage);
+
+
+export const storageClient = browserStorageClient;
+
+export const wordlistClient = new WordlistClient({ local: browserStorageClient });

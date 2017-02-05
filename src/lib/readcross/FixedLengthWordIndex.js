@@ -49,16 +49,10 @@ export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
         // Tokenize the search string
         const tokens = pattern.split('');
 
-        // Since this trie only contains words of a certain length, bail if the
-        // search string doesn't also have that length.
-        if (tokens.length !== _cardinality) {
-            return [];
-        }
-
         // Results array
         const matches = [];
         const lastDepth = _cardinality - 1;
-        // BFS over matched nodes, adding matches to results array.
+        // BFS over matched nodes, adding results to matches array.
         while (nodesQueue.length) {
             let curNode = nodesQueue.shift();
             let { nodeRoot, depth, memo } = curNode;
