@@ -6,43 +6,43 @@ Past, present, and future work on Crucible.
 Items may jump around and work may not be completed exactly in the planned order.
 
 ## 0.0
- x Basic interactive grid implementation
- x Load / save grid templates
- x Basic frequency counts
- x Clue highlighting
+ - ~~Basic interactive grid implementation~~
+ - ~~Load / save grid templates~~
+ - ~~Basic frequency counts~~
+ - ~~Clue highlighting~~
 
 ## 0.1
- x Clue builder
- x Auto-join clues when grid changes
- x Symmetrical grid building
+ - ~~Clue builder~~
+ - ~~Auto-join clues when grid changes~~
+ - ~~Symmetrical grid building~~
 
 ## 0.2
- x Save grid with clues/answers
+ - ~~Save grid with clues/answers~~
     ? Unique ID
-    x Date created
-    x Last edited
-    x Title
-    x Author
-    x Copyright
-    x Description
+    - ~~Date created~~
+    - ~~Last edited~~
+    - ~~Title~~
+    - ~~Author~~
+    - ~~Copyright~~
+    - ~~Description~~
     ? Checksum
- x Load grid with clues/answers
- x Autosave puzzles in progress
+ - ~~Load grid with clues/answers~~
+ - ~~Autosave puzzles in progress~~
  * Lock the grid while editing puzzles
     - This should allow blocks to be skipped during nav
 
 ## 0.3
- x Fix small grid layout solution
- x Find a large grid layout solution
+ - ~~Fix small grid layout solution~~
+ - ~~Find a large grid layout solution~~
  * Tuned navigation
-    x Double click to change direction
+    - ~~Double click to change direction~~
     - Tab controls from clue builder
-    x Backspace more quickly
- x Improve cell highlight styles
+    - ~~Backspace more quickly~~
+ - ~~Improve cell highlight styles~~
  * Improve clue builder styles
 
 ## 0.4
- x Enhanced meta data (word / letter count)
+ - ~~Enhanced meta data (word / letter count)~~
  * Word lists:
     * Default, embedded
     * Metadata (cruciverb? rex parker? other?)

@@ -16,6 +16,19 @@ const COMMON_SETUP = {
 };
 
 
+suite('WordBank: Wildcard Search - Beginning', () => {
+
+    benchmark('WB', function(done) {
+        this.wb.search('BOO*').then(done);
+    });
+
+    benchmark('RegEx', function() {
+        this.words.filter(word => /^BOO.$/.test(word));
+    });
+
+}, COMMON_SETUP);
+
+
 suite('WordBank: Wildcard Search - Mid1', () => {
 
     benchmark('WB', function(done) {
@@ -50,6 +63,23 @@ suite('WordBank: Wildcard Search - End', () => {
 
     benchmark('RegEx', function() {
         this.words.filter(word => /^...P$/.test(word));
+    });
+
+}, COMMON_SETUP);
+
+
+suite('WordBank: Wildcard Search - All', () => {
+
+    benchmark('WB', function(done) {
+        this.wb.search('****').then(done);
+    });
+
+    benchmark('RegEx', function() {
+        this.words.filter(word => /^.{4}$/.test(word));
+    });
+
+    benchmark('length', function() {
+        this.words.filter(word => word.length === 4);
     });
 
 }, COMMON_SETUP);

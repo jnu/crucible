@@ -1,33 +1,16 @@
 import { Trie } from 'tiny-trie';
+import { AbstractFixedLengthWordIndex } from './AbstractFixedLengthWordIndex';
 
 
 /**
  * A fixed length word index that supports wildcard searches.
  */
-export class FixedLengthWordIndex {
+export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
 
     constructor(cardinality) {
-        if (cardinality === undefined) {
-            throw new Error('Index must be constructed with a cardinality.');
-        }
+        super(cardinality);
         this._wordsBuffer = [];
-        this._cardinality = cardinality;
         this._trie = new Trie();
-        this._allWords = new Set();
-        this._allWildPattern = '*'.repeat(cardinality);
-    }
-
-    /**
-     * Add words to index's input buffer. Use #commit to commit them into the
-     * search index.
-     * @param {String} word - word with length of `cardinality`
-     */
-    add(word) {
-        const { _cardinality } = this;
-        if (word.length !== _cardinality) {
-            throw new Error(`Cannot insert word of length ${word.length} into index with cardinality ${_cardinality}`);
-        }
-        this._wordsBuffer.push(word);
     }
 
     /**
@@ -42,18 +25,23 @@ export class FixedLengthWordIndex {
     }
 
     /**
+     * Add words to index's input buffer.
+     * NB: in this implementation, must use #commit for words to be written
+     * into the index. The #add method only buffers words.
+     * @param {String} word - word with length of `cardinality`
+     */
+    _addWord(word) {
+        this._wordsBuffer.push(word);
+    }
+
+    /**
      * Match words in trie either exactly or using wildcards.
      * @param  {String} pattern - search string, using `*` for a wildcard.
      * @return {String[]}
      */
-    match(pattern) {
-        const { _trie, _allWords, _allWildPattern, _cardinality } = this;
+    _matchWords(pattern) {
+        const { _trie, _cardinality } = this;
         const { root } = _trie;
-
-        // Optimize special case to match everything.
-        if (pattern === _allWildPattern) {
-            return Array.from(_allWords);
-        }
 
         // Queue of nodes to search
         const nodesQueue = [{ memo: '', nodeRoot: root, depth: 0 }];
@@ -109,4 +97,5 @@ export class FixedLengthWordIndex {
 
         return matches;
     }
+
 }
