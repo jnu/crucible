@@ -8,7 +8,7 @@ var execSync = require('child_process').execSync;
 var HtmlPlugin = require('html-webpack-plugin');
 var UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
-var DedupePlugin = require('webpack/lib/optimize/DedupePlugin');
+var DefinePlugin = require('webpack/lib/DefinePlugin');
 var CompressionPlugin = require('compression-webpack-plugin');
 var ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -52,41 +52,51 @@ var webpackConfig = {
     },
 
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.jsx?$/,
                 include: [SRC_ROOT, /tiny-trie/],
-                loaders: ['babel?cacheDirectory']
+                use: [{
+                    loader: 'babel-loader',
+                    options: { cacheDirectory: true }
+                }]
             },
             {
                 test: /\.svg$/,
                 exclude: /font-awesome/,
-                loader: 'url-loader?limit=10000'
+                use: [{ loader: 'url-loader', options: { limit: 10000 } }]
             },
             {
                 test: /\.scss$/,
-                loader: ExtractTextPlugin.extract(
-                    'css?sourceMap!resolve-url?sourceMap!sass?sourceMap'
-                )
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        { loader: 'css-loader', options: { sourceMap: !PROD } },
+                        { loader: 'resolve-url-loader', options: { sourceMap: !PROD } },
+                        { loader: 'sass-loader', options: { sourceMap: !PROD } }
+                    ]
+                })
             },
             {
                 test: /\.css$/,
-                loader: ExtractTextPlugin.extract(
-                    'style',
-                    'css?sourceMap'
-                )
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [{ loader: 'css-loader', options: { sourceMap: !PROD } }]
+                })
             },
             {
                 test: /\.dawg$/,
-                loader: 'raw',
-                include: [DATA_ROOT]
+                include: [DATA_ROOT],
+                use: [{ loader: 'raw-loader' }],
             }
         ]
     },
 
     plugins: [
 
-        new DedupePlugin(),
+        new DefinePlugin({
+            DEBUG: !PROD
+        }),
 
         // // Split out runtime bundle
         // new CommonsChunkPlugin({
@@ -98,7 +108,7 @@ var webpackConfig = {
         new HtmlPlugin({
             IS_PROD: PROD,
             deployment: NODE_ENV,
-            template: './src/layout/app.html',
+            template: './layout/app.html',
             // favicon: './src/assets/favicon.ico',
             inject: false
         }),
@@ -106,11 +116,13 @@ var webpackConfig = {
         // Only support default moment locale (en-us) for now.
         new ContextReplacementPlugin(/moment[\/\\]locale$/, /^$/),
 
-        new ExtractTextPlugin(cssFilename)
+        new ExtractTextPlugin({
+            filename: cssFilename,
+            disable: false,
+            allChunks: true
+        })
 
     ],
-
-    debug: DEBUG,
 
     devtool: DEBUG ? 'source-map' : null,
 
@@ -119,16 +131,18 @@ var webpackConfig = {
     },
 
     resolveLoader: {
-        modulesDirectories: [
+        modules: [
             'node_modules',
             'web_loaders'
         ]
     },
 
     resolve: {
-        extensions: ['', '.js', '.jsx'],
-        root: path.resolve(SRC_ROOT, 'app'),
-        modulesDirectories: ['node_modules'],
+        extensions: ['.js', '.jsx'],
+        modules: [
+            path.resolve(SRC_ROOT, 'app'),
+            'node_modules'
+        ],
         alias: {
             data: DATA_ROOT
         }
@@ -146,7 +160,8 @@ if (PROD) {
     Array.prototype.push.apply(webpackConfig.plugins, [
 
         new UglifyJsPlugin({
-            mangle: true
+            mangle: true,
+            minimize: true
         }),
 
         new CompressionPlugin()

@@ -11,15 +11,15 @@
         <link href="https://fonts.googleapis.com/css?family=Radley|UnifrakturMaguntia" rel="stylesheet">
         <link rel="icon"
               type="image/x-icon"
-              href="/favicon.ico?{%=o.htmlWebpackPlugin.options.ts%}">
-        {% for (var i = 0; i < o.htmlWebpackPlugin.files.css.length; i++) { %}
-        <link rel="stylesheet" type="text/css" href="/{%=o.htmlWebpackPlugin.files.css[i] %}"></script>
-        {% } %}
+              href="/favicon.ico?<%=htmlWebpackPlugin.options.ts%>">
+        <% for (var i = 0; i < htmlWebpackPlugin.files.css.length; i++) { %>
+        <link rel="stylesheet" type="text/css" href="/<%=htmlWebpackPlugin.files.css[i] %>"></script>
+        <% } %>
     </head>
     <body>
 
         <main id="root"></main>
 
-        <script src="/{%=o.htmlWebpackPlugin.files.chunks.app.entry %}" charset="utf8"></script>
+        <script src="/<%=htmlWebpackPlugin.files.chunks.app.entry %>" charset="utf8"></script>
     </body>
 </html>
