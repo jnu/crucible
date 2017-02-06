@@ -1,4 +1,4 @@
-import { PackedTrie } from 'tiny-trie';
+import PackedTrie from 'tiny-trie/lib/PackedTrie';
 import { AbstractFixedLengthWordIndex } from './AbstractFixedLengthWordIndex';
 
 

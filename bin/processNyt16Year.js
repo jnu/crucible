@@ -1,18 +1,21 @@
-var __doc__ = [
-'Process nyt_16_year_clues.txt by building into frozen, encoded DAWG.',
-'',
-'Usage:',
-'',
-'$ node processNyt16Year.js <path/to/nyt_16_year_clues.txt> <path/to/output/dir> <baseOutputName>'
-].join('\n');
+/* eslint no-console:false */
+'use strict';
+
+const __doc__ = `\
+Process nyt_16_year_clues.txt by building into frozen, encoded DAWG.
+
+Usage:
+
+  $ node processNyt16Year.js <path/to/nyt_16_year_clues.txt> <path/to/output/dir> <baseOutputName>
+`;
 
 
 // Imports
-var fs = require('fs');
-var path = require('path');
-var crypto = require('crypto');
-var mkdirp = require('mkdirp');
-var Trie = require('tiny-trie/dist/tiny-trie').Trie;
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const mkdirp = require('mkdirp');
+const Trie = require('tiny-trie/dist/tiny-trie').Trie;
 
 
 /**
@@ -24,12 +27,12 @@ var Trie = require('tiny-trie/dist/tiny-trie').Trie;
  */
 function getNextLine(contentBox, delimeter) {
     delimeter = delimeter || '\n';
-    var content = contentBox[0];
-    var line = '';
-    var len = content.length;
-    var ptr = 0;
+    const content = contentBox[0];
+    const len = content.length;
+    let line = '';
+    let ptr = 0;
     while (ptr < len) {
-        var char = content[ptr++];
+        let char = content[ptr++];
         if (char === '\r') {
             break;
         }
@@ -44,30 +47,31 @@ function getNextLine(contentBox, delimeter) {
  * Process input word list, write encoded DAWG to output file.
  * @param  {String} inputFile - path to input word list
  * @param  {String} outputDir - path to output directory
+ * @param  {String} name - base name for wordlist
  */
-function processFiles(inputFile, outputDir) {
-    var tries = {};
-    var counts = {};
+function processFiles(inputFile, outputDir, name) {
+    const tries = {};
+    const counts = {};
 
     console.log('Reading ' + inputFile + ' ...');
-    var contents = fs.readFileSync(inputFile, 'utf8');
-    var boxedContents = [contents];
+    const contents = fs.readFileSync(inputFile, 'utf8');
+    const boxedContents = [contents];
 
     console.log('Building trie ...');
-    var line;
+    let line;
     while (line = getNextLine(boxedContents, '\r')) {
-        var parts = line.split('\t');
-        var word = parts[1];
+        let parts = line.split('\t');
+        let word = parts[1];
 
         // Don't care about non-words.
         if (!word) {
             continue;
         }
 
-        var len = word.length;
+        let len = word.length;
         // Create new tries for newly encountered lengths. All tries contain
         // words of identical length.
-        var trie = tries[len] || (tries[len] = new Trie());
+        let trie = tries[len] || (tries[len] = new Trie());
         trie.insert(word);
 
         // Update counts for reporting stats.
@@ -78,12 +82,10 @@ function processFiles(inputFile, outputDir) {
         }
     }
     console.log('Word distributions:');
-    var key;
-    var count;
-    var sum = 0;
-    for (key in counts) {
+    let sum = 0;
+    for (let key in counts) {
         if (counts.hasOwnProperty(key)) {
-            count = counts[key];
+            let count = counts[key];
             console.log('  ' + key + ': ' + count);
             sum += count;
         }
@@ -91,38 +93,78 @@ function processFiles(inputFile, outputDir) {
     console.log('  Total: ' + sum);
 
     console.log('Freezing tries ...');
-    for (key in tries) {
+    for (let key in tries) {
         if (tries.hasOwnProperty(key)) {
             console.log('  - Length ' + key);
             tries[key].freeze();
         }
     }
 
-    var paths = {};
+    const paths = {};
     console.log('Encoding ...');
-    for (key in tries) {
+    for (let key in tries) {
         if (tries.hasOwnProperty(key)) {
             console.log('  - Length ' + key);
-            var encoded = tries[key].encode();
-            var hash = crypto.createHash('sha1').update(encoded).digest('hex');
-            var outFileName = [key, hash, 'dawg'].join('.');
-            var outFilePath = path.join(outputDir, outFileName);
+            let encoded = tries[key].encode();
+            let hash = crypto.createHash('sha1').update(encoded).digest('hex');
+            let outFileName = [key, hash, 'dawg'].join('.');
+            let outFilePath = path.join(outputDir, outFileName);
             fs.writeFileSync(outFilePath, encoded, 'utf8');
             paths[key] = outFileName;
         }
     }
 
     console.log('Writing manifest ...');
-    var date = (new Date()).toISOString();
-    var manifestFn = ['manifest', date, 'js'].join('.');
-    // Fugly hack to convert file names to inline require statements.
-    var requireHash = JSON.stringify(paths, null, 2)
-        .replace(/"\s*:\s*"([^"]+?)"/g, '": require("./$1")');
-    var manifestContent = 'module.exports = ' + requireHash + ';';
+    const now = new Date();
+    const date = now.toISOString();
+    const manifestFn = ['manifest', date, 'js'].join('.');
+    const imports = Object
+        .keys(paths)
+        .sort((a, b) => +a < +b ? -1 : 1)
+        .map(key => `${key}: import('./${paths[key]}')`);
+    const INDENT = '    ';
+    const manifestContent = `\
+// Auto-generated manifest. Do not edit.
+
+export const chunks = {
+${INDENT}${imports.join(`,\n${INDENT}`)}
+};
+
+export const ts = ${+now};
+`;
     fs.writeFileSync(path.join(outputDir, manifestFn), manifestContent, 'utf8');
 
     console.log('Linking manifest ...');
-    var indexContent = 'module.exports = require(\'./' + manifestFn.slice(0, manifestFn.length - 3) + '\');';
+    const manifestPath = `./${manifestFn.slice(0, manifestFn.length - 3)}`;
+    const indexContent = `\
+// Auto-generated module loader. Do not edit.
+
+import { chunks } from '${manifestPath}';
+
+/**
+ * Timestamp (ms) when wordlist was last updated.
+ * @type number
+ */
+export { ts } from '${manifestPath}';
+
+/**
+ * ID of wordlist.
+ * @type {string}
+ */
+export const id = '${name.replace(/'/g, '\\\'')}';
+
+/**
+ * Get a promise resolving with packed wordlist DAWG, binned by word length.
+ * @returns Promise<{[key: number]: string}>
+ */
+export const load = () => Promise.all(
+        Object.keys(chunks).map(key => chunks[key].then(dawg => [key, dawg]))
+    )
+    .then(pairs => pairs.reduce((agg, [key, dawg]) => {
+        agg[key] = dawg;
+        return agg;
+    }, {}));
+`;
     fs.writeFileSync(path.join(outputDir, 'index.js'), indexContent, 'utf8');
 
     console.log('Done.');
@@ -133,15 +175,15 @@ function processFiles(inputFile, outputDir) {
  * Execute program.
  */
 (function main() {
-    var args = process.argv.slice(2);
+    const args = process.argv.slice(2);
     if (args.length !== 3 || args.indexOf('-h') >= 0 || args.indexOf('--help') >= 0) {
         console.error('Need to supply both input and output paths.');
         console.error(__doc__);
         process.exit(-1);
     }
 
-    var input = args[0];
-    var outputBaseDir = path.join(args[1], args[2]);
+    const input = args[0];
+    const outputBaseDir = path.join(args[1], args[2]);
 
     // Ensure intput file exists.
     if (!fs.existsSync(input)) {
@@ -152,5 +194,5 @@ function processFiles(inputFile, outputDir) {
     // Make directories recursively up to output path.
     mkdirp.sync(outputBaseDir);
 
-    processFiles(input, outputBaseDir);
+    processFiles(input, outputBaseDir, args[2]);
 }());

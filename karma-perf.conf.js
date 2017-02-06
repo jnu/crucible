@@ -36,28 +36,27 @@ module.exports = function(config) {
         logLevel: config.LOG_INFO,
 
         // Start these browsers
-        browsers: ['PhantomJS2'],
+        browsers: ['PhantomJS'],
 
         // If browser does not capture in given timeout [ms], kill it
         captureTimeout: 60000,
 
         webpack: {
             devtool: 'inline-source-map',
-            debug: true,
             bail: true,
             profile: true,
             plugins: [],
             module: {
-                loaders: [
+                rules: [
                     {
                         test: /\.jsx?$/,
                         include: [SRC_DIR, /tiny-trie/],
-                        loaders: ['babel?cacheDirectory']
+                        use: [{ loader: 'babel-loader', options: { cacheDirectory: true } }]
                     },
                     {
                         test: /\.json$/,
                         include: [TEST_DATA_DIR],
-                        loaders: ['json']
+                        use: [{ loader: 'json-loader' }]
                     }
                 ],
                 noParse: [
@@ -65,8 +64,8 @@ module.exports = function(config) {
                 ]
             },
             resolve: {
-                extensions: ['', '.js', '.jsx'],
-                root: path.resolve(__dirname, 'node_modules'),
+                extensions: ['.js', '.jsx'],
+                modules: [path.resolve(__dirname, 'node_modules')],
                 alias: {
                     'test-data': TEST_DATA_DIR
                 }
@@ -77,7 +76,7 @@ module.exports = function(config) {
             'karma-benchmark',
             'karma-benchmark-reporter',
             'karma-webpack',
-            'karma-phantomjs2-launcher'
+            'karma-phantomjs-launcher'
         ]
     });
 };

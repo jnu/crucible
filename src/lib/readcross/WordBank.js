@@ -81,7 +81,7 @@ export class WordBank {
         for (let i = 0; i < sizes.length; i++) {
             let len = sizes[i];
 
-            _indexes[len] = new FixedLengthPackedWordIndex(len);
+            _indexes[len] = new FixedLengthPackedWordIndex(len, dawgs[len]);
         }
     }
 
