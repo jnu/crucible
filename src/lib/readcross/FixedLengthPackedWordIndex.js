@@ -28,7 +28,7 @@ export class FixedLengthPackedWordIndex extends AbstractFixedLengthWordIndex {
      * of "all words of length n" is fully optimized.
      */
     _preprocess() {
-        const { _allWords, _trie } = this;
+        const { _allWords } = this;
         // TODO optimize
         const fullWordSet = this._matchWords(this._allWildPattern);
         fullWordSet.forEach(word => _allWords.add(word));

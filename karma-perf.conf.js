@@ -10,7 +10,7 @@ module.exports = function(config) {
         basePath: '',
 
         files: [
-            './node_modules/babel-polyfill/dist/polyfill.js',
+            { pattern: 'node_modules/babel-polyfill/dist/polyfill.js', watched: false },
             'src/**/*.benchmark.js'
         ],
 
