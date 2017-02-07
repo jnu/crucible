@@ -59,6 +59,8 @@ export class FixedLengthPackedWordIndex extends AbstractFixedLengthWordIndex {
      * @return {String[]}
      */
     _matchWords(pattern) {
+        // TODO move wildcard matching implementation out to `tiny-trie`, it's
+        // been a TODO there for a while ...
         const {
             _trie,
             _cardinality,

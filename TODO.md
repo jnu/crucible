@@ -44,7 +44,9 @@ Items may jump around and work may not be completed exactly in the planned order
 ## 0.4
  - ~~Enhanced meta data (word / letter count)~~
  * Word lists:
-    * Default, embedded
+    - ~~Default, embedded~~
+     - ~~bundle splitting~~
+     - ~~minified format~~
     * Metadata (cruciverb? rex parker? other?)
  * Answer suggestions:
     * Search through word lists
@@ -60,7 +62,7 @@ Items may jump around and work may not be completed exactly in the planned order
  * Print view
  * Extreme case solutions (> 21x21)
  * Ensure clues containers resize properly
- * Puzzle difficulty grade
+ * Puzzle difficulty grade (this depends on clues as well as answers / grid though)
 
 ## 1.0
  * Server-side persistence
@@ -76,3 +78,9 @@ Items may jump around and work may not be completed exactly in the planned order
  * "Play" mode - for solving
  * Accounts / auth / whatever
  * Sharing, commenting, collaborating (?)
+
+
+
+## Misc
+ - Port wildcard trie matching to `tiny-trie`
+    - Refactor bit manip as necessary
