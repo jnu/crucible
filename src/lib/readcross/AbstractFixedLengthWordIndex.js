@@ -11,7 +11,7 @@ export class AbstractFixedLengthWordIndex {
         if (cardinality === undefined) {
             throw new Error('Index must be constructed with a cardinality.');
         }
-        this._cardinality = cardinality;
+        this._cardinality = +cardinality;
         this._allWords = new Set();
         this._allWildPattern = '*'.repeat(cardinality);
         this._trie = null;

@@ -8,3 +8,4 @@ const browserStorageClient = new BrowserStorageClient(window.localStorage);
 export const storageClient = browserStorageClient;
 
 export const wordlistClient = new WordlistClient({ local: browserStorageClient });
+wordlistClient.load('nyt16Year').then(wl => window.wl = wl);
