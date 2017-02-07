@@ -47,6 +47,7 @@ Items may jump around and work may not be completed exactly in the planned order
     - ~~Default, embedded~~
      - ~~bundle splitting~~
      - ~~minified format~~
+     * Non-blocking with wordbank in webworker
     * Metadata (cruciverb? rex parker? other?)
  * Answer suggestions:
     * Search through word lists

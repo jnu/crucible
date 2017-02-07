@@ -15,7 +15,7 @@ import {
 } from './actions';
 import { AutoSave } from './lib/AutoSave';
 import { storageClient } from './lib';
-import { WordBank } from './lib/readcross';
+
 const injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
@@ -72,9 +72,10 @@ render(
 
 
 if (DEBUG) {
-    window.UTIL = {
+    window.__app__ = {
         store,
         actions: require('./actions'),
-        storageClient: require('./lib').storageClient
+        storageClient: require('./lib').storageClient,
+        wordlistClient: require('./lib').wordlistClient
     };
 }

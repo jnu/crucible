@@ -1,5 +1,6 @@
 import { FixedLengthWordIndex } from './FixedLengthWordIndex';
 import { FixedLengthPackedWordIndex } from './FixedLengthPackedWordIndex';
+import { LRUCache } from '../LRUCache';
 
 
 /**
@@ -7,8 +8,9 @@ import { FixedLengthPackedWordIndex } from './FixedLengthPackedWordIndex';
  */
 export class WordBank {
 
-    constructor(words) {
+    constructor(words, cacheSize = 10) {
         this._indexes = [];
+        this._cache = new LRUCache(cacheSize);
         if (words) {
             if (Array.isArray(words)) {
                 this._fromWordsArray(words);
@@ -33,7 +35,13 @@ export class WordBank {
      * @return {String[]}
      */
     search(token) {
-        const { _indexes } = this;
+        const { _indexes, _cache } = this;
+
+        const cached = _cache.get(token);
+        if (cached) {
+            return Promise.resolve(cached);
+        }
+
         const len = token.length;
         const index = _indexes[len];
 
@@ -42,7 +50,11 @@ export class WordBank {
             return Promise.resolve([]);
         }
 
-        return Promise.resolve(index.match(token));
+        return Promise.resolve(index.match(token))
+            .then(match => {
+                _cache.add(match);
+                return match;
+            });
     }
 
     /**
