@@ -51,7 +51,10 @@ module.exports = function(config) {
                     {
                         test: /\.jsx?$/,
                         include: [SRC_DIR, /tiny-trie/],
-                        use: [{ loader: 'babel-loader', options: { cacheDirectory: true } }]
+                        use: [{
+                            loader: 'babel-loader',
+                            options: { cacheDirectory: true }
+                        }]
                     },
                     {
                         test: /\.json$/,
