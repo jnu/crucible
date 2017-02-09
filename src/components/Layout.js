@@ -6,12 +6,14 @@ import { Clues } from './Clues';
 import { PuzzleStats } from './PuzzleStats';
 import { ClueBuilder } from './ClueBuilder';
 import { PuzzleInfo } from './PuzzleInfo';
+import { WordWizard } from './WordWizard';
 import { GridVerticalDivider, GridHorizontalDivider } from './GridDividers';
 import './Layout.scss';
 
 
 const PUZZLE_INFO_HEIGHT = 50;
 const PUZZLE_STATS_HEIGHT = 100;
+const PUZZLE_STATS_WIDTH = 320;
 const MIN_PUZZLE_VIEW_HEIGHT = 500;
 const MIN_PUZZLE_VIEW_WIDTH = 500;
 const CLUE_COL_MIN_WIDTH = 180;
@@ -63,10 +65,19 @@ class LayoutView extends React.Component {
             width: collapseClueCols ? CLUE_COL_MIN_WIDTH : 2 * CLUE_COL_MIN_WIDTH
         };
 
+        const lowerHorizontTop = puzzleContainerHeight + MAR_BIG + PUZZLE_INFO_HEIGHT;
+        const lowerContainerStyle = {
+            position: 'absolute',
+            top: lowerHorizontTop,
+            height: PUZZLE_STATS_HEIGHT
+        };
         const puzzleStatsStyle = {
             position: 'absolute',
-            top: puzzleContainerHeight + MAR_BIG + PUZZLE_INFO_HEIGHT,
-            height: PUZZLE_STATS_HEIGHT
+            left: 0
+        };
+        const wordWizardStyle = {
+            position: 'absolute',
+            left: 2 * MAR_BIG + PUZZLE_STATS_WIDTH
         };
 
         return (
@@ -101,9 +112,17 @@ class LayoutView extends React.Component {
                     </div>
                 </div>
                 <GridHorizontalDivider offset={puzzleContainerHeight + PUZZLE_INFO_HEIGHT + MAR_BIG / 2} />
-                <div className="Layout_HorizontalContainer Layout_PuzzleStats-container"
-                     style={puzzleStatsStyle}>
-                    <PuzzleStats />
+                <div className="Layout_HorizontalContainer Layout_Lower-container"
+                     style={lowerContainerStyle}>
+                    <div className="Layout_PuzzleStats-container Layout_VerticalContainer"
+                         style={puzzleStatsStyle}>
+                        <PuzzleStats />
+                    </div>
+                    <GridVerticalDivider offset={PUZZLE_STATS_WIDTH + MAR_BIG} />
+                    <div className="Layout_WordSuggestion-container Layout_VerticalContainer"
+                         style={wordWizardStyle}>
+                        <WordWizard />
+                    </div>
                 </div>
             </div>
         );

@@ -1,4 +1,4 @@
-import { WordBank } from './readcross';
+import { WordBank } from './WordBank';
 
 import * as wl_nyt16Year from 'data/dist/nyt16Year';
 
@@ -39,12 +39,11 @@ const WORDLIST_KEY = 'wordlist';
  *
  * TODO saving custom wordlists?
  */
-export class WordlistClient {
+export class WordListClient {
 
     constructor(opts) {
         this._cache = opts.local;
         this._requests = {};
-        this._preload();
     }
 
     /**
@@ -75,14 +74,6 @@ export class WordlistClient {
     }
 
     /**
-     * Kickoff requests for initial word lists.
-     * @private
-     */
-    _preload() {
-        WordlistClient.DEFAULT_LISTS.forEach(key => this.load(key));
-    }
-
-    /**
      * Fetch a wordlist from cache if possible, or load asynchronously.
      * @private
      * @param  {String} key
@@ -103,12 +94,3 @@ export class WordlistClient {
     }
 
 }
-
-
-/**
- * Wordlists to preload
- * @type {String[]}
- */
-WordlistClient.DEFAULT_LISTS = [
-    wl_nyt16Year.id
-];

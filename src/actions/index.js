@@ -34,3 +34,7 @@ export {
     autoSaveError,
     loadEmptyPuzzle,
 } from './storage';
+
+export {
+    loadWordList
+} from './wordlist';

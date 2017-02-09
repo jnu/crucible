@@ -1,11 +1,11 @@
-import { wordlistClient } from '../lib';
+import { wordlist } from '../lib';
 
 
-export const loadWordlist = key => {
+export const loadWordList = key => {
     return (dispatch, getState) => {
         dispatch({ type: 'REQUEST_WORDLIST' });
-        wordlistClient
-            .load(key)
+        wordlist
+            .loadList(key)
             .then(({ key, data }) => {
                 dispatch({
                     type: 'RECEIVE_WORDLIST_SUCCESS',

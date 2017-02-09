@@ -1,1 +1,1 @@
-export { WordBank } from './WordBank';
+export { WordList } from './WordList';

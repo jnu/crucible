@@ -2,7 +2,7 @@ import Immutable from 'immutable';
 
 
 const DEFAULT_WORDLIST_STATE = Immutable.fromJS({
-    lists: {},
+    ready: false,
     fetching: false,
     error: null
 });

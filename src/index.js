@@ -15,6 +15,9 @@ import {
 } from './actions';
 import { AutoSave } from './lib/AutoSave';
 import { storageClient } from './lib';
+import { init as initWordList } from './init/wordlist';
+
+
 
 const injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
@@ -61,6 +64,11 @@ const autosaver = new AutoSave({
     onSaveError: e => store.dispatch(autoSaveError(e))
 });
 autosaver.start();
+
+
+// Init word list data.
+// TODO all things should init through functions like this.
+initWordList(store);
 
 
 render(
