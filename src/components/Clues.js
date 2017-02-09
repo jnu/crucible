@@ -21,7 +21,7 @@ const getClueClassName = (i, selection, isPrimary) => {
         }
     }
     return cn.join(' ');
-}
+};
 
 
 class CluesView extends React.Component {
@@ -89,7 +89,7 @@ const mapStateToProps = state => {
         cursor: grid.get('cursor'),
         cursorDirection: grid.get('cursorDirection')
     };
-}
+};
 
 
 export const Clues = connect(mapStateToProps)(pure(CluesView));
