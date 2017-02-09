@@ -1,54 +1,72 @@
-
+/**
+ * Identity function
+ * @param  {any} x
+ * @return {any}
+ */
 const IDENT = x => x;
 
+
 /**
+ * Simple Cache with least-recently-used invalidation and no expiration.
+ *
  * TODO tests, more efficient implementation using self-balancing tree
  */
 export class LRUCache {
 
     constructor(size, key = IDENT) {
+        if (!size) {
+            throw new Error('LRUCache must be constructed with size.');
+        }
         this._size = size;
         this._items = new Map();
         this._getKey = key;
     }
 
+    get size() {
+        return this._size;
+    }
+
     has(item) {
         const key = this._getKey(item);
-        return this._isKeyInCache(key);
+        return this.hasKey(key);
+    }
+
+    hasKey(key) {
+        return this._items.has(key);
     }
 
     get(item) {
         const key = this._getKey(item);
-        if (this._isKeyInCache(key)) {
+        return this.getByKey(key);
+    }
+
+    getByKey(key) {
+        if (this.hasKey(key)) {
             const entry = this._items.get(key);
             entry.ts = LRUCache.now();
             return entry.val;
         }
     }
 
-    _isKeyInCache(key) {
-        return this._items.has(key);
-    }
-
     add(item) {
         const key = this._getKey(item);
-        if (this._isKeyInCache(key)) {
+        if (this.hasKey(key)) {
             this._items.get(key).ts = LRUCache.now();
         } else {
-            this._items.insert(key, {
+            // Find and drop oldest item if cache is full.
+            if (this._items.size === this._size) {
+                this._dropOldest();
+            }
+            // Add new item.
+            this._items.set(key, {
                 ts: LRUCache.now(),
                 val: item
             });
-            this._prune();
         }
+        return key;
     }
 
-    _prune() {
-        // No need to prune when cache isn't full
-        if (this._items.size < this._size) {
-            return;
-        }
-
+    _dropOldest() {
         let minKey = null;
         let minTs = Infinity;
         for (let [key, entry] of this._items) {
@@ -64,8 +82,6 @@ export class LRUCache {
 
         this._items.delete(minKey);
     }
-
-
 
 }
 
