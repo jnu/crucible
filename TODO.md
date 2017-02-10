@@ -57,6 +57,7 @@ Items may jump around and work may not be completed exactly in the planned order
  * Word lists:
     * Load custom
     * Select, deselect
+    * Context aware (crossings)
  * Grid validation (options)
 
 ## 0.6
