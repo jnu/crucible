@@ -1,3 +1,13 @@
+@import 'constants';
+
+
 .WordWizard {
 
+    .match-hit {
+        font-weight: bold;
+    }
+    .match-miss {
+        color: $red;
+        font-weight: normal;
+    }
 }

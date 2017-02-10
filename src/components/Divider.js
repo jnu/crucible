@@ -22,4 +22,4 @@ export const Divider = ({ span, align, thickness, color, style, offset }) => {
     return (
         <div style={dividerStyle} />
     );
-}
+};
