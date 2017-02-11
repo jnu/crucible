@@ -1,4 +1,11 @@
+@import 'constants';
+
+
 .PuzzleInfo {
     width: 100%;
     text-align: center;
+
+    .PuzzleInfo_Title {
+        padding-top: $marSmall;
+    }
 }

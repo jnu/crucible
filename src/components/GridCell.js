@@ -56,7 +56,6 @@ export class GridCell extends React.Component {
             cell,
             focused,
             highlight,
-            onFocus,
             left,
             top,
             size

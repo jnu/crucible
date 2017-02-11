@@ -10,12 +10,14 @@ import {
     fetchPuzzleIndex,
     toggleSymmetricalGrid,
     loadPuzzle,
-    loadEmptyPuzzle
+    loadEmptyPuzzle,
+    resize
 } from '../actions';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import { List, ListItem } from 'material-ui/List';
 import CircularProgress from 'material-ui/CircularProgress';
@@ -31,17 +33,23 @@ class GridMetaMenuView extends React.Component {
             'openImportGridShapeDialog',
             'openExportGridShapeDialog',
             'openLoadPuzzleDialog',
+            'openResizeGridDialog',
             'openGridMenu',
             'closeDialog',
             'importGrid',
             'exportGrid',
             'loadPuzzle',
             'makeNewPuzzle',
+            'resizeGrid',
             'updateExportName',
+            'updateNewWidth',
+            'updateNewHeight',
             'toggleSymmetricalGrid'
         );
         this.state = {
             exportGridName: '',
+            newGridWidth: props.grid.get('width'),
+            newGridHeight: props.grid.get('height'),
             anchorEl: null
         };
     }
@@ -65,6 +73,11 @@ class GridMetaMenuView extends React.Component {
         const { dispatch } = this.props;
         dispatch(fetchPuzzleIndex());
         dispatch(openMetaDialog('LOAD_PUZZLE'));
+    }
+
+    openResizeGridDialog() {
+        const { dispatch } = this.props;
+        dispatch(openMetaDialog('RESIZE_GRID'));
     }
 
     openGridMenu(e) {
@@ -107,6 +120,21 @@ class GridMetaMenuView extends React.Component {
         this.setState({ exportGridName: e.target.value });
     }
 
+    updateNewWidth(e) {
+        this.setState({ newGridWidth: e.target.value });
+    }
+
+    updateNewHeight(e) {
+        this.setState({ newGridHeight: e.target.value });
+    }
+
+    resizeGrid() {
+        const { dispatch } = this.props;
+        const { newGridWidth, newGridHeight } = this.state;
+        dispatch(resize(+newGridWidth, +newGridHeight));
+        this.closeDialog();
+    }
+
     toggleSymmetricalGrid() {
         const { dispatch } = this.props;
         dispatch(toggleSymmetricalGrid());
@@ -136,6 +164,9 @@ class GridMetaMenuView extends React.Component {
                         </MenuItem>
                         <MenuItem onClick={this.openImportGridShapeDialog}>
                             Load Grid Template
+                        </MenuItem>
+                        <MenuItem onClick={this.openResizeGridDialog}>
+                            Resize ...
                         </MenuItem>
                         <MenuItem onClick={this.toggleSymmetricalGrid}
                                   checked={grid.get('symmetrical')}>
@@ -173,7 +204,7 @@ class GridMetaMenuView extends React.Component {
                             <FlatButton label="Cancel"
                                         primary={false}
                                         onTouchTap={this.closeDialog} />
-                            <FlatButton label="Save"
+                            <RaisedButton label="Save"
                                         primary={true}
                                         onTouchTap={this.exportGrid} />
                         </div>
@@ -201,6 +232,29 @@ class GridMetaMenuView extends React.Component {
                         </List> :
                         <CircularProgress />
                     }
+                </Dialog>
+                <Dialog title="Resize Grid"
+                        open={meta.get('openDialog') === 'RESIZE_GRID'}
+                        contentStyle={{ width: 400 }}
+                        autoScrollBodyContent={false}
+                        onRequestClose={this.closeDialog}
+                        actions={
+                        <div>
+                            <FlatButton label="Cancel" primary={false} onTouchTap={this.closeDialog} />
+                            <RaisedButton label="Apply" primary={true} onTouchTap={this.resizeGrid} />
+                        </div>}>
+                        <div>
+                            Width: <TextField name="ResizeGrid_Width_Input"
+                                              value={this.state.newGridWidth}
+                                              hintText="Enter puzzle width"
+                                              onChange={this.updateNewWidth} />
+                        </div>
+                        <div>
+                            Height: <TextField name="ResizeGrid_Height_Input"
+                                               value={this.state.newGridHeight}
+                                               hintText="Enter puzzle height"
+                                               onChange={this.updateNewHeight} />
+                        </div>
                 </Dialog>
             </div>
         );

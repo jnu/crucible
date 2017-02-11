@@ -53,6 +53,7 @@ class ClueBuilderView extends React.Component {
                         <TextField name="ClueBuiler_Input"
                                    value={value}
                                    hintText="Enter clue"
+                                   style={{ width: 'calc(100% - 60px)' }}
                                    onChange={this.updateClueState} />
                     </div>
                 }

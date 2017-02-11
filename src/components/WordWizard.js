@@ -227,7 +227,6 @@ const INITIAL_WIZARD_STATE = {
 
 const wordWizardStyle = {
     height: '100%',
-    overflow: 'auto'
 };
 
 
@@ -317,9 +316,9 @@ class WordWizardView extends React.Component {
             <div>Error fetching words: {error}</div> :
             <div>
                 <List width={300}
-                      height={300}
+                      height={90}
                       rowCount={matches.length}
-                      rowHeight={20}
+                      rowHeight={15}
                       rowRenderer={this._renderListRow} />
             </div>
             ;

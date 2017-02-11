@@ -11,13 +11,14 @@ import { GridVerticalDivider, GridHorizontalDivider } from './GridDividers';
 import './Layout.scss';
 
 
-const PUZZLE_INFO_HEIGHT = 50;
+const PUZZLE_INFO_HEIGHT = 75;
 const PUZZLE_STATS_HEIGHT = 100;
 const PUZZLE_STATS_WIDTH = 320;
 const MIN_PUZZLE_VIEW_HEIGHT = 500;
 const MIN_PUZZLE_VIEW_WIDTH = 500;
 const CLUE_COL_MIN_WIDTH = 180;
 const CLUE_BUILDER_HEIGHT = 50;
+const MAR_SMALL = 20;
 const MAR_BIG = 40;
 
 
@@ -54,8 +55,14 @@ class LayoutView extends React.Component {
             marginTop: puzzlePadTop
         };
         const clueBuilderStyle = {
-            height: CLUE_BUILDER_HEIGHT
+            height: CLUE_BUILDER_HEIGHT,
+            width: puzzleContainerWidth - 2 * MAR_SMALL,
+            left: MAR_SMALL,
+            position: 'relative'
         };
+
+        // Puzzle info styles
+        const puzzleInfoStyle = { height: PUZZLE_INFO_HEIGHT };
 
         // Reckon clue container styles
         const collapseClueCols = viewportWidth < (puzzleContainerWidth + 2 * CLUE_COL_MIN_WIDTH);
@@ -82,7 +89,7 @@ class LayoutView extends React.Component {
 
         return (
             <div className="Layout">
-                <PuzzleInfo />
+                <PuzzleInfo style={puzzleInfoStyle} />
                 <div className="Layout_HorizontalContainer Layout_MainBuilder"
                      style={{ height: puzzleContainerHeight }}>
                     <div className="Layout_GridContent-container Layout_VerticalContainer"

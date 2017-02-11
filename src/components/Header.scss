@@ -3,14 +3,21 @@
 
 .Header {
     width: 100%;
+    height: 40px;
+    position: relative;
     color: $dark;
 
     h1 {
         text-align: center;
         font-family: 'UnifrakturMaguntia', cursive;
-        font-size: 40px;
+        font-size: 30px;
         margin-bottom: 0;
-        margin-top: $marMed;
+        margin-top: $marSmall;
+    }
+
+    .GridMetaMenu {
+        position: absolute;
+        bottom: 0;
     }
 
 }

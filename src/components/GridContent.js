@@ -123,6 +123,10 @@ class GridContentView extends React.Component {
             return;
         }
 
+        if (e.metaKey) {
+            return;
+        }
+
         const keyCode = e.which || e.keyCode || 0;
 
         switch (keyCode) {
