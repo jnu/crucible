@@ -8,14 +8,37 @@ import { LRUCache } from '../LRUCache';
  */
 export class WordBank {
 
-    constructor(words, cacheSize = 10) {
+    /**
+     * Construct a word bank from frozen, encoded DAWGs. In production this should
+     * be how WordBanks are instantiated, as constructing banks from raw lists will
+     * be too expensive both over the wire and in init time.
+     *
+     * The input should be a map from word-length to a packed DAWG of words with
+     * this length. See Trie#freeze and Trie#encode for expected DAWG format.
+     *
+     * @public
+     * @static
+     * @param  {{ [key: number]: String }} dawgs - map from length to packed DAWG
+     * @return {WordBank}
+     */
+    public static fromPacked(dawgs: {[key: number]: string}) {
+        const wb = new WordBank();
+        wb._fromWordsDAWGs(dawgs);
+        return wb;
+    };
+
+    private _cache: LRUCache<string, string>;
+
+    private _indexes: FixedLengthPackedWordIndex[];
+
+    constructor(words?: string[] | {[key: number]: string}, cacheSize = 10) {
         this._indexes = [];
         this._cache = new LRUCache(cacheSize);
         if (words) {
             if (Array.isArray(words)) {
-                this._fromWordsArray(words);
+                this._fromWordsArray(words as string[]);
             } else {
-                this._fromWordsDAWGs(words);
+                this._fromWordsDAWGs(words as {[key: number]: string});
             }
         }
     }
@@ -24,7 +47,7 @@ export class WordBank {
      * Insert a word or words into the word bank.
      * @param  {String|String[]} word - single word or array of words
      */
-    insert(word) {
+    insert(word: string) {
         this._fromWordsArray(Array.isArray(word) ? word : [word]);
     }
 
@@ -34,7 +57,7 @@ export class WordBank {
      * @param  {String} token
      * @return {String[]}
      */
-    search(token) {
+    search(token: string) {
         const { _indexes, _cache } = this;
 
         const cached = _cache.get(token);
@@ -62,7 +85,7 @@ export class WordBank {
      * @private
      * @param  {String[]} words
      */
-    _fromWordsArray(words) {
+    _fromWordsArray(words: string[]) {
         const { _indexes } = this;
 
         // Create indexes for words by length. The length is always known, so
@@ -85,35 +108,16 @@ export class WordBank {
      * Initialize fixed-length indexes from packed DAWGs.
      * @param  {{ [key: number]: String }} dawgs - map from length to DAWG
      */
-    _fromWordsDAWGs(dawgs) {
+    _fromWordsDAWGs(dawgs: {[key: number]: string}) {
         const { _indexes } = this;
 
         const sizes = Object.keys(dawgs);
 
         for (let i = 0; i < sizes.length; i++) {
-            let len = sizes[i];
+            let len = +sizes[i];
 
             _indexes[len] = new FixedLengthPackedWordIndex(len, dawgs[len]);
         }
     }
 
 }
-
-/**
- * Construct a word bank from frozen, encoded DAWGs. In production this should
- * be how WordBanks are instantiated, as constructing banks from raw lists will
- * be too expensive both over the wire and in init time.
- *
- * The input should be a map from word-length to a packed DAWG of words with
- * this length. See Trie#freeze and Trie#encode for expected DAWG format.
- *
- * @public
- * @static
- * @param  {{ [key: number]: String }} dawgs - map from length to packed DAWG
- * @return {WordBank}
- */
-WordBank.fromPacked = dawgs => {
-    const wb = new WordBank();
-    wb._fromWordsDAWGs(dawgs);
-    return wb;
-};

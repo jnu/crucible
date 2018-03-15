@@ -14,9 +14,8 @@ import {
     autoSaveError
 } from './actions';
 import { AutoSave } from './lib/AutoSave';
-import { storageClient } from './lib';
+import { storageClient } from './lib/index';
 import { init as initWordList } from './init/wordlist';
-
 
 
 const injectTapEventPlugin = require('react-tap-event-plugin');
@@ -83,7 +82,7 @@ if (DEBUG) {
     window.__app__ = {
         store,
         actions: require('./actions'),
-        storageClient: require('./lib').storageClient,
-        wordlistClient: require('./lib').wordlistClient
+        storageClient: require('./lib/index').storageClient,
+        wordlistClient: require('./lib/index').wordlistClient
     };
 }

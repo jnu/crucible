@@ -4,10 +4,7 @@
 require('es6-promise').polyfill();
 
 var path = require('path');
-var execSync = require('child_process').execSync;
 var HtmlPlugin = require('html-webpack-plugin');
-var UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
-var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
 var CompressionPlugin = require('compression-webpack-plugin');
 var ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
@@ -43,13 +40,15 @@ var webpackConfig = {
     context: path.resolve(SRC_ROOT),
 
     entry: {
-        app: './index.js'
+        app: './index.ts'
     },
 
     output: {
         path: path.resolve(__dirname, 'build', 'app'),
         filename: appFilename
     },
+
+    mode: PROD ? 'production' : 'development',
 
     module: {
         rules: [
@@ -59,6 +58,16 @@ var webpackConfig = {
                 use: [{
                     loader: 'babel-loader',
                     options: { cacheDirectory: true }
+                }]
+            },
+            {
+                test: /\.tsx?$/,
+                include: [SRC_ROOT, /tiny-trie/],
+                use: [{
+                    loader: 'babel-loader',
+                    options: { cacheDirectory: true }
+                }, {
+                    loader: 'ts-loader'
                 }]
             },
             {
@@ -98,13 +107,6 @@ var webpackConfig = {
             DEBUG: !PROD
         }),
 
-        // // Split out runtime bundle
-        // new CommonsChunkPlugin({
-        //     name: 'runtime',
-        //     filename: runtimeFilename,
-        //     minChunks: Infinity
-        // }),
-
         new HtmlPlugin({
             IS_PROD: PROD,
             deployment: NODE_ENV,
@@ -118,7 +120,7 @@ var webpackConfig = {
 
         new ExtractTextPlugin({
             filename: cssFilename,
-            disable: false,
+            disable: !PROD,
             allChunks: true
         })
 
@@ -138,7 +140,7 @@ var webpackConfig = {
     },
 
     resolve: {
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
         modules: [
             path.resolve(SRC_ROOT, 'app'),
             'node_modules'
@@ -158,11 +160,6 @@ var webpackConfig = {
 
 if (PROD) {
     Array.prototype.push.apply(webpackConfig.plugins, [
-
-        new UglifyJsPlugin({
-            mangle: true,
-            minimize: true
-        }),
 
         new CompressionPlugin()
 

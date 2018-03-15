@@ -7,7 +7,9 @@ import { AbstractFixedLengthWordIndex } from './AbstractFixedLengthWordIndex';
  */
 export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
 
-    constructor(cardinality) {
+    private _wordsBuffer: string[];
+
+    constructor(cardinality: number) {
         super(cardinality);
         this._wordsBuffer = [];
         this._trie = new Trie();
@@ -30,7 +32,7 @@ export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
      * into the index. The #add method only buffers words.
      * @param {String} word - word with length of `cardinality`
      */
-    _addWord(word) {
+    _addWord(word: string) {
         this._wordsBuffer.push(word);
     }
 
@@ -39,7 +41,7 @@ export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
      * @param  {String} pattern - search string, using `*` for a wildcard.
      * @return {String[]}
      */
-    _matchWords(pattern) {
+    _matchWords(pattern: string) {
         const { _trie, _cardinality } = this;
         const { root } = _trie;
 
@@ -50,7 +52,7 @@ export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
         const tokens = pattern.split('');
 
         // Results array
-        const matches = [];
+        const matches: string[] = [];
         const lastDepth = _cardinality - 1;
         // BFS over matched nodes, adding results to matches array.
         while (nodesQueue.length) {

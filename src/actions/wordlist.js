@@ -1,4 +1,4 @@
-import { wordlistClient } from '../lib';
+import { wordlistClient } from '../lib/index';
 
 
 export const loadWordList = key => {

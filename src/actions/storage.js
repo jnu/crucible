@@ -1,5 +1,5 @@
 import * as crux from '../lib/crux';
-import { storageClient } from '../lib';
+import { storageClient } from '../lib/index';
 import UUID from 'pure-uuid';
 import Immutable from 'immutable';
 

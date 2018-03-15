@@ -1,4 +1,5 @@
 import { WordBank } from './WordBank';
+import { BrowserStorageClient } from '../BrowserStorageClient';
 
 import * as wl_nyt16Year from 'data/dist/nyt16Year';
 
@@ -34,6 +35,11 @@ const PREMADE_LISTS = [
 const WORDLIST_KEY = 'wordlist';
 
 
+interface IWordListClientParams {
+    local: BrowserStorageClient;
+}
+
+
 /**
  * Manage loading of async wordlist modules.
  *
@@ -41,7 +47,11 @@ const WORDLIST_KEY = 'wordlist';
  */
 export class WordListClient {
 
-    constructor(opts) {
+    private _cache: BrowserStorageClient;
+
+    private _requests: {[key: string]: Promise<WordBank>};
+
+    constructor(opts: IWordListClientParams) {
         this._cache = opts.local;
         this._requests = {};
     }
@@ -51,7 +61,7 @@ export class WordListClient {
      * @param  {String} key
      * @return {Promise<WordBank>}
      */
-    load(key) {
+    load(key: string) {
         // Use request cache to glom any redundant, concurrent requests for
         // the same entity.
         let req = this._requests[key];
@@ -79,7 +89,7 @@ export class WordListClient {
      * @param  {String} key
      * @return {Promise<WordBank>}
      */
-    _fetchWordlistByKey(key) {
+    _fetchWordlistByKey(key: string) {
         return this._cache.load(WORDLIST_KEY, key)
             .then(cacheHit => cacheHit.data)
             .catch(e => PREMADE_LISTS[key]()

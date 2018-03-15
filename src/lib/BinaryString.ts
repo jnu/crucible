@@ -17,38 +17,31 @@ import {
 class BinaryString {
 
     /**
-     * No arguments are necessary.
-     * @constructor
-     * @return {BinaryString}
+     * Data buffer
+     * @type {Number?}
      */
-    constructor() {
-        /**
-         * Data buffer
-         * @type {Number?}
-         */
-        this.buffer = 0;
+    public buffer = 0;
 
-        /**
-         * Word pointer for buffer. With every entry into the buffer, the
-         * pointer gets incremented by the entry's width. Every six characters
-         * may be encoded, so when the pointer exceeds 6, the buffer can be
-         * emptied until the pointer is back under 6.
-         * @type {Number}
-         */
-        this.pointer = 0;
+    /**
+     * Word pointer for buffer. With every entry into the buffer, the
+     * pointer gets incremented by the entry's width. Every six characters
+     * may be encoded, so when the pointer exceeds 6, the buffer can be
+     * emptied until the pointer is back under 6.
+     * @type {Number}
+     */
+    public pointer = 0;
 
-        /**
-         * Encoded data as a string of base64 characters
-         * @type {String}
-         */
-        this.data = '';
+    /**
+     * Encoded data as a string of base64 characters
+     * @type {String}
+     */
+    public data = '';
 
-        /**
-         * Data is read-only if the instance was initialized with a string.
-         * @type {Boolean}
-         */
-        this.canWrite = true;
-    }
+    /**
+     * Data is read-only if the instance was initialized with a string.
+     * @type {Boolean}
+     */
+    public canWrite = true;
 
     /**
      * Write a value to the binary string. This value should be thought of as
@@ -59,7 +52,7 @@ class BinaryString {
      *                             automatically. An error will be thrown if
      *                             the width is too small to contain the data.
      */
-    write(val, width = null) {
+    write(val: number, width: number = null) {
         if (!this.canWrite) {
             throw new Error('BinaryString is read-only');
         }
@@ -142,16 +135,19 @@ export default BinaryString;
 
 export class BinaryStringReader extends BinaryString {
 
-    constructor(data) {
+    public cursor: 0;
+
+    public data: string;
+
+    public canWrite: boolean = false;
+
+    constructor(data: string) {
         super();
         this.data = data;
-        this.canWrite = false;
 
         if (data === undefined) {
             throw new Error('Data must be provided');
         }
-
-        this.cursor = 0;
     }
 
     /**
@@ -173,7 +169,7 @@ export class BinaryStringReader extends BinaryString {
      * @param  {Number} [len=1] - number of bits to read
      * @return {Number} Integer representing what was read.
      */
-    readRange(start, len = 1) {
+    readRange(start: number, len = 1) {
         if (this.canWrite) {
             throw new Error('BinaryString is write-only');
         }

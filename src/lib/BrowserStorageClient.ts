@@ -1,10 +1,38 @@
-export class BrowserStorageClient {
+/**
+ * @file Browser-based storage for application data.
+ */
 
-    constructor(storage) {
+import {IStorageClient} from './StorageClient';
+
+
+/**
+ * Application storage interface that uses browser-local storage as a backend.
+ *
+ * API offers namespaced keys and is asynchronous.
+ */
+export class BrowserStorageClient implements IStorageClient {
+
+    private _storage: Storage;
+
+    /**
+     * Instantiate the storage client with the given backend. Backends can be sessionStorage, browserStorage, or some
+     * other object that implements the Storage API.
+     *
+     * @param {Storage} storage
+     */
+    constructor(private storage: Storage) {
         this._storage = storage;
     }
 
-    save(domain, key, value) {
+    /**
+     * Save a value to browser storage.
+     *
+     * @param {string} domain
+     * @param {string} key
+     * @param {T} value
+     * @returns {Promise<void>}
+     */
+    save<T>(domain: string, key: string, value: T) {
         const location = this._getNamespacedKey(domain, key);
         const hasItem = this._storage.getItem(location) !== null;
         this._storage.setItem(location, JSON.stringify(value));
@@ -19,7 +47,14 @@ export class BrowserStorageClient {
         return Promise.resolve();
     }
 
-    load(domain, key, value) {
+    /**
+     * Load a value from browser storage.
+     *
+     * @param {string} domain
+     * @param {string} key
+     * @returns {Promise<T>}
+     */
+    load<T>(domain: string, key: string) {
         const location = this._getNamespacedKey(domain, key);
         const val = this._storage.getItem(location);
 
@@ -28,10 +63,17 @@ export class BrowserStorageClient {
         }
 
         const obj = Object.assign(JSON.parse(val), { key });
-        return Promise.resolve(obj);
+        return Promise.resolve(obj as T);
     }
 
-    remove(domain, key) {
+    /**
+     * Remove a value from browser storage.
+     *
+     * @param {string} domain
+     * @param {string} key
+     * @returns {Promise<void>}
+     */
+    remove(domain: string, key: string) {
         const location = this._getNamespacedKey(domain, key);
         const hasItem = this._storage.getItem(location) !== null;
         this._storage.removeItem(location);
@@ -47,15 +89,21 @@ export class BrowserStorageClient {
         return Promise.resolve();
     }
 
-    index(domain) {
+    /**
+     * Get the index of values from browser storage.
+     *
+     * @param {string} domain
+     * @returns {Promise<T[]>}
+     */
+    index<T>(domain: string) {
         const location = this._getNamespacedKey(domain);
         const idx = this._storage.getItem(location);
         const items = idx ? idx.split('\0') : [];
         // Inflate each item since it's cheap here.
-        return Promise.all(items.map(item => this.load(domain, item)));
+        return Promise.all(items.map(item => this.load<T>(domain, item)));
     }
 
-    _getNamespacedKey(domain, key = null) {
+    _getNamespacedKey(domain: string, key: string = null) {
         return (key === null) ? `$${domain}$index` : `$${domain}$/${key}`;
     }
 

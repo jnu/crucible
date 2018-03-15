@@ -7,7 +7,7 @@
  * @param  {Number} x
  * @return {Number}
  */
-export function fast_floor_log2(x) {
+export function fast_floor_log2(x: number) {
     let n = 0;
     while (x >>= 1) {
         n++;
@@ -27,6 +27,6 @@ const INV_LOG2 = 1 / Math.log(2);
  * @param  {Number} x
  * @return {Number}
  */
-export function log2(x) {
+export function log2(x: number) {
     return Math.log(x) * INV_LOG2;
 }

@@ -1,10 +1,16 @@
 import * as crux from './crux';
-window.crux = crux;
+
 
 const NOOP = () => {};
 
 
 export class AutoSave {
+
+    public pollInterval: number = 5000;
+
+    public storageClient:
+
+    private _interval: number = null
 
     constructor({ getState, pollInterval, storageClient, onSaveStart, onSaveSuccess, onSaveError }) {
         this._lastState = getState();
@@ -14,7 +20,7 @@ export class AutoSave {
         this.onSaveError = onSaveError || NOOP;
         this.getState = getState;
         this.storageClient = storageClient;
-        this.pollInterval = pollInterval || 5000;
+        this.pollInterval = pollInterval || this.pollInterval;
         this._check = this._check.bind(this);
         this._interval = null;
     }

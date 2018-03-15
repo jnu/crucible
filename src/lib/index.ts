@@ -1,6 +1,6 @@
 /** eslint-env: browser */
 import { BrowserStorageClient } from './BrowserStorageClient';
-import { WordListClient } from './readcross';
+import { WordListClient } from './readcross/index';
 
 
 const browserStorageClient = new BrowserStorageClient(window.localStorage);

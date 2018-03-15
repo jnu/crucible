@@ -8,7 +8,7 @@ import {BASE64_CHAR_TO_INT} from './base64';
  * @param  {Number} len - number of bits to read
  * @return {Number} - bits from string, as number
  */
-export function readBits(binary, start, len) {
+export function readBits(binary: string, start: number, len: number) {
     let startChar = ~~(start / 6);
     let startBitOffset = start % 6;
     let endBit = startBitOffset + len;

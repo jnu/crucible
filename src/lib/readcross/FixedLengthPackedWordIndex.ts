@@ -9,7 +9,11 @@ import { readBits } from '../readBits';
  */
 export class FixedLengthPackedWordIndex extends AbstractFixedLengthWordIndex {
 
-    constructor(cardinality, dawg) {
+    private _trieCharToIdx: {[key: string]: number};
+
+    private _trieIdxToChar: {[key: number]: string};
+
+    constructor(cardinality: number, dawg: string) {
         super(cardinality);
         if (!dawg) {
             throw new Error(`Packed word index must be constructed with DAWG.`);
@@ -25,7 +29,7 @@ export class FixedLengthPackedWordIndex extends AbstractFixedLengthWordIndex {
      * would be very expensive and complicated to update.
      * @param {String} word
      */
-    _addWord(word) {
+    _addWord(word: string) {
         throw new Error(`Can't add word to packed word index.`);
     }
 
@@ -50,7 +54,7 @@ export class FixedLengthPackedWordIndex extends AbstractFixedLengthWordIndex {
             const idx = table[char];
             map[idx] = char;
             return map;
-        }, {});
+        }, {} as {[key: number]: string});
     }
 
     /**
@@ -58,7 +62,7 @@ export class FixedLengthPackedWordIndex extends AbstractFixedLengthWordIndex {
      * @param  {String} pattern
      * @return {String[]}
      */
-    _matchWords(pattern) {
+    _matchWords(pattern: string) {
         // TODO move wildcard matching implementation out to `tiny-trie`, it's
         // been a TODO there for a while ...
         const {

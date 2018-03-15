@@ -7,7 +7,15 @@
  */
 export class AbstractFixedLengthWordIndex {
 
-    constructor(cardinality) {
+    protected _cardinality: number;
+
+    protected _allWords: Set<string>;
+
+    protected _allWildPattern: string;
+
+    protected _trie: any;
+
+    constructor(cardinality: number) {
         if (cardinality === undefined) {
             throw new Error('Index must be constructed with a cardinality.');
         }
@@ -21,7 +29,7 @@ export class AbstractFixedLengthWordIndex {
      * Add a word to the index.
      * @param {String} word - word with length of `cardinality`
      */
-    add(word) {
+    add(word: string) {
         const { _cardinality } = this;
         if (!word) {
             throw new Error(`Cannot insert non-word ${word} into index`);
@@ -37,7 +45,7 @@ export class AbstractFixedLengthWordIndex {
      * @param  {String} pattern - search string, using `*` for a wildcard.
      * @return {String[]}
      */
-    match(pattern) {
+    match(pattern: string) {
         const { _allWildPattern, _allWords, _cardinality } = this;
 
         // Since this index only contains words of a certain length, bail if
@@ -58,14 +66,14 @@ export class AbstractFixedLengthWordIndex {
     /**
      * Implementation of #add. Overwrite in subclass.
      */
-    _addWord(word) {
+    _addWord(word: string) {
         throw new Error('not implemented');
     }
 
     /**
      * Implementation of #match. Overwrite in subclass.
      */
-    _matchWords(pattern) {
+    _matchWords(pattern: string) {
         throw new Error('not implemented');
     }
 

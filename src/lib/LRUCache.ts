@@ -1,9 +1,18 @@
 /**
+ * Track a cache item with its last access time.
+ */
+interface ICacheEntry<T> {
+    ts: number;
+    readonly val: T;
+}
+
+
+/**
  * Identity function
  * @param  {any} x
  * @return {any}
  */
-const IDENT = x => x;
+const IDENT = <T, U>(x: T) => x as any;
 
 
 /**
@@ -11,14 +20,24 @@ const IDENT = x => x;
  *
  * TODO tests, more efficient implementation using self-balancing tree
  */
-export class LRUCache {
+export class LRUCache<T, U> {
 
-    constructor(size, key = IDENT) {
+    public static now() {
+        return Date.now();
+    }
+
+    private _size: number;
+
+    private _items: Map<U, ICacheEntry<T>>;
+
+    private _getKey: <T>(x: T) => U;
+
+    constructor(size: number, key = IDENT) {
         if (!size) {
             throw new Error('LRUCache must be constructed with size.');
         }
         this._size = size;
-        this._items = new Map();
+        this._items = new Map<U, ICacheEntry<T>>();
         this._getKey = key;
     }
 
@@ -26,21 +45,21 @@ export class LRUCache {
         return this._size;
     }
 
-    has(item) {
+    has(item: T) {
         const key = this._getKey(item);
         return this.hasKey(key);
     }
 
-    hasKey(key) {
+    hasKey(key: U) {
         return this._items.has(key);
     }
 
-    get(item) {
+    get(item: T) {
         const key = this._getKey(item);
         return this.getByKey(key);
     }
 
-    getByKey(key) {
+    getByKey(key: U) {
         if (this.hasKey(key)) {
             const entry = this._items.get(key);
             entry.ts = LRUCache.now();
@@ -48,7 +67,7 @@ export class LRUCache {
         }
     }
 
-    add(item) {
+    add(item: T) {
         const key = this._getKey(item);
         if (this.hasKey(key)) {
             this._items.get(key).ts = LRUCache.now();
@@ -84,5 +103,3 @@ export class LRUCache {
     }
 
 }
-
-LRUCache.now = () => Date.now();
