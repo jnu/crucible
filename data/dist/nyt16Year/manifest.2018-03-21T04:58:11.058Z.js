@@ -3,7 +3,7 @@
 export const chunks = {
     1: import('./1.21f422e17589051e9592cb6467ac15de0f8d89f6.dawg'),
     2: import('./2.4f2506f211a3656587e65241bcae10d904407fdd.dawg'),
-    3: import('./3.8895d18b6b87a01ba7c6ece49d234cefffacf04e.dawg'),
+    3: import('./3.5932f7261b40f15283c5a1237ba4e3bd9c26b8d0.dawg'),
     4: import('./4.5ec4cc75973b9d2ee6b5bdfc47aae24df133df54.dawg'),
     5: import('./5.5295e82b25156c238aef00fce7cae09e23be8bdd.dawg'),
     6: import('./6.90395f47e9b4abb37f01e391954f6e5eb43f59d0.dawg'),
@@ -27,4 +27,4 @@ export const chunks = {
     24: import('./24.7d308e08accca8560dd6278150ddc2cbdb38c6e8.dawg')
 };
 
-export const ts = 1521591893224;
+export const ts = 1521608291058;

@@ -173,7 +173,7 @@ export const load = () => Promise.all(
 import {IDawgs} from '../../common';
 
 interface INytChunks {
-${Object.keys(paths).map(k => `${INDENT}readonly ${k}: Promise<string>;`).join('\n')}
+${Object.keys(paths).map(k => `${INDENT}readonly ${k}: Promise<{ default: string }>;`).join('\n')}
 }
 
 interface INytDawgs extends IDawgs {
