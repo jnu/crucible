@@ -1,9 +1,8 @@
-/// <reference path="../../../data/common.d.ts" />
-
 import { WordBank } from './WordBank';
 import { BrowserStorageClient } from '../BrowserStorageClient';
 
 import * as wl_nyt16Year from 'data/dist/nyt16Year';
+import {IDawgs} from 'data/common';
 
 
 /**

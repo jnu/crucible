@@ -1,5 +1,5 @@
 // Auto-generated type declaration. Do not edit.
-/// <reference path="../../common.d.ts" />
+import {IDawgs} from '../../common';
 
 interface INytChunks {
     readonly 1: Promise<string>;

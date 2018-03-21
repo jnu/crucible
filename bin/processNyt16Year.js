@@ -170,7 +170,7 @@ export const load = () => Promise.all(
     console.log('Generating typings ...');
     const typingContent = `\
 // Auto-generated type declaration. Do not edit.
-/// <reference path="../../common.d.ts" />
+import {IDawgs} from '../../common';
 
 interface INytChunks {
 ${Object.keys(paths).map(k => `${INDENT}readonly ${k}: Promise<string>;`).join('\n')}
