@@ -1,3 +1,5 @@
+/// <reference path="../../../data/common.d.ts" />
+
 import { WordBank } from './WordBank';
 import { BrowserStorageClient } from '../BrowserStorageClient';
 
@@ -29,7 +31,7 @@ const PREMADE_LISTS = [
     }
     agg[id] = loader;
     return agg;
-}, {});
+}, {} as {[key: string]: () => Promise<{[key: number]: string}>});
 
 
 const WORDLIST_KEY = 'wordlist';
@@ -37,6 +39,10 @@ const WORDLIST_KEY = 'wordlist';
 
 interface IWordListClientParams {
     local: BrowserStorageClient;
+}
+
+interface ICacheEntry<T> {
+    data: T;
 }
 
 
@@ -90,10 +96,11 @@ export class WordListClient {
      * @return {Promise<WordBank>}
      */
     _fetchWordlistByKey(key: string) {
-        return this._cache.load(WORDLIST_KEY, key)
+        return this._cache.load<ICacheEntry<IDawgs>>(WORDLIST_KEY, key)
             .then(cacheHit => cacheHit.data)
             .catch(e => PREMADE_LISTS[key]()
-                .then(data => this._cache.save(WORDLIST_KEY, key, { data }))
+                .then(data => this._cache.save<ICacheEntry<IDawgs>>(WORDLIST_KEY, key, { data }))
+                .then(cached => cached.data)
             )
             .then(data => new WordBank(data))
             .catch(e => {

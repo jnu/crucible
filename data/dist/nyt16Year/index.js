@@ -1,12 +1,12 @@
 // Auto-generated module loader. Do not edit.
 
-import { chunks } from './manifest.2017-02-06T17:27:45.669Z';
+import { chunks } from './manifest.2018-03-21T00:24:53.224Z';
 
 /**
  * Timestamp (ms) when wordlist was last updated.
  * @type number
  */
-export { ts } from './manifest.2017-02-06T17:27:45.669Z';
+export { ts } from './manifest.2018-03-21T00:24:53.224Z';
 
 /**
  * ID of wordlist.

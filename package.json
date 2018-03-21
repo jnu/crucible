@@ -47,7 +47,7 @@
     "karma-mocha-reporter": "^2.2.2",
     "karma-phantomjs-launcher": "^1.0.2",
     "karma-sinon": "^1.0.5",
-    "karma-webpack": "^2.0.13",
+    "karma-webpack": "2.0.13",
     "lodash": "^4.16.3",
     "material-ui": "^0.16.7",
     "mkdirp": "^0.5.1",
@@ -68,12 +68,12 @@
     "sass-loader": "^6.0.7",
     "sinon": "^1.17.5",
     "style-loader": "^0.13.1",
-    "tiny-trie": "^0.1.0",
+    "tiny-trie": "0.2.5",
     "ts-loader": "^4.0.1",
     "typescript": "^2.7.2",
     "utf8": "^2.1.1",
     "webpack": "4",
-    "webpack-dev-middleware": "^1.10.0",
+    "webpack-dev-middleware": "3",
     "webpack-dev-server": "^3.1.1"
   },
   "devDependencies": {

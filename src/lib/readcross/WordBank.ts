@@ -1,3 +1,4 @@
+import { AbstractFixedLengthWordIndex } from './AbstractFixedLengthWordIndex';
 import { FixedLengthWordIndex } from './FixedLengthWordIndex';
 import { FixedLengthPackedWordIndex } from './FixedLengthPackedWordIndex';
 import { LRUCache } from '../LRUCache';
@@ -27,9 +28,11 @@ export class WordBank {
         return wb;
     };
 
-    private _cache: LRUCache<string, string>;
+    // Cache for recent query results
+    private _cache: LRUCache<void | string[], string>;
 
-    private _indexes: FixedLengthPackedWordIndex[];
+    // Word tries by length
+    private _indexes: AbstractFixedLengthWordIndex[];
 
     constructor(words?: string[] | {[key: number]: string}, cacheSize = 10) {
         this._indexes = [];
@@ -60,7 +63,7 @@ export class WordBank {
     search(token: string) {
         const { _indexes, _cache } = this;
 
-        const cached = _cache.get(token);
+        const cached = _cache.getByKey(token);
         if (cached) {
             return Promise.resolve(cached);
         }
@@ -75,7 +78,7 @@ export class WordBank {
 
         return Promise.resolve(index.match(token))
             .then(match => {
-                _cache.add(match);
+                _cache.addByKey(token, match);
                 return match;
             });
     }
@@ -101,7 +104,7 @@ export class WordBank {
         }
 
         // Commit all of the new words to the indexes.
-        _indexes.forEach(index => index.commit());
+        _indexes.forEach(index => (index as FixedLengthWordIndex).commit());
     }
 
     /**

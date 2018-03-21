@@ -69,6 +69,10 @@ export class LRUCache<T, U> {
 
     add(item: T) {
         const key = this._getKey(item);
+        return this.addByKey(key, item);
+    }
+
+    addByKey(key: U, item: T) {
         if (this.hasKey(key)) {
             this._items.get(key).ts = LRUCache.now();
         } else {

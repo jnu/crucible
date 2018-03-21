@@ -6,7 +6,11 @@
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "baseUrl": ".",
+        "paths": {
+            "data": ["data/"]
+        }
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "global.d.ts"]
 }

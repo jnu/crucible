@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const mkdirp = require('mkdirp');
-const Trie = require('tiny-trie/dist/tiny-trie').Trie;
+const Trie = require('tiny-trie').Trie;
 
 
 /**
@@ -166,6 +166,26 @@ export const load = () => Promise.all(
     }, {}));
 `;
     fs.writeFileSync(path.join(outputDir, 'index.js'), indexContent, 'utf8');
+
+    console.log('Generating typings ...');
+    const typingContent = `\
+// Auto-generated type declaration. Do not edit.
+/// <reference path="../../common.d.ts" />
+
+interface INytChunks {
+${Object.keys(paths).map(k => `${INDENT}readonly ${k}: Promise<string>;`).join('\n')}
+}
+
+interface INytDawgs extends IDawgs {
+${Object.keys(paths).map(k => `${INDENT}readonly ${k}: string;`).join('\n')}
+}
+
+export declare const ts: number;
+export declare const id: string;
+export declare const chunks: INytChunks;
+export declare function load(): Promise<INytDawgs>;
+`;
+    fs.writeFileSync(path.join(outputDir, 'index.d.ts'), typingContent, 'utf8');
 
     console.log('Done.');
 }

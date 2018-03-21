@@ -30,7 +30,7 @@ export class BrowserStorageClient implements IStorageClient {
      * @param {string} domain
      * @param {string} key
      * @param {T} value
-     * @returns {Promise<void>}
+     * @returns {Promise<T>}
      */
     save<T>(domain: string, key: string, value: T) {
         const location = this._getNamespacedKey(domain, key);
@@ -44,7 +44,7 @@ export class BrowserStorageClient implements IStorageClient {
             this._storage.setItem(idxKey, idx ? `${idx}\0${key}` : key);
         }
 
-        return Promise.resolve();
+        return Promise.resolve(value);
     }
 
     /**

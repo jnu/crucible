@@ -8,9 +8,9 @@ export interface IStorageClient {
      * @param {string} domain
      * @param {string} key
      * @param {T} value
-     * @returns {Promise<void>}
+     * @returns {Promise<T>}
      */
-    save: <T>(domain: string, key: string, value: T) => Promise<void>;
+    save: <T>(domain: string, key: string, value: T) => Promise<T>;
 
     /**
      * Load a piece of data from storage from the given domain and key.

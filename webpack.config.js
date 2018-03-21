@@ -40,7 +40,7 @@ var webpackConfig = {
     context: path.resolve(SRC_ROOT),
 
     entry: {
-        app: './index.ts'
+        app: './index.js'
     },
 
     output: {

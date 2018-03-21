@@ -1,18 +1,42 @@
-import * as crux from './crux';
+const crux = require<any>('./crux');
+import {IStorageClient} from './StorageClient';
+import * as Immutable from 'immutable';
 
 
 const NOOP = () => {};
 
 
-export class AutoSave {
+interface IAutoSaveOpts<T> {
+    getState?: () => T;
+    pollInterval?: number;
+    storageClient?: IStorageClient;
+    onSaveStart?: () => void;
+    onSaveSuccess?: (state: T) => void;
+    onSaveError?: () => void;
+}
+
+
+export class AutoSave<T extends Immutable.Map<string, any>> {
 
     public pollInterval: number = 5000;
 
-    public storageClient:
+    public storageClient: IStorageClient;
 
-    private _interval: number = null
+    public getState: () => T;
 
-    constructor({ getState, pollInterval, storageClient, onSaveStart, onSaveSuccess, onSaveError }) {
+    public onSaveStart: () => void;
+
+    public onSaveSuccess: (state: T) => void;
+
+    public onSaveError: () => void;
+
+    private _interval: number = null;
+
+    private _lastBitmap: string;
+
+    private _lastState: T;
+
+    constructor({ getState, pollInterval, storageClient, onSaveStart, onSaveSuccess, onSaveError }: IAutoSaveOpts<T>) {
         this._lastState = getState();
         this._lastBitmap = crux.write(this._lastState);
         this.onSaveStart = onSaveStart || NOOP;
@@ -22,7 +46,6 @@ export class AutoSave {
         this.storageClient = storageClient;
         this.pollInterval = pollInterval || this.pollInterval;
         this._check = this._check.bind(this);
-        this._interval = null;
     }
 
     start() {
@@ -57,7 +80,7 @@ export class AutoSave {
         this._doSave(newState, bitmap);
     }
 
-    _doSave(state, bitmap) {
+    _doSave(state: T, bitmap: string) {
         this.onSaveStart();
         const ts = Date.now();
         const id = state.get('id');
