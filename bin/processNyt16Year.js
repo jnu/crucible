@@ -158,7 +158,7 @@ export const id = '${name.replace(/'/g, '\\\'')}';
  * @returns Promise<{[key: number]: string}>
  */
 export const load = () => Promise.all(
-        Object.keys(chunks).map(key => chunks[key].then(dawg => [key, dawg]))
+        Object.keys(chunks).map(key => chunks[key].then(mod => [key, mod.default]))
     )
     .then(pairs => pairs.reduce((agg, [key, dawg]) => {
         agg[key] = dawg;

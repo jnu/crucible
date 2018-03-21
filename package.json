@@ -68,7 +68,7 @@
     "sass-loader": "^6.0.7",
     "sinon": "^1.17.5",
     "style-loader": "^0.13.1",
-    "tiny-trie": "0.2.5",
+    "tiny-trie": "0.2.6",
     "ts-loader": "^4.0.1",
     "typescript": "^2.7.2",
     "utf8": "^2.1.1",
