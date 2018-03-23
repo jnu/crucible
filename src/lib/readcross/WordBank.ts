@@ -50,7 +50,7 @@ export class WordBank {
      * Insert a word or words into the word bank.
      * @param  {String|String[]} word - single word or array of words
      */
-    insert(word: string) {
+    public insert(word: string) {
         this._fromWordsArray(Array.isArray(word) ? word : [word]);
     }
 
@@ -58,14 +58,14 @@ export class WordBank {
      * Find all tokens matching input string. Search supports `*` wildcard to
      * match any token.
      * @param  {String} token
-     * @return {String[]}
+     * @return {Promise<String[]>}
      */
-    search(token: string) {
+    public search(token: string): Promise<string[]> {
         const { _indexes, _cache } = this;
 
         const cached = _cache.getByKey(token);
         if (cached) {
-            return Promise.resolve(cached);
+            return Promise.resolve(cached as string[]);
         }
 
         const len = token.length;
@@ -73,22 +73,38 @@ export class WordBank {
 
         // Return immediately if index does not exist.
         if (!index) {
-            return Promise.resolve([]);
+            return Promise.resolve([] as string[]);
         }
 
         return Promise.resolve(index.match(token))
             .then(match => {
                 _cache.addByKey(token, match);
-                return match;
+                return (match || []) as string[];
             });
     }
 
     /**
-     * Insert the given words into the appropriate indexes.
-     * @private
-     * @param  {String[]} words
+     * Check whether search term exists in the word bank, synchronously.
+     * Wildcards are supported using the '*' character.
+     * @param {string} query
+     * @returns {boolean}
      */
-    _fromWordsArray(words: string[]) {
+    public testSync(query: string): boolean {
+        const {_indexes, _cache} = this;
+        const len = query.length;
+        const index = _indexes[len];
+        if (!index) {
+            return false;
+        }
+        return index.test(query);
+    }
+
+    /**
+     * Insert the given words into the appropriate indexes.
+     * @param  {String[]} words
+     * @private
+     */
+    private _fromWordsArray(words: string[]) {
         const { _indexes } = this;
 
         // Create indexes for words by length. The length is always known, so
@@ -110,8 +126,9 @@ export class WordBank {
     /**
      * Initialize fixed-length indexes from packed DAWGs.
      * @param  {{ [key: number]: String }} dawgs - map from length to DAWG
+     * @private
      */
-    _fromWordsDAWGs(dawgs: {[key: number]: string}) {
+    private _fromWordsDAWGs(dawgs: {[key: number]: string}) {
         const { _indexes } = this;
 
         const sizes = Object.keys(dawgs);

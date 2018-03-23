@@ -27,9 +27,9 @@ export class AbstractFixedLengthWordIndex {
 
     /**
      * Add a word to the index.
-     * @param {String} word - word with length of `cardinality`
+     * @param {string} word - word with length of `cardinality`
      */
-    add(word: string) {
+    public add(word: string): void {
         const { _cardinality } = this;
         if (!word) {
             throw new Error(`Cannot insert non-word ${word} into index`);
@@ -42,10 +42,10 @@ export class AbstractFixedLengthWordIndex {
 
     /**
      * Match words in trie either exactly or using wildcards.
-     * @param  {String} pattern - search string, using `*` for a wildcard.
-     * @return {String[]}
+     * @param  {string} pattern - search string, using `*` for a wildcard.
+     * @return {string[]}
      */
-    match(pattern: string) {
+    public match(pattern: string): string[] {
         const { _allWildPattern, _allWords, _cardinality } = this;
 
         // Since this index only contains words of a certain length, bail if
@@ -64,16 +64,48 @@ export class AbstractFixedLengthWordIndex {
     }
 
     /**
-     * Implementation of #add. Overwrite in subclass.
+     * Test if a word exists in the trie, either exactly or using a wildcard. Use '*' for wildcard.
+     * @param {string} pattern
+     * @returns {boolean}
      */
-    _addWord(word: string) {
+    public test(pattern: string): boolean {
+        if (!pattern || pattern.length !== this._cardinality) {
+            return false;
+        }
+
+        if (pattern === this._allWildPattern) {
+            return this._allWords.size > 0;
+        }
+
+        return this._testPattern(pattern);
+    }
+
+    /**
+     * Implementation of #add. Overwrite in subclass.
+     * @param {string} word
+     * @private
+     */
+    protected _addWord(word: string): void {
         throw new Error('not implemented');
     }
 
     /**
      * Implementation of #match. Overwrite in subclass.
+     * @param {string} pattern
+     * @returns {string[]}
+     * @private
      */
-    _matchWords(pattern: string) {
+    protected _matchWords(pattern: string): string[] {
+        throw new Error('not implemented');
+    }
+
+    /**
+     * Implementation of #test. Overwrite in subclass.
+     * @param {string} pattern
+     * @returns {boolean}
+     * @private
+     */
+    protected _testPattern(pattern: string): boolean {
         throw new Error('not implemented');
     }
 

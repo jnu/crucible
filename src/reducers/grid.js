@@ -1,6 +1,7 @@
 import Immutable from 'immutable';
 import UUID from 'pure-uuid';
 import { isDefined } from '../lib/isDefined';
+import {fill} from '../lib/gridiron';
 
 
 /**
@@ -460,7 +461,9 @@ export const rReplaceGrid = (state, action) => {
     });
 };
 
-
+/**
+ * Toggle symmetrical block constraint.
+ */
 export const rToggleSymmetricalGrid = (state, action) => {
     return state.set('symmetrical', !state.get('symmetrical'));
 };
@@ -472,6 +475,49 @@ export const rUpdatePuzzleInfo = (state, action) => {
     return state.set(action.key, action.value);
 };
 
+/**
+ * Mark the start of the auto-fill process.
+ */
+export const rAutoFillGridStart = (state, action) => {
+    return (state.set('autoFilling', true)
+        .set('autoFillStatus', {})
+        .set('autoFillError', null));
+};
+
+/**
+ * Update summary stats about auto-fill progress.
+ */
+export const rAutoFillGridUpdate = (state, action) => {
+    return state.set('autoFillStatus', action.stats);
+};
+
+/**
+ * Fill the grid randomly with words from the wordlists.
+ */
+export const rAutoFillGridDone = (state, action) => {
+    return (state
+        .set('content', Immutable.fromJS(action.content))
+        .set('autoFilling', false)
+        .set('autoFillStatus', null)
+        .set('autoFillError', null));
+};
+
+/**
+ * Mark an error that occurred while auto-filling.
+ */
+export const rAutoFillGridError = (state, action) => {
+    return (state
+        .set('autoFilling', false)
+        .set('autoFillStatus', null)
+        .set('autoFillError', action.error));
+};
+
+/**
+ * Dismiss an error that occurred while auto-filling grid.
+ */
+export const rAutoFillGridDismissError = (state, action) => {
+    return state.set('autoFillError', null);
+};
 
 /**
  * Grid state reducer. Applies action transformations to state.
@@ -502,6 +548,16 @@ const dispatchGridAction = (state, action) => {
             return rToggleSymmetricalGrid(state, action);
         case 'UPDATE_PUZZLE_INFO':
             return rUpdatePuzzleInfo(state, action);
+        case 'AUTO_FILL_GRID_START':
+            return rAutoFillGridStart(state, action);
+        case 'AUTO_FILL_STATS_UPDATE':
+            return rAutoFillGridUpdate(state, action);
+        case 'AUTO_FILL_GRID_DONE':
+            return rAutoFillGridDone(state, action);
+        case 'AUTO_FILL_GRID_ERROR':
+            return rAutoFillGridError(state, action);
+        case 'AUTO_FILL_GRID_DISMISS_ERROR':
+            return rAutoFillGridDismissError(state, action);
         default:
             return state;
     }

@@ -13,6 +13,8 @@ export {
     updateClue,
     moveCursorAndUpdate,
     updatePuzzleInfo,
+    autoFillGrid,
+    autoFillGridDismissError,
 } from './gridSemantic';
 
 export {

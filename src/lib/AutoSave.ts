@@ -50,7 +50,7 @@ export class AutoSave<T extends Immutable.Map<string, any>> {
 
     start() {
         if (!this._interval) {
-            this._interval = setInterval(this._check, this.pollInterval);
+            this._interval = window.setInterval(this._check, this.pollInterval);
         }
     }
 

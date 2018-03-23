@@ -11,7 +11,8 @@ import {
     moveCursor,
     moveCursorAndUpdate,
     requestCellContext,
-    hideCellContext
+    hideCellContext,
+    autoFillGridDismissError,
 } from '../actions';
 import * as Keys from '../lib/keys';
 import './GridContent.scss';
@@ -30,7 +31,8 @@ class GridContentView extends React.Component {
             'onLoseCellContext',
             'onRequestCellContext',
             'onKeyDown',
-            'onDoubleClick'
+            'onDoubleClick',
+            'dismissAutoFillError',
         );
     }
 
@@ -184,6 +186,11 @@ class GridContentView extends React.Component {
         dispatch(setDirection(getNextDirection(cursorDirection)));
     }
 
+    dismissAutoFillError() {
+        const {dispatch} = this.props;
+        dispatch(autoFillGridDismissError());
+    }
+
     render() {
         const {
             content,
@@ -191,7 +198,10 @@ class GridContentView extends React.Component {
             height,
             cellSize,
             cursor,
-            cursorDirection
+            cursorDirection,
+            autoFilling,
+            autoFillStatus,
+            autoFillError,
         } = this.props;
 
         const cursorCell = cursor !== null && cursor !== undefined && content.get(cursor);
@@ -203,6 +213,24 @@ class GridContentView extends React.Component {
             width: width * cellSize + 2,
             height: height * cellSize + 2
         };
+
+        // Show status of auto-fill, hide grid for editing.
+        if (autoFilling) {
+            return (
+                <div>
+                    <pre><code>{JSON.stringify(autoFillStatus, null, 2)}</code></pre>
+                </div>
+            );
+        }
+
+        if (autoFillError) {
+            return (
+                <div>
+                    <div>Error: {autoFillError.message}</div>
+                    <button onClick={this.dismissAutoFillError}>Dismiss</button>
+                </div>
+            );
+        }
 
         return (
             <div className="GridContent"
@@ -245,7 +273,10 @@ const mapStateToProps = state => {
         cellSize: grid.get('cellSize'),
         menuCell: grid.get('menuCell'),
         cursor: grid.get('cursor'),
-        cursorDirection: grid.get('cursorDirection')
+        cursorDirection: grid.get('cursorDirection'),
+        autoFilling: grid.get('autoFilling'),
+        autoFillStatus: grid.get('autoFillStatus'),
+        autoFillError: grid.get('autoFillError'),
     };
 };
 

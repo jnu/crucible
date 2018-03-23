@@ -1,7 +1,9 @@
 import React from 'react';
+import { pure } from 'recompose';
 import { connect } from 'react-redux';
 import { List } from 'react-virtualized';
 import { isDefined } from '../lib/isDefined';
+import { autoFillGrid } from '../actions/gridSemantic';
 import './WordWizard.scss';
 
 
@@ -236,6 +238,7 @@ class WordWizardView extends React.Component {
         super(props);
         this.state = INITIAL_WIZARD_STATE;
         this._renderListRow = this._renderListRow.bind(this);
+        this._autoFillGrid = this._autoFillGrid.bind(this);
     }
 
     /**
@@ -306,6 +309,10 @@ class WordWizardView extends React.Component {
         );
     }
 
+    _autoFillGrid() {
+        this.props.dispatch(autoFillGrid(this.props.wordlist));
+    }
+
     render() {
         const { query, fetching, matches, error } = this.state;
         const matchesUi = query === null ?
@@ -324,6 +331,7 @@ class WordWizardView extends React.Component {
             ;
         return (
             <div className="WordWizard" style={wordWizardStyle}>
+                <div><button onClick={this._autoFillGrid}>Auto Fill</button></div>
                 <div>{matchesUi}</div>
             </div>
         );
@@ -333,6 +341,5 @@ class WordWizardView extends React.Component {
 
 
 const mapStateToProps = ({ grid, wordlist }) => ({ grid, wordlist });
-const mapDispatchToProps = dispatch => ({});
 
-export const WordWizard = connect(mapStateToProps, mapDispatchToProps)(WordWizardView);
+export const WordWizard = connect(mapStateToProps)(pure(WordWizardView));
