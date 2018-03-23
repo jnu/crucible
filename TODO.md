@@ -52,6 +52,10 @@ Items may jump around and work may not be completed exactly in the planned order
  * Answer suggestions:
     * Search through word lists
     * Rank by metadata (?)
+ * Auto-fill grid
+    - Basic functional version
+    - Non-blocking in webworker
+    - Display summary stats on progress
 
 ## 0.5
  * Word lists:
@@ -59,12 +63,20 @@ Items may jump around and work may not be completed exactly in the planned order
     * Select, deselect
     * Context aware (crossings)
  * Grid validation (options)
+ * Auto-fill grid
+    - Improve TS perf (benchmark is 2523 pats/sec, )
+    - Rust implementation
+    - Graceful degradation to TS
 
 ## 0.6
  * Print view
  * Extreme case solutions (> 21x21)
  * Ensure clues containers resize properly
  * Puzzle difficulty grade (this depends on clues as well as answers / grid though)
+ * Auto-fill grid
+   - measure search space and progress through this space
+   - performance / progress viz
+   - About page explaining how progress viz works
 
 ## 1.0
  * Server-side persistence
