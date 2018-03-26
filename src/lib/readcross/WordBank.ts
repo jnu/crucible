@@ -4,6 +4,23 @@ import { FixedLengthPackedWordIndex } from './FixedLengthPackedWordIndex';
 import { LRUCache } from '../LRUCache';
 
 
+export interface IJSONWordIndex {
+    data: any;
+    type: string;
+}
+
+const _TYPE_TO_IDX_CLS_MAP = {
+    [FixedLengthWordIndex.type]: FixedLengthWordIndex,
+    [FixedLengthPackedWordIndex.type]: FixedLengthPackedWordIndex,
+};
+
+function _typeToIdxCls(type: string) {
+    if (_TYPE_TO_IDX_CLS_MAP.hasOwnProperty(type)) {
+        return _TYPE_TO_IDX_CLS_MAP[type];
+    }
+    throw new Error(`Unknown word index type: ${type}`);
+}
+
 /**
  * An arbitrary-length word index that supports wildcard matching.
  */
@@ -28,6 +45,15 @@ export class WordBank {
         return wb;
     };
 
+    public static fromJSON(indexes: IJSONWordIndex[]) {
+        const wb = new WordBank();
+        wb._indexes = indexes.map(idx => {
+            const Cls = _typeToIdxCls(idx.type);
+            return Cls.fromJSON(idx.data);
+        });
+        return wb;
+    }
+
     // Cache for recent query results
     private _cache: LRUCache<void | string[], string>;
 
@@ -44,6 +70,13 @@ export class WordBank {
                 this._fromWordsDAWGs(words as {[key: number]: string});
             }
         }
+    }
+
+    public toJSON(): IJSONWordIndex[] {
+        return this._indexes.map(idx => ({
+            data: idx.toJSON(),
+            type: idx.getType(),
+        }));
     }
 
     /**

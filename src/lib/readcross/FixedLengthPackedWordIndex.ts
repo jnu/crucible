@@ -8,13 +8,30 @@ import { AbstractFixedLengthWordIndex } from './AbstractFixedLengthWordIndex';
  */
 export class FixedLengthPackedWordIndex extends AbstractFixedLengthWordIndex {
 
+    public static type: 'fixedLengthPackedWordIndex';
+
+    public static fromJSON(obj: any) {
+        return new FixedLengthPackedWordIndex(obj.cardinality, obj.dawg);
+    }
+
+    private _dawg: string;
+
     constructor(cardinality: number, dawg: string) {
         super(cardinality);
         if (!dawg) {
             throw new Error(`Packed word index must be constructed with DAWG.`);
         }
+        // TODO(jnu) give tiny-trie some way to recover the trie instead of keeping it here redundantly.
+        this._dawg = dawg;
         this._trie = new PackedTrie(dawg);
         this._preprocess();
+    }
+
+    toJSON() {
+        return {
+            cardinality: this._cardinality,
+            dawg: this._dawg,
+        };
     }
 
     /**

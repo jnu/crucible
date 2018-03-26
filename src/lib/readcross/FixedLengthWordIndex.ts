@@ -7,6 +7,15 @@ import { AbstractFixedLengthWordIndex } from './AbstractFixedLengthWordIndex';
  */
 export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
 
+    public static type = 'fixedLengthWordIndex';
+
+    public static fromJSON(json: any) {
+        const idx = new FixedLengthWordIndex(json.cardinality);
+        idx._trie = new Trie(json.trie);
+        idx._allWords = idx._trie.search(idx._allWildPattern);
+        return idx;
+    }
+
     private _wordsBuffer: string[];
 
     constructor(cardinality: number) {
@@ -24,6 +33,13 @@ export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
             _trie.insert(word);
             _allWords.add(word);
         });
+    }
+
+    toJSON() {
+        return {
+            cardinality: this._cardinality,
+            trie: this._trie.toJSON(),
+        };
     }
 
     /**

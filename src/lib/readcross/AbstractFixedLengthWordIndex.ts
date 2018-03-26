@@ -7,6 +7,20 @@
  */
 export class AbstractFixedLengthWordIndex {
 
+    /**
+     * The word index's identifier for serialization. Set in subclass.
+     * @type {string}
+     */
+    public static type: string = null;
+
+    /**
+     * Restore an index from its JSON serialization. See also #toJSON.
+     * @param {Object} obj
+     */
+    public static fromJSON(obj: Object) {
+        throw new Error('not implemented');
+    }
+
     protected _cardinality: number;
 
     protected _allWords: Set<string>;
@@ -78,6 +92,23 @@ export class AbstractFixedLengthWordIndex {
         }
 
         return this._testPattern(pattern);
+    }
+
+    /**
+     * Get the class identifier for this instance.
+     * @returns {string}
+     */
+    public getType(): string {
+        // TODO(jnu) find a cleaner way to get static property from instance's constructor.
+        return (this.constructor as (typeof AbstractFixedLengthWordIndex)).type;
+    }
+
+    /**
+     * Serialize the index as a simple JSON object. See also .fromJSON.
+     * @returns {Object}
+     */
+    public toJSON(): Object {
+        throw new Error('not implemented');
     }
 
     /**

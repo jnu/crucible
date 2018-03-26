@@ -53,6 +53,17 @@ var webpackConfig = {
     module: {
         rules: [
             {
+                test: /\.worker\.ts$/,
+                use: [{
+                    loader: 'worker-loader'
+                }, {
+                    loader: 'babel-loader',
+                    options: {cacheDirectory: true}
+                }, {
+                    loader: 'ts-loader'
+                }],
+            },
+            {
                 test: /\.jsx?$/,
                 include: [SRC_ROOT, /tiny-trie/],
                 use: [{

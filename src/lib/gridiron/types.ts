@@ -1,3 +1,5 @@
+import {IJSONWordIndex} from "../readcross/WordBank";
+
 /**
  * A content cell, i.e. a square in the grid containing a letter.
  * TODO(jnu) move to shared location when converting other things to TS.
@@ -56,4 +58,43 @@ export interface IProgressStats {
     readonly visits: number;
     readonly leftToSolve: number;
     readonly totalWords: number;
+}
+
+/**
+ * HACK: Typescript doesn't have good support for typing WebWorkers within
+ * arbitrary projects, so define APIs here.
+ * See https://github.com/Microsoft/TypeScript/issues/494 for more info.
+ */
+export interface IWebWorker {
+    postMessage: (message: any) => void;
+    addEventListener: (type: string, handler: (event: any) => void) => void;
+}
+
+export interface IGridIronSolveMessage {
+    readonly type: 'SOLVE';
+    readonly grid: GridCell[];
+    readonly wordlists: {[key: string]: IJSONWordIndex[]};
+}
+
+export type GridIronMessage = IGridIronSolveMessage;
+
+interface IGridIronErrorResponse {
+    readonly type: 'ERROR';
+    readonly message: string;
+}
+
+interface IGridIronSolutionResponse {
+    readonly type: 'SOLUTION';
+    readonly solution: GridCell[];
+}
+
+interface IGridIronProgressResponse {
+    readonly type: 'PROGRESS';
+    readonly data: IProgressStats;
+}
+
+export type GridIronResponse = IGridIronErrorResponse | IGridIronSolutionResponse | IGridIronProgressResponse;
+
+export interface IWorkerMessage<T> {
+    data: T;
 }
