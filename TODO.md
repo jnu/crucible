@@ -52,10 +52,12 @@ Items may jump around and work may not be completed exactly in the planned order
  * Answer suggestions:
     * Search through word lists
     * Rank by metadata (?)
+    * Cleaner UI display of answers
  * Auto-fill grid
-    - Basic functional version
-    - Non-blocking in webworker
-    - Display summary stats on progress
+    - ~~Basic functional version~~
+    - ~~Non-blocking in webworker~~
+    - ~~Display summary stats on progress~~
+    - lock grid / UI buttons while solving puzzle
 
 ## 0.5
  * Word lists:
@@ -64,7 +66,9 @@ Items may jump around and work may not be completed exactly in the planned order
     * Context aware (crossings)
  * Grid validation (options)
  * Auto-fill grid
-    - Improve TS perf (benchmark is 2523 pats/sec, )
+    - ~~Improve TS perf (benchmark is 2523 pats/sec, )~~
+    - investigate non-determinism / solvability
+    - better looking stats output
     - Rust implementation
     - Graceful degradation to TS
 
