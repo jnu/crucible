@@ -61,6 +61,7 @@ function dispatch(message: IWorkerMessage<GridIronMessage>) {
     switch (message.data.type) {
         case 'SOLVE':
             solve(message.data.grid, message.data.wordlists);
+            break;
         default:
             throw new Error(`Unknown event type ${message.data.type}`);
     }

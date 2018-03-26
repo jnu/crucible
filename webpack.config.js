@@ -45,7 +45,8 @@ var webpackConfig = {
 
     output: {
         path: path.resolve(__dirname, 'build', 'app'),
-        filename: appFilename
+        filename: appFilename,
+        globalObject: 'this',
     },
 
     mode: PROD ? 'production' : 'development',
