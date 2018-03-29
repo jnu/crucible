@@ -8,11 +8,15 @@ import {GridCell, IProgressStats, GridIronResponse, IWorkerMessage, IGridIronSol
 import {Deferred} from "../deferred";
 
 
-function _sendAutoFillMessageToWorker(worker: Worker, grid: GridCell[], wordlists: {[key: string]: IJSONWordIndex[]}) {
+function _sendAutoFillMessageToWorker(worker: Worker,
+                                      grid: GridCell[],
+                                      wordlists: {[key: string]: IJSONWordIndex[]},
+                                      updateInterval: number) {
     const msg: IGridIronSolveMessage = {
         type: 'SOLVE',
         grid,
         wordlists,
+        updateInterval,
     };
     worker.postMessage(msg);
 }
@@ -38,7 +42,7 @@ function _runAutoFillOnWorker(grid: GridCell[],
     });
 
     const jsonLists = _serializeWordLists(words);
-    _sendAutoFillMessageToWorker(worker, grid, jsonLists);
+    _sendAutoFillMessageToWorker(worker, grid, jsonLists, updateInterval);
 
     return deferred.promise;
 }
@@ -50,6 +54,7 @@ function _serializeWordLists(words: {[key: string]: WordBank}): {[key: string]: 
     });
     return json;
 }
+
 
 /**
  * Fill in grid content based on initial constraints (i.e., the content given
@@ -63,11 +68,12 @@ function _serializeWordLists(words: {[key: string]: WordBank}): {[key: string]: 
 export function fill(grid: GridCell[],
                      words: {[key: string]: WordBank},
                      statsCallback?: (x: IProgressStats) => void,
-                     updateInterval: number = 2000): Promise<GridCell[]> {
+                     updateInterval: number = 500): Promise<GridCell[]> {
     // TODO(jnu)
     // - Fix update interval
     // - Write Rust implementation
     // - Graceful degradation Rust -> TS based on availability.
-
+    // - Lock so that multiple threads aren't spawned
+    // - Ability to cancel processing
     return _runAutoFillOnWorker(grid, words, statsCallback, updateInterval);
 }

@@ -304,7 +304,12 @@ class WordWizardView extends React.Component {
         const { match, hits } = this.state.matches[index];
         return (
             <div key={key} style={style}>{
-                hits.map((hit, i) => <span className={hit ? 'match-hit' : 'match-miss'}>{match[i]}</span>)
+                hits.map((hit, i) => (
+                    <span key={`key-${i}`}
+                          className={hit ? 'match-hit' : 'match-miss'}>
+                        {match[i]}
+                    </span>
+                ))
             }</div>
         );
     }

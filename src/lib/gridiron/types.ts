@@ -74,9 +74,14 @@ export interface IGridIronSolveMessage {
     readonly type: 'SOLVE';
     readonly grid: GridCell[];
     readonly wordlists: {[key: string]: IJSONWordIndex[]};
+    readonly updateInterval: number;
 }
 
-export type GridIronMessage = IGridIronSolveMessage;
+export interface IGridIronAbortMessage {
+    readonly type: 'ABORT';
+}
+
+export type GridIronMessage = IGridIronSolveMessage | IGridIronAbortMessage;
 
 interface IGridIronErrorResponse {
     readonly type: 'ERROR';

@@ -18,10 +18,6 @@ import { storageClient } from './lib/index';
 import { init as initWordList } from './init/wordlist';
 
 
-const injectTapEventPlugin = require('react-tap-event-plugin');
-injectTapEventPlugin();
-
-
 const loggerMiddleware = createLogger();
 
 const store = createStore(

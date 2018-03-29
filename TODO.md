@@ -57,7 +57,7 @@ Items may jump around and work may not be completed exactly in the planned order
     - ~~Basic functional version~~
     - ~~Non-blocking in webworker~~
     - ~~Display summary stats on progress~~
-    - lock grid / UI buttons while solving puzzle
+    - ~~lock grid / UI buttons while solving puzzle~~ 
 
 ## 0.5
  * Word lists:
@@ -68,19 +68,20 @@ Items may jump around and work may not be completed exactly in the planned order
  * Auto-fill grid
     - ~~Improve TS perf (benchmark is 2523 pats/sec, )~~
     - investigate non-determinism / solvability
-    - better looking stats output
-    - Rust implementation
-    - Graceful degradation to TS
+    - error handling for non-solvable case
+    - parallelize ts solution
+    - ~~better looking stats output~~
 
 ## 0.6
  * Print view
- * Extreme case solutions (> 21x21)
+ * Extreme case grid layout (> 21x21)
  * Ensure clues containers resize properly
  * Puzzle difficulty grade (this depends on clues as well as answers / grid though)
  * Auto-fill grid
    - measure search space and progress through this space
    - performance / progress viz
    - About page explaining how progress viz works
+   - Make auto-fill buttons and errors look nicer
 
 ## 1.0
  * Server-side persistence
@@ -92,7 +93,10 @@ Items may jump around and work may not be completed exactly in the planned order
  * Performance fixes for WordBank (see benchmarks)
     - Improve tail / low information over naive RegEx search
 
-## 2.0
+## 1.1
+ * Autofill: rust implementation w/ graceful degradation
+
+## 2.0 (or separate project)
  * "Play" mode - for solving
  * Accounts / auth / whatever
  * Sharing, commenting, collaborating (?)
@@ -100,5 +104,4 @@ Items may jump around and work may not be completed exactly in the planned order
 
 
 ## Misc
- - Port wildcard trie matching to `tiny-trie`
-    - Refactor bit manip as necessary
+ * ~~Port wildcard trie matching to `tiny-trie` library~~

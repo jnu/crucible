@@ -12,7 +12,6 @@ import {
     moveCursorAndUpdate,
     requestCellContext,
     hideCellContext,
-    autoFillGridDismissError,
 } from '../actions';
 import * as Keys from '../lib/keys';
 import './GridContent.scss';
@@ -32,7 +31,6 @@ class GridContentView extends React.Component {
             'onRequestCellContext',
             'onKeyDown',
             'onDoubleClick',
-            'dismissAutoFillError',
         );
     }
 
@@ -42,6 +40,10 @@ class GridContentView extends React.Component {
         cmp.mouseClickListener = e => {
             const { gridContentRoot } = cmp;
             const { target } = e;
+
+            if (cmp.props.autoFilling) {
+                return;
+            }
 
             if (!gridContentRoot) {
                 if (DEBUG) {
@@ -100,26 +102,42 @@ class GridContentView extends React.Component {
 
     onFocusCell(index) {
         const { dispatch } = this.props;
+        if (this.props.autoFilling) {
+            return;
+        }
         dispatch(focusCell(index));
     }
 
     onUpdateCell(index, updates) {
         const { dispatch } = this.props;
+        if (this.props.autoFilling) {
+            return;
+        }
         dispatch(updateCell(index, updates));
     }
 
     onLoseCellContext() {
         const { dispatch } = this.props;
+        if (this.props.autoFilling) {
+            return;
+        }
         dispatch(hideCellContext());
     }
 
     onRequestCellContext(index) {
         const { dispatch } = this.props;
+        if (this.props.autoFilling) {
+            return;
+        }
         dispatch(requestCellContext(index));
     }
 
     onKeyDown(e, index, cursorDirection, content) {
         const { dispatch } = this.props;
+
+        if (this.props.autoFilling) {
+            return;
+        }
 
         if (index === undefined || index === null) {
             return;
@@ -183,12 +201,10 @@ class GridContentView extends React.Component {
 
     onDoubleClick() {
         const { dispatch, cursorDirection } = this.props;
+        if (this.props.autoFilling) {
+            return;
+        }
         dispatch(setDirection(getNextDirection(cursorDirection)));
-    }
-
-    dismissAutoFillError() {
-        const {dispatch} = this.props;
-        dispatch(autoFillGridDismissError());
     }
 
     render() {
@@ -199,9 +215,6 @@ class GridContentView extends React.Component {
             cellSize,
             cursor,
             cursorDirection,
-            autoFilling,
-            autoFillStatus,
-            autoFillError,
         } = this.props;
 
         const cursorCell = cursor !== null && cursor !== undefined && content.get(cursor);
@@ -213,24 +226,6 @@ class GridContentView extends React.Component {
             width: width * cellSize + 2,
             height: height * cellSize + 2
         };
-
-        // Show status of auto-fill, hide grid for editing.
-        if (autoFilling) {
-            return (
-                <div>
-                    <pre><code>{JSON.stringify(autoFillStatus, null, 2)}</code></pre>
-                </div>
-            );
-        }
-
-        if (autoFillError) {
-            return (
-                <div>
-                    <div>Error: {autoFillError.message}</div>
-                    <button onClick={this.dismissAutoFillError}>Dismiss</button>
-                </div>
-            );
-        }
 
         return (
             <div className="GridContent"
@@ -275,8 +270,6 @@ const mapStateToProps = state => {
         cursor: grid.get('cursor'),
         cursorDirection: grid.get('cursorDirection'),
         autoFilling: grid.get('autoFilling'),
-        autoFillStatus: grid.get('autoFillStatus'),
-        autoFillError: grid.get('autoFillError'),
     };
 };
 

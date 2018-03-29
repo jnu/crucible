@@ -146,7 +146,7 @@ class GridMetaMenuView extends React.Component {
 
         return (
             <div className="GridMetaMenu">
-                <FlatButton onTouchTap={this.openGridMenu}>Grid</FlatButton>
+                <FlatButton onClick={this.openGridMenu}>Grid</FlatButton>
                 <Popover open={meta.get('openDialog') === 'GRID_MENU'}
                          anchorEl={this.state.anchorEl}
                          anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
@@ -179,14 +179,14 @@ class GridMetaMenuView extends React.Component {
                         contentStyle={{ width: 400 }}
                         onRequestClose={this.closeDialog}
                         autoScrollBodyContent={true}
-                        actions={<FlatButton label="Cancel" primary={false} onTouchTap={this.closeDialog} />}>
+                        actions={<FlatButton label="Cancel" primary={false} onClick={this.closeDialog} />}>
                     {!meta.get('requestingGridShapeIndex') ?
                         <List>
                             {meta.get('gridShapeIndex').map(obj => {
                                 const key = obj.get('key');
                                 const name = obj.get('name');
                                 return (
-                                    <ListItem key={key} onTouchTap={() => this.importGrid(key)}>
+                                    <ListItem key={key} onClick={() => this.importGrid(key)}>
                                         {name ? name : <span>Unnamed</span>}
                                     </ListItem>
                                 );
@@ -203,10 +203,10 @@ class GridMetaMenuView extends React.Component {
                         <div>
                             <FlatButton label="Cancel"
                                         primary={false}
-                                        onTouchTap={this.closeDialog} />
+                                        onClick={this.closeDialog} />
                             <RaisedButton label="Save"
                                         primary={true}
-                                        onTouchTap={this.exportGrid} />
+                                        onClick={this.exportGrid} />
                         </div>
                         }>
                     <TextField hintText="Enter a name for this template"
@@ -217,14 +217,14 @@ class GridMetaMenuView extends React.Component {
                         contentStyle={{ width: 400 }}
                         autoScrollBodyContent={true}
                         onRequestClose={this.closeDialog}
-                        actions={<FlatButton label="Cancel" primary={false} onTouchTap={this.closeDialog} />}>
+                        actions={<FlatButton label="Cancel" primary={false} onClick={this.closeDialog} />}>
                     {!meta.get('requestingPuzzleIndex') ?
                         <List>
                             {meta.get('puzzleIndex').map(obj => {
                                 const id = obj.get('id');
                                 const title = obj.get('title');
                                 return (
-                                    <ListItem key={id} onTouchTap={() => this.loadPuzzle(id)}>
+                                    <ListItem key={id} onClick={() => this.loadPuzzle(id)}>
                                         {title ? title : <span>(Untitled)</span>}
                                     </ListItem>
                                 );
@@ -240,8 +240,8 @@ class GridMetaMenuView extends React.Component {
                         onRequestClose={this.closeDialog}
                         actions={
                         <div>
-                            <FlatButton label="Cancel" primary={false} onTouchTap={this.closeDialog} />
-                            <RaisedButton label="Apply" primary={true} onTouchTap={this.resizeGrid} />
+                            <FlatButton label="Cancel" primary={false} onClick={this.closeDialog} />
+                            <RaisedButton label="Apply" primary={true} onClick={this.resizeGrid} />
                         </div>}>
                         <div>
                             Width: <TextField name="ResizeGrid_Width_Input"

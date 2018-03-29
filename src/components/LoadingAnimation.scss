@@ -1,0 +1,76 @@
+@import 'constants';
+$boxDim: 10px;
+
+.LoadingAnimation-sq {
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: $boxDim;
+  height: $boxDim;
+  background-color: $dark;
+  animation-name: sqmove;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+
+  &.-init {
+    animation-name: sqinit;
+  }
+}
+
+@keyframes sqinit {
+  0% {
+    top: calc(50% - #{$boxDim});
+    left: calc(50% - #{$boxDim});
+  }
+  25% {
+    top: calc(50% - #{$boxDim});
+    left: 50%;
+  }
+  50% {
+    top: 50%;
+    left: 50%;
+  }
+  75% {
+    top: 50%;
+    left: calc(50% - #{$boxDim});
+  }
+  100% {
+    top: calc(50% - #{$boxDim});
+    left: calc(50% - #{$boxDim});
+  }
+}
+
+@keyframes sqmove {
+  0% {
+    top: 0;
+    left: 0;
+  }
+  25% {
+    top: 0;
+    left: calc(100% - #{$boxDim});
+  }
+  50% {
+    top: calc(100% - #{$boxDim});
+    left: calc(100% - #{$boxDim});
+  }
+  75% {
+    top: calc(100% - #{$boxDim});
+    left: 0;
+  }
+  100% {
+    top: 0;
+    left: 0;
+  }
+}
+
+.-a1 {
+  animation-delay: 50ms;
+}
+
+.-a2 {
+  animation-delay: 200ms;
+}
+
+.-a3 {
+  animation-delay: 400ms;
+}

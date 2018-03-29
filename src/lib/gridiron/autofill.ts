@@ -1,4 +1,5 @@
 import {WordBank} from '../readcross/WordBank';
+import {Future} from '../Future';
 import {v4} from '../uuid';
 import {shuffle} from '../shuffle';
 import {IGridContentCell, GridCell, IProgressStats, IGridWord} from "./types";
@@ -133,16 +134,19 @@ function createSearchQuery(w: IGridWord) {
  * Populate the grid with words that satisfy both the initial explicit
  * constraints (i.e., the fill that's in the grid already) as well as
  * the implicit contraints (i.e., that every crossing is a valid word).
+ *
+ * The returned future can be canceled if necessary.
+ *
  * @param {GridCell[]} grid
  * @param {{[p: string]: WordBank}} words
  * @param {(x: IProgressStats) => void} statsCallback
  * @param {number} updateInterval
- * @returns {Promise<GridCell[]>}
+ * @returns {Future<GridCell[]>}
  */
 export function fill(grid: GridCell[],
                      words: {[key: string]: WordBank},
                      statsCallback?: (x: IProgressStats) => void,
-                     updateInterval: number = 2000): Promise<GridCell[]> {
+                     updateInterval: number = 500): Future<GridCell[]> {
     grid = _clone(grid);
     // Extract and sort content cells from raw grid.
     // This constructs a view on the existing (cloned) grid, so that references can be modified
@@ -153,6 +157,8 @@ export function fill(grid: GridCell[],
     const queue = gridInfo.across.slice();
     // Keep a stack of visited nodes for backtracking.
     const parents: IGridNode[] = [];
+    // Flag that lets routine be aborted
+    let canceled = false;
 
     // Collect some stats on performance.
     let testedPatterns = 0;
@@ -203,6 +209,12 @@ export function fill(grid: GridCell[],
 
                 // Try to find a word to fill this position.
                 while (choices.length) {
+                    // Check if the process was killed. Pick a place to do this
+                    // check that will be reasonably responsive but avoid doing
+                    // it on every inner loop iteration.
+                    if (canceled) {
+                        throw new Error('canceled');
+                    }
                     let candidate = choices.shift();
                     let satisfiable = true;
 
@@ -286,7 +298,7 @@ export function fill(grid: GridCell[],
             .then(_processNext)
     }
 
-    return _processNext()
+    const result = _processNext()
         // Transform cells back into external format before returning.
         .then(() => grid.map(c => ({
             type: c.type,
@@ -297,4 +309,9 @@ export function fill(grid: GridCell[],
             annotation: c.annotation,
             startOfWord: c.startOfWord,
         } as GridCell)));
+
+    // Return a cancelable future
+    return new Future(result, () => {
+        canceled = true;
+    });
 }

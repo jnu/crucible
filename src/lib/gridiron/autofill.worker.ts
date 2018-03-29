@@ -1,13 +1,14 @@
 import {GridCell, IProgressStats, GridIronResponse, IWorkerMessage, IWebWorker, GridIronMessage} from './types';
 import {fill} from './autofill';
 import {WordBank, IJSONWordIndex} from '../readcross/WordBank';
+import {Future} from '../Future';
 
 /**
  * HACK: Better-typed alias for the global context. See IWebWorker for info.
  */
 const ctx: IWebWorker = (self as any);
 
-let lock = false;
+let fillFuture: Future<GridCell[]> = null;
 
 function _sendResponse(response: GridIronResponse) {
     ctx.postMessage(response);
@@ -43,27 +44,44 @@ function _updateStats(stats: IProgressStats) {
     });
 }
 
-function solve(grid: GridCell[], wordlists: {[key: string]: IJSONWordIndex[]}) {
-    if (lock) {
-        _sendError('Processing is locked');
+function solve(grid: GridCell[], wordlists: {[key: string]: IJSONWordIndex[]}, updateInterval: number) {
+    if (fillFuture) {
+        _sendError('Processing is already started.');
+        return fillFuture.promise;
+    }
+    const words = _inflateWordLists(wordlists)
+    fillFuture = fill(grid, words, _updateStats, updateInterval);
+
+    return (fillFuture.promise
+        .then(solution => {
+            fillFuture = null;
+            _sendSolution(solution);
+            return solution;
+        })
+        .catch(e => {
+            _sendError(e instanceof Error ? e.message : '' + e);
+        }));
+}
+
+function abort() {
+    if (!fillFuture) {
+        _sendError('No processing is in progress.');
         return;
     }
-    lock = true;
-    const words = _inflateWordLists(wordlists)
-    fill(grid, words, _updateStats)
-        .then(solution => {
-            lock = false;
-            _sendSolution(solution);
-        });
+    fillFuture.cancel();
+    fillFuture = null;
 }
 
 function dispatch(message: IWorkerMessage<GridIronMessage>) {
     switch (message.data.type) {
         case 'SOLVE':
-            solve(message.data.grid, message.data.wordlists);
+            solve(message.data.grid, message.data.wordlists, message.data.updateInterval || 500);
+            break;
+        case 'ABORT':
+            abort();
             break;
         default:
-            throw new Error(`Unknown event type ${message.data.type}`);
+            throw new Error(`Unknown event type ${JSON.stringify(message)}`);
     }
 }
 

@@ -6,10 +6,11 @@ $red:           #e53935; // Equivalent to MUI red600
 $lightAmber:    #ffd54f; // Equivalent to MUI amber300
 $amber:         #ffb300; // Equivalent to MUI amber600
 
-$zIndexDefaultCell: 0;
-$zIndexFocusedCell: 1;
-$zIndexClueIndex: 1;
+$zIndexDefaultCell:     0;
+$zIndexFocusedCell:     1;
+$zIndexClueIndex:       1;
 $zIndexCellContextMenu: 2;
+$zIndexOverlay:         3;
 
 $marSmall:  10px;
 $marMed:    20px;
