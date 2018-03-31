@@ -1,3 +1,5 @@
+extern crate bit_vec;
+
 use std::collections::HashMap;
 
 
@@ -24,9 +26,9 @@ const PTR_SHIFT: u8 = 1;
 ///
 /// The trade-off from the full Trie implementation is that the trie is
 /// frozen; elements cannot be added or removed.
-pub struct PackedTrie<'a> {
+pub struct PackedTrie {
     offset: u32,
-    data: &'a str,
+    data: bit_vec::BitVec,
     // TODO(jnu) optimized hashmap for short char keys
     table: HashMap<char, u32>,
     // TODO(jnu) could use array here? but knowing size at compile time impossible.
@@ -37,16 +39,20 @@ pub struct PackedTrie<'a> {
     char_shift: u32,
 }
 
-impl<'a> PackedTrie<'a> {
+impl PackedTrie {
 
     /// Load a packed trie from its Base64 binary encoding.
-    pub fn from(packed: &'a str) -> PackedTrie {
+    #[inline]
+    pub fn from(packed: &str) -> PackedTrie {
         let mut ptr: u32 = 0;
         ptr += 1;
 
+        // Create a bitvec that can hold all the binary data
+        let data = bit_vec::BitVec::with_capacity(10); // todo
+
         PackedTrie {
             offset: ptr,
-            data: packed,
+            data,
             table: HashMap::new(),
             inverse_table: HashMap::new(),
             word_width: 0,
@@ -59,6 +65,7 @@ impl<'a> PackedTrie<'a> {
     /// Test string membership in a trie.
     ///
     /// Supports wildcards and prefix matching.
+    #[inline]
     pub fn test(&self, needle: &str) {
         // TODO(jnu) implement, add wildcards and prefix matching opts.
     }
@@ -67,6 +74,7 @@ impl<'a> PackedTrie<'a> {
     /// Find all words matching the given pattern in the trie.
     ///
     /// Supports wildcards and prefix matching.
+    #[inline]
     pub fn search(&self, needle: &str) {
         // TODO(jnu) implement, add wildcards and prefix matching opts.
     }
