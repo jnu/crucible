@@ -90,7 +90,7 @@ impl PackedTrie {
 }
 
 /// Extract a window of bits from a base-64 encoded sequence.
-/// TODO(jnu) evaluate perf of this against reading things from bit_vec.
+/// TODO(jnu) benchmark against reading things from bit_vec.
 /// The TS version always uses this for lack of a bitset. Presumably
 /// in Rust the bitset access will be faster, but who knows.
 fn get_base64_field(base64: &str, start: u32, bit_length: u32) -> u32 {
@@ -120,10 +120,37 @@ fn get_base64_field(base64: &str, start: u32, bit_length: u32) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use ::tiny_trie;
+    use super::*;
 
+
+    // get_base64_field (bit extraction) ------------------------------------
+
+    // Test basic accuracy of bit window extraction
     #[test]
-    fn get_base64_field() {
-        assert_eq!(tiny_trie::get_base64_field(String::from("foo"), 0, 8), 23);
+    fn test_get_base64_field() {
+        let test_str = String::from("foo+");
+        // For reference, "foo+" encodes the binary:
+        // 0111 1110 1000 1010 0011 1110
+        assert_eq!(get_base64_field(&test_str, 0, 4), 7);
+        assert_eq!(get_base64_field(&test_str, 2, 4), 15);
+        assert_eq!(get_base64_field(&test_str, 8, 8), 138);
+        assert_eq!(get_base64_field(&test_str, 10, 13), 1311);
     }
+
+    // Test panic when window size exceeds bounds
+    #[test]
+    #[should_panic]
+    fn test_get_base64_field_bounds() {
+        let test_str = String::from("foo+");
+        get_base64_field(&test_str, 17, 8);
+    }
+
+    // Test panic when starts out of bounds
+    #[test]
+    #[should_panic]
+    fn test_get_base64_field_oob_start() {
+        let test_str = String::from("foo+");
+        get_base64_field(&test_str, 25, 1);
+    }
+
 }
