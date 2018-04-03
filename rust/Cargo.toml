@@ -2,6 +2,11 @@
 name = "crucible"
 version = "0.1.0"
 authors = ["Joe Nudell <jnu@stanford.edu>"]
+build = "src/tiny_trie/build.rs"
 
 [dependencies]
 bit-vec = "0.4.4"
+phf = "0.7.21"
+
+[build-dependencies]
+phf_codegen = "0.7.21"
