@@ -28,3 +28,12 @@ pub const CHAR_WIDTH_FIELD: usize = 8;
 
 /// Width of header field representing the width of the offset pointer in a word.
 pub const POINTER_WIDTH_FIELD: usize = 8;
+
+
+// Constants for hard-coded body fields -------------------------------------
+
+/// Flag that indicates whether a node is the last in the level.
+pub const LAST_MASK: u32 = 0x1;
+
+/// Offset of the pointer field within a node.
+pub const PTR_SHIFT: u32 = 1;
