@@ -486,6 +486,22 @@ mod tests {
         b.iter(|| pt.test("xump"));
     }
 
+    // Wildcard tests should be very fast queries.
+    // TODO(jnu) benchmark shows they are actually quite slow. Figure this out.
+    #[bench]
+    fn bench_packed_trie_test_wc_hit(b: &mut Bencher) {
+        let pt = PackedTrie::from("BAAAAABAwIfboarzKTbjds1FDB");
+        b.iter(|| pt.test("***"));
+    }
+
+    // Wildcard searches should be slowest queries, as they have to traverse the
+    // entire trie.
+    #[bench]
+    fn bench_packed_trie_search_wc_hit(b: &mut Bencher) {
+        let pt = PackedTrie::from("BAAAAABAwIfboarzKTbjds1FDB");
+        b.iter(|| pt.search("***"));
+    }
+
 
     // get_base64_field (bit extraction) ------------------------------------
 
@@ -540,28 +556,10 @@ mod tests {
         // For reference, "fo" encodes the binary:
         // 0111 1110 1000
         let test_str = String::from("fo");
-        let test_bools: [bool; 12] = [
-            // first word
-            false,
-            true,
-            true,
-            true,
-            // second word
-            true,
-            true,
-            true,
-            false,
-            // third break
-            true,
-            false,
-            false,
-            false,
-        ];
-        let mut test_vec = bit_vec::BitVec::from_elem(12, false);
-        for (i, b) in test_bools.iter().enumerate() {
-            test_vec.set(i, *b);
-        }
-        assert_eq!(bit_vec_from_base64(&test_str), test_vec);
+
+        assert!(bit_vec_from_base64(&test_str).eq_vec(&[false, true, true, true,
+                                                                true, true, true, false,
+                                                                true, false, false, false]));
     }
 
 }
