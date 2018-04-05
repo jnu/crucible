@@ -196,7 +196,7 @@ impl PackedTrie {
             }
             // Resolve the token's index from the char table to compare
             // against blocks in the trie.
-            let tok_idx = if is_last {
+            let tok_idx = if is_wild {
                 0u32
             } else {
                 *self.table.get(&token).unwrap()
@@ -433,6 +433,28 @@ mod tests {
         exp.clear();
         assert_eq!(pt.search("bao"), exp);
         assert_eq!(pt.search("bunk"), exp);
+    }
+
+    // Test wildcard search
+    #[test]
+    fn test_packed_trie_search_wc() {
+        let pt = PackedTrie::from("BAAAAABAwIfboarzKTbjds1FDB");
+        let mut exp: LinkedList<String> = LinkedList::new();
+        exp.push_front(String::from("bar"));
+        exp.push_front(String::from("baz"));
+        assert_eq!(pt.search("ba*"), exp);
+
+        exp.clear();
+        exp.push_front(String::from("foo"));
+        exp.push_front(String::from("bar"));
+        exp.push_front(String::from("baz"));
+        assert_eq!(pt.search("***"), exp);
+
+        exp.clear();
+        assert_eq!(pt.search("*"), exp);
+        assert_eq!(pt.search("z**"), exp);
+        assert_eq!(pt.search("*x*"), exp);
+        assert_eq!(pt.search("****"), exp);
     }
 
     // Benchmarks
