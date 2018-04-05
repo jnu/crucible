@@ -1,6 +1,5 @@
-extern crate bit_vec;
-
 use std::collections::{HashMap, LinkedList};
+use bit_vec;
 use ::tiny_trie::constants::{CHAR_WIDTH_FIELD,
                              HEADER_WIDTH_FIELD,
                              LAST_MASK,
@@ -20,6 +19,15 @@ use ::tiny_trie::base64::{char_to_int};
 const DEFAULT_WILDCARD: &'static char = &'*';
 
 
+/// BFS trie search node
+struct SearchNode {
+    pointer: usize,
+    memo: String,
+    depth: usize,
+}
+
+
+
 // Packed trie implementation -----------------------------------------------
 
 /// Packed binary trie that implements test and search with wildcard and
@@ -35,7 +43,6 @@ const DEFAULT_WILDCARD: &'static char = &'*';
 pub struct PackedTrie {
     offset: i32,
     data: bit_vec::BitVec,
-    sdata: String,
     // TODO(jnu) optimized hashmap for short char keys
     table: HashMap<char, u32>,
     // TODO(jnu) could use array here? but knowing size at compile time impossible.
@@ -45,6 +52,7 @@ pub struct PackedTrie {
     char_mask: u32,
     char_shift: u32,
 }
+
 
 impl PackedTrie {
 
@@ -103,12 +111,10 @@ impl PackedTrie {
         // TODO(jnu) benchmark bitvec against native reads
         let body = packed.get(header_char_width..).unwrap();
         let data = bit_vec_from_base64(&body);
-        let sdata = String::from(body);
 
         PackedTrie {
             offset,
             data,
-            sdata,
             table,
             inverse_table,
             word_width,
@@ -118,23 +124,47 @@ impl PackedTrie {
         }
     }
 
-    /// Test string membership in a trie.
+    /// Test if a string matching the given pattern exists in the trie.
+    ///
+    /// Uses '*' for wildcard matching.
     #[inline]
     pub fn test(&self, needle: &str) -> bool {
         !self.search_impl(needle, DEFAULT_WILDCARD, false, true).is_empty()
     }
 
-    /// Find all words matching the given pattern in the trie.
+    /// Test if a string matching the given prefix pattern exists in the trie.
+    ///
+    /// Uses '*' for wildcard matching.
     #[inline]
-    pub fn search(&self, needle: &str) {
-        self.search_impl(needle, DEFAULT_WILDCARD, false, false);
+    pub fn test_pfx(&self, needle: &str) -> bool {
+        !self.search_impl(needle, DEFAULT_WILDCARD, true, true).is_empty()
+    }
+
+    /// Find all words matching the given pattern in the trie.
+    ///
+    /// Uses '*' for wildcard matching.
+    #[inline]
+    pub fn search(&self, needle: &str) -> LinkedList<String> {
+        self.search_impl(needle, DEFAULT_WILDCARD, false, false)
+    }
+
+    /// Find all words that use the given pattern as a prefix.
+    ///
+    /// Uses '*' for wildcard matching.
+    #[inline]
+    pub fn search_pfx(&self, needle: &str) -> LinkedList<String> {
+        self.search_impl(needle, DEFAULT_WILDCARD, true, false)
     }
 
     /// The fully-qualified search method.
     ///
     /// Implements wildcard and prefix matching.
     #[inline]
-    fn search_impl(&self, needle: &str, wildcard: &char, prefix: bool, first: bool) -> LinkedList<String> {
+    fn search_impl(&self,
+                   needle: &str,
+                   wildcard: &char,
+                   prefix: bool,
+                   first: bool) -> LinkedList<String> {
         let mut matches: LinkedList<String> = LinkedList::new();
 
         // Convert the needle to a vector of chars for indexed access.
@@ -156,23 +186,33 @@ impl PackedTrie {
             let is_last = node.depth >= last_depth;
             // Get the token to match, using a special terminal for the last.
             let token = if is_last { TERMINAL } else { char_vec[node.depth] };
-            let tok_idx = if is_last { 0u32 } else { *self.table.get(&token).unwrap() };
             // This may be an explicit wildcard token, or an implicit one
             // if it's a prefix search and we're beyond the last depth.
             let is_wild = token == *wildcard || (prefix && is_last);
+            // Optimization: quit the search immediately if this is not a
+            // wildcard search and the token is not in the char table.
+            if !is_wild && !self.table.contains_key(&token) {
+                continue;
+            }
+            // Resolve the token's index from the char table to compare
+            // against blocks in the trie.
+            let tok_idx = if is_last {
+                0u32
+            } else {
+                *self.table.get(&token).unwrap()
+            };
+
             let mut word_ptr = node.pointer;
 
             loop {
-                // Exit early if token does not exist in the char table (which
-                // means it can't possibly be in the trie).
-                if !is_wild && !self.table.contains_key(&token) {
-                    break;
-                }
+
 
                 // Extract the word.
                 // TODO(jnu) probably can replace mult with add on each iter.
                 let start_bit = word_ptr * self.word_width;
-                let word = get_base64_field(&self.sdata, start_bit, self.word_width);
+                let word = get_bitvec_field(&self.data,
+                                            start_bit,
+                                            self.word_width);
                 let char_idx = (word >> self.char_shift) & self.char_mask;
 
                 // Test if the word is a match.
@@ -231,13 +271,8 @@ impl PackedTrie {
 }
 
 
-/// BFS trie search node
-struct SearchNode {
-    pointer: usize,
-    memo: String,
-    depth: usize,
-}
 
+// Private support methods --------------------------------------------------
 
 /// Create a bitvec with the base64-encoded binary content.
 // TODO(jnu) extend bitvec with this?
@@ -285,9 +320,16 @@ fn build_inverse_char_table(raw: &str) -> HashMap<u32, char> {
 
 
 /// Extract a window of bits from a base-64 encoded sequence.
-// TODO(jnu) benchmark against reading things from bit_vec.
-// The TS version always uses this for lack of a bitset. Presumably
-// in Rust the bitset access will be faster, but who knows.
+///
+/// This method reads binary from the encoded string directly. It is ported
+/// from the Typescript implementation, which uses it for every lookup due
+/// to lack of better bit-level tooling in that language.
+///
+/// Use this for non performance-sensitive operations; i.e., never use this
+/// for lookups in the trie. Use get_bitvec_field instead for reads that are
+/// about 25% faster.
+// TODO(jnu) rewrite header parsing to use bitvec, get rid of this function.
+#[inline]
 fn get_base64_field(base64: &str, start: usize, bit_length: usize) -> u32 {
     let bytes: &[u8] = base64.as_bytes();
     let start_char: usize = (start as f32 / 6.0).floor() as usize;
@@ -312,12 +354,31 @@ fn get_base64_field(base64: &str, start: usize, bit_length: usize) -> u32 {
 }
 
 
+/// Read a window of bits from a bitvec as a contiguous integer.
+///
+/// Behavior is undefined when the window size exceeds 32 bits.
+#[inline]
+fn get_bitvec_field(vec: &bit_vec::BitVec, start: usize, length: usize) -> u32 {
+    let mut val: u32 = 0x0;
+    let mut shft: usize = length - 1;
+    for i in start..(start + length) {
+        let digit = (vec.get(i).unwrap() as u32) << shft;
+        val |= digit;
+        // Careful with overflows.
+        shft = if shft > 0 { shft - 1 } else { 0 };
+    }
+    val
+}
+
+
 
 // Tests --------------------------------------------------------------------
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test::Bencher;
+
 
     // PackedTrie -----------------------------------------------------------
 
@@ -352,8 +413,38 @@ mod tests {
         assert_eq!(pt.test("bar"), true);
         assert_eq!(pt.test("baz"), true);
         assert_eq!(pt.test("boop"), false);
+        assert_eq!(pt.test("bump"), false);
         assert_eq!(pt.test("bop"), false);
         assert_eq!(pt.test("foz"), false);
+    }
+
+    // Benchmarks
+
+    // Init is slower than ideal due to base64 junk. TODO(jnu) improve this.
+    #[bench]
+    fn bench_packed_trie_init(b: &mut Bencher) {
+        b.iter(|| PackedTrie::from("BAAAAABAwIfboarzKTbjds1FDB"))
+    }
+
+    // Hit perf depends on trie structure. Try to get a worst case.
+    #[bench]
+    fn bench_packed_trie_test_hit(b: &mut Bencher) {
+        let pt = PackedTrie::from("BAAAAABAwIfboarzKTbjds1FDB");
+        b.iter(|| pt.test("baz"));
+    }
+
+    // Misses for plausible trie entries should be the slowest tests.
+    #[bench]
+    fn bench_packed_trie_test_close_miss(b: &mut Bencher) {
+        let pt = PackedTrie::from("BAAAAABAwIfboarzKTbjds1FDB");
+        b.iter(|| pt.test("bao"));
+    }
+
+    // Total miss means the search pattern contained words that were totally
+    #[bench]
+    fn bench_packed_trie_test_total_miss(b: &mut Bencher) {
+        let pt = PackedTrie::from("BAAAAABAwIfboarzKTbjds1FDB");
+        b.iter(|| pt.test("xump"));
     }
 
 
@@ -385,6 +476,21 @@ mod tests {
     fn test_get_base64_field_oob_start() {
         let test_str = String::from("foo+");
         get_base64_field(&test_str, 25, 1);
+    }
+
+
+    // get_bitvec_field (bit window extraction) -----------------------------
+
+    #[test]
+    fn test_get_bitvec_field() {
+        let test_str = String::from("foo+");
+        // For reference, "foo+" encodes the binary:
+        // 0111 1110 1000 1010 0011 1110
+        let bv = bit_vec_from_base64(&test_str);
+        assert_eq!(get_bitvec_field(&bv, 0, 4), 7);
+        assert_eq!(get_bitvec_field(&bv, 2, 4), 15);
+        assert_eq!(get_bitvec_field(&bv, 8, 8), 138);
+        assert_eq!(get_bitvec_field(&bv, 10, 13), 1311);
     }
 
 

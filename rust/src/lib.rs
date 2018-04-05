@@ -1,5 +1,6 @@
-pub mod tiny_trie;
-
-// phf_codegen uses `::phf` syntax, weirdly. Make phf available here.
-// TODO(jnu) this feels like a hack, figure out a better way.
+#![feature(test)]
+extern crate test;
 extern crate phf;
+extern crate bit_vec;
+
+pub mod tiny_trie;
