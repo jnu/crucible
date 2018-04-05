@@ -404,7 +404,7 @@ mod tests {
         PackedTrie::from("BD/wAABAwIfboarzKTbjds1FDB");
     }
 
-    // Test simple search
+    // Test simple membership
     #[test]
     fn test_packed_trie_test() {
         let pt = PackedTrie::from("BAAAAABAwIfboarzKTbjds1FDB");
@@ -416,6 +416,23 @@ mod tests {
         assert_eq!(pt.test("bump"), false);
         assert_eq!(pt.test("bop"), false);
         assert_eq!(pt.test("foz"), false);
+    }
+
+    // Test simple search
+    #[test]
+    fn test_packed_trie_search() {
+        let pt = PackedTrie::from("BAAAAABAwIfboarzKTbjds1FDB");
+        let mut exp: LinkedList<String> = LinkedList::new();
+        exp.push_front(String::from("foo"));
+        assert_eq!(pt.search("foo"), exp);
+
+        exp.clear();
+        exp.push_front(String::from("baz"));
+        assert_eq!(pt.search("baz"), exp);
+
+        exp.clear();
+        assert_eq!(pt.search("bao"), exp);
+        assert_eq!(pt.search("bunk"), exp);
     }
 
     // Benchmarks
