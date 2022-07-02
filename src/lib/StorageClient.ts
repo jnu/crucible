@@ -26,7 +26,7 @@ export interface IStorageClient {
      * @param {string} key
      * @returns {Promise<void>}
      */
-    remove: <T>(domain: string, key: string) => Promise<void>;
+    remove: (domain: string, key: string) => Promise<void>;
 
     /**
      * Fetch an index of all data in a domain.

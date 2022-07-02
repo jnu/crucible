@@ -81,7 +81,7 @@ export class BrowserStorageClient implements IStorageClient {
         // Update index if removal was successful.
         if (hasItem) {
             const idxKey = this._getNamespacedKey(domain, key);
-            const idx = this._storage.getItem(idxKey);
+            const idx = this._storage.getItem(idxKey)!;
             const newIdx = idx.split('\0').filter(id => id !== key).join('\0');
             this._storage.setItem(idxKey, newIdx);
         }
@@ -103,7 +103,7 @@ export class BrowserStorageClient implements IStorageClient {
         return Promise.all(items.map(item => this.load<T>(domain, item)));
     }
 
-    _getNamespacedKey(domain: string, key: string = null) {
+    _getNamespacedKey(domain: string, key: string | null = null) {
         return (key === null) ? `$${domain}$index` : `$${domain}$/${key}`;
     }
 

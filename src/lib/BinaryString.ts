@@ -52,7 +52,7 @@ class BinaryString {
      *                             automatically. An error will be thrown if
      *                             the width is too small to contain the data.
      */
-    write(val: number, width: number = null) {
+    write(val: number, width: number = 0) {
         if (!this.canWrite) {
             throw new Error('BinaryString is read-only');
         }
@@ -135,7 +135,7 @@ export default BinaryString;
 
 export class BinaryStringReader extends BinaryString {
 
-    public cursor: 0;
+    public cursor: number = 0;
 
     public data: string;
 

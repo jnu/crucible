@@ -7,7 +7,7 @@
 export function shuffle<T>(array: T[]) {
     const A = array.slice();
     let m = A.length;
-    let t: T = null;
+    let t: T | null = null;
     let i: number;
 
     while (m) {

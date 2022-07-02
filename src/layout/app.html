@@ -17,9 +17,10 @@
         <% } %>
     </head>
     <body>
-
         <main id="root"></main>
 
-        <script src="/<%=htmlWebpackPlugin.files.chunks.app.entry %>" charset="utf8"></script>
+        <% for (var i = 0; i < htmlWebpackPlugin.files.js.length; i++) { %>
+        <script src="/<%=htmlWebpackPlugin.files.js[i] %>" charset="utf8"></script>
+        <% } %>
     </body>
 </html>

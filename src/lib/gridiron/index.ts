@@ -2,7 +2,6 @@
  * Public interface to gridiron CSP solvers.
  */
 
-const AutoFillWorker = require<new() => Worker>('./autofill.worker');
 import {IJSONWordIndex, WordBank} from '../readcross/WordBank';
 import {GridCell, IProgressStats, GridIronResponse, IWorkerMessage, IGridIronSolveMessage} from './types';
 import {Deferred} from "../deferred";
@@ -25,7 +24,7 @@ function _runAutoFillOnWorker(grid: GridCell[],
                               words: {[key: string]: WordBank},
                               statsCallback?: (x: IProgressStats) => void,
                               updateInterval: number = 2000): Promise<GridCell[]> {
-    const worker = new AutoFillWorker();
+    const worker = new Worker(new URL('./autofill.worker', import.meta.url));
     const deferred = new Deferred<GridCell[]>();
 
     worker.addEventListener('message', (event: IWorkerMessage<GridIronResponse>) => {
@@ -35,7 +34,10 @@ function _runAutoFillOnWorker(grid: GridCell[],
             case 'ERROR':
                 return deferred.reject(new Error(event.data.message));
             case 'PROGRESS':
-                return statsCallback(event.data.data);
+                if (statsCallback) {
+                  return statsCallback(event.data.data);
+                }
+                return;
             default:
                 throw new Error(`Unknown event from worker ${JSON.stringify(event.data)}`);
         }

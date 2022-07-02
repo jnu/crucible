@@ -8,7 +8,7 @@ import {Future} from '../Future';
  */
 const ctx: IWebWorker = (self as any);
 
-let fillFuture: Future<GridCell[]> = null;
+let fillFuture: Future<GridCell[]> | null = null;
 
 function _sendResponse(response: GridIronResponse) {
     ctx.postMessage(response);

@@ -54,7 +54,7 @@ export class WordListClient {
 
     private _cache: BrowserStorageClient;
 
-    private _requests: {[key: string]: Promise<WordBank>};
+    private _requests: {[key: string]: Promise<WordBank> | null};
 
     constructor(opts: IWordListClientParams) {
         this._cache = opts.local;
@@ -97,7 +97,7 @@ export class WordListClient {
     _fetchWordlistByKey(key: string) {
         return this._cache.load<ICacheEntry<IDawgs>>(WORDLIST_KEY, key)
             .then(cacheHit => cacheHit.data)
-            .catch(e => PREMADE_LISTS[key]()
+            .catch(() => PREMADE_LISTS[key]()
                 .then(data => this._cache.save<ICacheEntry<IDawgs>>(WORDLIST_KEY, key, { data }))
                 .then(cached => cached.data)
             )

@@ -5,20 +5,20 @@
  * @abstract
  * @class
  */
-export class AbstractFixedLengthWordIndex {
+export abstract class AbstractFixedLengthWordIndex {
 
     /**
      * The word index's identifier for serialization. Set in subclass.
      * @type {string}
      */
-    public static type: string = null;
+    public static type: string = "";
 
     /**
      * Restore an index from its JSON serialization. See also #toJSON.
      * @param {Object} obj
      */
     public static fromJSON(obj: Object) {
-        throw new Error('not implemented');
+        throw new Error(`not implemented / ${obj}`);
     }
 
     protected _cardinality: number;
@@ -116,9 +116,7 @@ export class AbstractFixedLengthWordIndex {
      * @param {string} word
      * @private
      */
-    protected _addWord(word: string): void {
-        throw new Error('not implemented');
-    }
+    protected abstract _addWord(word: string): void
 
     /**
      * Implementation of #match. Overwrite in subclass.
@@ -126,9 +124,7 @@ export class AbstractFixedLengthWordIndex {
      * @returns {string[]}
      * @private
      */
-    protected _matchWords(pattern: string): string[] {
-        throw new Error('not implemented');
-    }
+    protected abstract _matchWords(pattern: string): string[]
 
     /**
      * Implementation of #test. Overwrite in subclass.
@@ -136,8 +132,6 @@ export class AbstractFixedLengthWordIndex {
      * @returns {boolean}
      * @private
      */
-    protected _testPattern(pattern: string): boolean {
-        throw new Error('not implemented');
-    }
+    protected abstract _testPattern(pattern: string): boolean
 
 }

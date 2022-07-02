@@ -9,6 +9,7 @@ const DefinePlugin = require('webpack/lib/DefinePlugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const MiniCssPlugin = require('mini-css-extract-plugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,6 +94,13 @@ const webpackConfig = {
     },
 
     plugins: [
+
+        new CircularDependencyPlugin({
+          exclude: /node_modules/,
+          include: /src/,
+          failOnError: true,
+          allowAsyncCycles: false,
+        }),
 
         new DefinePlugin({
             DEBUG: !PROD

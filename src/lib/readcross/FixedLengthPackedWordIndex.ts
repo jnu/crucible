@@ -10,7 +10,7 @@ export class FixedLengthPackedWordIndex extends AbstractFixedLengthWordIndex {
 
     public static type: 'fixedLengthPackedWordIndex';
 
-    public static fromJSON(obj: any) {
+    public static fromJSON(obj: {cardinality: number, dawg: string}) {
         return new FixedLengthPackedWordIndex(obj.cardinality, obj.dawg);
     }
 
@@ -41,7 +41,7 @@ export class FixedLengthPackedWordIndex extends AbstractFixedLengthWordIndex {
      * @param {string} word
      * @private
      */
-    _addWord(word: string) {
+    _addWord() {
         throw new Error(`Can't add word to packed word index.`);
     }
 

@@ -7,9 +7,9 @@ const NOOP = () => {};
 
 
 interface IAutoSaveOpts<T> {
-    getState?: () => T;
+    getState: () => T;
     pollInterval?: number;
-    storageClient?: IStorageClient;
+    storageClient: IStorageClient;
     onSaveStart?: () => void;
     onSaveSuccess?: (state: T) => void;
     onSaveError?: () => void;
@@ -30,7 +30,7 @@ export class AutoSave<T extends Immutable.Map<string, any>> {
 
     public onSaveError: () => void;
 
-    private _interval: number = null;
+    private _interval: number | null = null;
 
     private _lastBitmap: string;
 

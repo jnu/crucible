@@ -8,14 +8,6 @@ interface ICacheEntry<T> {
 
 
 /**
- * Identity function
- * @param  {any} x
- * @return {any}
- */
-const IDENT = <T, U>(x: T) => x as any;
-
-
-/**
  * Simple Cache with least-recently-used invalidation and no expiration.
  *
  * TODO tests, more efficient implementation using self-balancing tree
@@ -32,7 +24,7 @@ export class LRUCache<T, U> {
 
     private _getKey: <T>(x: T) => U;
 
-    constructor(size: number, key = IDENT) {
+    constructor(size: number, key = <T>(x: T) => x as unknown as U) {
         if (!size) {
             throw new Error('LRUCache must be constructed with size.');
         }
@@ -61,7 +53,7 @@ export class LRUCache<T, U> {
 
     getByKey(key: U) {
         if (this.hasKey(key)) {
-            const entry = this._items.get(key);
+            const entry = this._items.get(key)!;
             entry.ts = LRUCache.now();
             return entry.val;
         }
@@ -74,7 +66,7 @@ export class LRUCache<T, U> {
 
     addByKey(key: U, item: T) {
         if (this.hasKey(key)) {
-            this._items.get(key).ts = LRUCache.now();
+            this._items.get(key)!.ts = LRUCache.now();
         } else {
             // Find and drop oldest item if cache is full.
             if (this._items.size === this._size) {
@@ -90,20 +82,22 @@ export class LRUCache<T, U> {
     }
 
     _dropOldest() {
-        let minKey = null;
+        let found = false;
+        let minKey: U;
         let minTs = Infinity;
         for (let [key, entry] of this._items) {
             if (entry.ts < minTs) {
+                found = true;
                 minTs = entry.ts;
                 minKey = key;
             }
         }
 
-        if (minKey === null && minTs === Infinity) {
+        if (!found) {
             throw new Error('Error finding LRU entry');
         }
 
-        this._items.delete(minKey);
+        this._items.delete(minKey!);
     }
 
 }

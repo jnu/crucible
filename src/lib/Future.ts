@@ -6,7 +6,7 @@ export class Future<T> {
 
     private _done: boolean = false;
 
-    private _error?: Error = null;
+    private _error?: Error = undefined;
 
     private _value?: T;
 

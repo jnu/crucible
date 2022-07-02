@@ -25,6 +25,7 @@
   "dependencies": {
     "@types/react": "^16.0.41",
     "chai": "^3.5.0",
+    "circular-dependency-plugin": "^5.2.2",
     "compression-webpack-plugin": "10",
     "css-loader": "^0.28.10",
     "es6-promise": "^4.0.3",
@@ -51,7 +52,7 @@
     "react": "16",
     "react-dom": "16",
     "react-redux": "5",
-    "react-virtualized": "9",
+    "react-virtualized": "9.22.0",
     "recompose": "0.26",
     "redux": "^3.6.0",
     "redux-logger": "^2.7.0",

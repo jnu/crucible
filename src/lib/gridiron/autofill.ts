@@ -38,7 +38,7 @@ function _clone(g: GridCell[]) {
  * @private
  */
 function _emptyGridWord(): IGridWord {
-    return {cells: [], size: 0, choices: null};
+    return {cells: [], size: 0, choices: undefined};
 }
 
 /**
@@ -205,7 +205,7 @@ export function fill(grid: GridCell[],
             .then(choices => {
                 // Make sure choices are kept associated with this node.
                 w.choices = choices;
-                let newWord: string | void = null;
+                let newWord: string | void = undefined;
 
                 // Try to find a word to fill this position.
                 while (choices.length) {
@@ -230,7 +230,7 @@ export function fill(grid: GridCell[],
                             const dc = downWord.cells[j];
                             if (dc._id === cell._id) {
                                 foundIntersect = true;
-                                query += candidate[i];
+                                query += candidate![i];
                                 intersectIdx = j;
                             } else {
                                 query += dc.value || '*';
@@ -250,7 +250,7 @@ export function fill(grid: GridCell[],
                             // Prune the search space: no candidate with the same
                             // character in the intersect position will have a
                             // different outcome, so remove them.
-                            const badChar = candidate[intersectIdx];
+                            const badChar = candidate![intersectIdx];
                             w.choices = choices.filter(choice => choice[intersectIdx] !== badChar);
                             const numPruned = choices.length - w.choices.length;
                             pruned += numPruned;
@@ -278,7 +278,7 @@ export function fill(grid: GridCell[],
                     }
                     backtracks += 1;
                     // Add this word back to the queue, resetting its choices.
-                    w.choices = null;
+                    w.choices = undefined;
                     queue.unshift(w);
                     // Revert the node to its original state.
                     parent.word.cells = parent.originalCells;
