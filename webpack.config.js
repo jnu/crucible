@@ -3,39 +3,39 @@
 // Load Promise polyfill (needed by css-loader -> postcss)
 require('es6-promise').polyfill();
 
-var path = require('path');
-var HtmlPlugin = require('html-webpack-plugin');
-var DefinePlugin = require('webpack/lib/DefinePlugin');
-var CompressionPlugin = require('compression-webpack-plugin');
-var ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path');
+const HtmlPlugin = require('html-webpack-plugin');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+const MiniCssPlugin = require('mini-css-extract-plugin');
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Build env info
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var NODE_ENV = process.env.NODE_ENV || 'development';
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 
 // Infer modes based on env.
-var DEBUG = NODE_ENV !== 'production';
-var PROD = NODE_ENV === 'production';
-var SRC_ROOT = path.resolve(__dirname, 'src');
-var DATA_ROOT = path.resolve(__dirname, 'data');
+const DEBUG = NODE_ENV !== 'production';
+const PROD = NODE_ENV === 'production';
+const SRC_ROOT = path.resolve(__dirname, 'src');
+const DATA_ROOT = path.resolve(__dirname, 'data');
 
 
 // Asset bundles. Prod-like environments get fingerprinted for cache busting,
 // others get labeled for debugging.
-var appFilename = 'app-' + (PROD ? '[hash]' : NODE_ENV) + '.js';
-var cssFilename = 'styles-' + (PROD ? '[contenthash]' : NODE_ENV) + '.css';
+const appFilename = 'app-' + (PROD ? '[hash]' : NODE_ENV) + '.js';
+const cssFilename = 'styles-' + (PROD ? '[contenthash]' : NODE_ENV) + '.css';
 
 
 /**
  * Webpack configuration
  * @type {Object}
  */
-var webpackConfig = {
+const webpackConfig = {
 
     context: path.resolve(SRC_ROOT),
 
@@ -54,32 +54,13 @@ var webpackConfig = {
     module: {
         rules: [
             {
-                test: /\.worker\.ts$/,
-                use: [{
-                    loader: 'worker-loader'
-                }, {
-                    loader: 'babel-loader',
-                    options: {cacheDirectory: true}
-                }, {
-                    loader: 'ts-loader'
-                }],
-            },
-            {
-                test: /\.jsx?$/,
+                test: /\.(t|j)sx?$/,
                 include: [SRC_ROOT, /tiny-trie/],
                 use: [{
-                    loader: 'babel-loader',
-                    options: { cacheDirectory: true }
-                }]
-            },
-            {
-                test: /\.tsx?$/,
-                include: [SRC_ROOT, /tiny-trie/],
-                use: [{
-                    loader: 'babel-loader',
-                    options: { cacheDirectory: true }
-                }, {
-                    loader: 'ts-loader'
+                    loader: 'ts-loader',
+                    options: {
+                      configFile: 'tsconfig.json',
+                    },
                 }]
             },
             {
@@ -89,21 +70,19 @@ var webpackConfig = {
             },
             {
                 test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [
-                        { loader: 'css-loader', options: { sourceMap: !PROD } },
-                        { loader: 'resolve-url-loader', options: { sourceMap: !PROD } },
-                        { loader: 'sass-loader', options: { sourceMap: !PROD } }
-                    ]
-                })
+                use: [
+                  { loader: PROD ? MiniCssPlugin.loader : 'style-loader' },
+                  { loader: 'css-loader', options: { sourceMap: !PROD } },
+                  { loader: 'resolve-url-loader', options: { sourceMap: !PROD } },
+                  { loader: 'sass-loader', options: { sourceMap: !PROD } }
+                ],
             },
             {
                 test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [{ loader: 'css-loader', options: { sourceMap: !PROD } }]
-                })
+                use: [
+                  { loader: PROD ? MiniCssPlugin.loader : 'style-loader' },
+                  { loader: 'css-loader', options: { sourceMap: !PROD } },
+                ],
             },
             {
                 test: /\.dawg$/,
@@ -130,11 +109,9 @@ var webpackConfig = {
         // Only support default moment locale (en-us) for now.
         new ContextReplacementPlugin(/moment[\/\\]locale$/, /^$/),
 
-        new ExtractTextPlugin({
+        new MiniCssPlugin({
             filename: cssFilename,
-            disable: !PROD,
-            allChunks: true
-        })
+        }),
 
     ],
 

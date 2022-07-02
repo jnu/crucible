@@ -1,16 +1,23 @@
 {
     "compilerOptions": {
-        "target": "es6",
-        "module": "es6",
+        "target": "esnext",
+        "module": "esnext",
         "moduleResolution": "node",
+        "jsx": "react",
+        "strict": true,
+        "allowJs": true,
+        "noEmit": false,
+        "incremental": true,
         "noImplicitAny": true,
-        "removeComments": true,
+        "esModuleInterop": true,
+        "noUnusedParameters": true,
         "preserveConstEnums": true,
         "sourceMap": true,
-        "baseUrl": ".",
+        "baseUrl": "./",
         "paths": {
             "data": ["data/"]
         }
     },
-    "include": ["src/**/*", "global.d.ts"]
+    "include": ["src/**/*", "global.d.ts"],
+    "exclude": ["node_modules"]
 }
