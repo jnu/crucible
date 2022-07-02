@@ -60,6 +60,8 @@ Items may jump around and work may not be completed exactly in the planned order
     - ~~lock grid / UI buttons while solving puzzle~~ 
 
 ## 0.5
+ * Allow vertical / horizontal symmetry (not just diagonal)
+ * Delete saved puzzle
  * Word lists:
     * Load custom
     * Select, deselect
