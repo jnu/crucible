@@ -222,11 +222,15 @@ export function fill(grid: GridCell[],
                     for (let i = 0; i < w.cells.length; i++) {
                         const cell = w.cells[i];
                         const downWord = cell._downWordRef;
+                        if (!downWord) {
+                          // TODO - is this an error?
+                          continue;
+                        }
                         let intersectIdx = -1;
                         let query = '';
                         let foundIntersect = false;
 
-                        for (let j = 0; j < downWord.cells.length; j++) {
+                        for (let j = 0; j < downWord.cells.length || 0; j++) {
                             const dc = downWord.cells[j];
                             if (dc._id === cell._id) {
                                 foundIntersect = true;

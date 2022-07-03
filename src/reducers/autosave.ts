@@ -1,4 +1,4 @@
-import type { ReplaceGrid, AutoSaveGridStart, AutoSaveSuccess, AutoSaveError } from '../actions/storage';
+import type { Action } from '../actions';
 
 /**
  * Represent state of the automatic saving feature.
@@ -22,14 +22,9 @@ const DEFAULT_AUTOSAVE_STATE: AutoSaveState = {
 };
 
 /**
- * Actions pertaining to the auto-save feature.
- */
-export type AutoSaveActions = ReplaceGrid | AutoSaveGridStart | AutoSaveSuccess | AutoSaveError;
-
-/**
  * Autosave reducer.
  */
-export const autosave = (state = DEFAULT_AUTOSAVE_STATE, action: AutoSaveActions) => {
+export const autosave = (state = DEFAULT_AUTOSAVE_STATE, action: Action) => {
     switch (action.type) {
         case 'REPLACE_GRID':
             return DEFAULT_AUTOSAVE_STATE;

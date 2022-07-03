@@ -1,9 +1,6 @@
 import React from 'react';
-import thunkMiddleware from 'redux-thunk';
-import createLogger from 'redux-logger';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
 import { crucibleApp } from './reducers';
 import { App } from './components/App';
 import { debounce } from 'lodash';
@@ -16,17 +13,7 @@ import {
 import { AutoSave } from './lib/AutoSave';
 import { storageClient } from './lib/index';
 import { init as initWordList } from './init/wordlist';
-
-
-const loggerMiddleware = createLogger();
-
-const store = createStore(
-    crucibleApp,
-    applyMiddleware(
-        thunkMiddleware,
-        loggerMiddleware
-    )
-);
+import {store} from './store';
 
 
 /**

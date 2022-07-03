@@ -1,4 +1,5 @@
 import UUID from 'pure-uuid';
+
 import { isDefined } from '../lib/isDefined';
 import {fill, CellType} from '../lib/gridiron';
 import type {GridCell} from '../lib/gridiron';
@@ -16,6 +17,7 @@ import type {
     AutoFillGridError,
 } from '../actions/gridSemantic';
 import type {ReplaceGrid} from '../actions/storage';
+import type {Action} from '../actions';
 
 
 /**
@@ -536,7 +538,7 @@ export const rAutoFillGridUpdate = (state: GridState, action: AutoFillGridStatsU
 */
 export const rAutoFillGridDone = (state: GridState, action: AutoFillGridDone) => {
   return {...state,
-    content: action.content,
+    content: action.content.slice(),
     autoFilling: false,
     autoFillStatus: null,
     autoFillError: null,
@@ -563,14 +565,9 @@ export const rAutoFillGridDismissError = (state: GridState, _action: AutoFillGri
 };
 
 /**
- * Any action that updates the grid store.
- */
-export type GridAction = Resize | SetCell | SelectCell | SetCursorDirection | HideMenu | ShowMenu | UpdateClue | MoveCursor | ReplaceGrid | ToggleSymmetricalGrid | UpdatePuzzleInfo | AutoFillGridDismissError | AutoFillGridDone | AutoFillGridStatsUpdate | AutoFillGridError | AutoFillGridStart;
-
-/**
  * Grid state reducer. Applies action transformations to state.
  */
-const dispatchGridAction = (state: GridState, action: GridAction) => {
+const dispatchGridAction = (state: GridState, action: Action): GridState => {
     switch (action.type) {
         case 'RESIZE':
             return rResize(state, action);
@@ -616,11 +613,12 @@ const dispatchGridAction = (state: GridState, action: GridAction) => {
  * NB: the default argument for `state` is evaluated only when state is
  * undefined, not on each reducer evaluation.
  */
-export const grid = (state = createNewGrid(), action: GridAction) => {
+export const grid = (state = createNewGrid(), action: Action) => {
     const newState = dispatchGridAction(state, action);
     // Update last modified time as necessary
     if (newState !== state) {
-      newState.lastModified = Date.now();
+      return {...newState, lastModified: Date.now()};
+    } else {
+      return newState;
     }
-    return newState;
 };

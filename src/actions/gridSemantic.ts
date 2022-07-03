@@ -2,7 +2,8 @@ import type { Direction } from './gridMeta';
 import { moveCursor } from './gridMeta';
 import {fill} from "../lib/gridiron";
 import type {CellType, GridCell} from '../lib/gridiron';
-import {Dispatch} from 'redux';
+import type {Dispatch, GetState} from '../store'
+import type {WordBank} from '../lib/readcross/WordBank';
 
 /**
  * Updated information to apply to a cell.
@@ -95,12 +96,12 @@ export type AutoFillGridError = ReturnType<typeof autoFillGridError>;
 /**
  * [Async] fill in grid automatically, with regard to initial constraints.
  */
-export const autoFillGrid = (wordList) => {
-    return (dispatch: Dispatch<any>, getState) => {
+export const autoFillGrid = (wordList: {lists: {[key: string]: WordBank}}) => {
+    return (dispatch: Dispatch, getState: GetState) => {
         dispatch(AUTO_FILL_GRID_START);
         const gridContent = getState().grid.content;
         fill(gridContent,
-             wordList.get('lists').toJS(),
+             wordList.lists,
                 stats => dispatch(autoFillGridStatsUpdate(stats)))
             .then(filled => {
                 dispatch(autoFillGridDone(filled));
@@ -142,10 +143,12 @@ export type UpdateClue = ReturnType<typeof updateClue>;
  * Simultaneously move the puzzle cursor and apply updates to that cell.
  */
 export const moveCursorAndUpdate = (delta: number, updates: CellUpdates) => {
-    return (dispatch: Dispatch<any>, getState) => {
+    return (dispatch: Dispatch, getState: GetState) => {
         dispatch(moveCursor(delta));
         const { grid } = getState();
-        dispatch(updateCell(grid.get('cursor'), updates));
+        if (grid.cursor !== null) {
+            dispatch(updateCell(grid.cursor, updates));
+        }
     };
 };
 

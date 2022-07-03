@@ -24,6 +24,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/react": "^16.0.41",
+    "@types/redux-logger": "^3.0.9",
     "chai": "^3.5.0",
     "circular-dependency-plugin": "^5.2.2",
     "compression-webpack-plugin": "10",
@@ -54,8 +55,8 @@
     "react-redux": "5",
     "react-virtualized": "9.22.0",
     "recompose": "0.26",
-    "redux": "^3.6.0",
-    "redux-logger": "^2.7.0",
+    "redux": "3.7",
+    "redux-logger": "3",
     "redux-thunk": "^2.1.0",
     "resolve-url-loader": "^2.3.0",
     "sass": "^1.53.0",

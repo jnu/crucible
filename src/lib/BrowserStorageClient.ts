@@ -63,7 +63,7 @@ export class BrowserStorageClient implements IStorageClient {
         }
 
         const obj = Object.assign(JSON.parse(val), { key });
-        return Promise.resolve(obj as T);
+        return Promise.resolve(obj as T & {key: string});
     }
 
     /**
