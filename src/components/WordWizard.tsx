@@ -3,7 +3,11 @@ import { pure } from 'recompose';
 import { connect } from 'react-redux';
 import { List } from 'react-virtualized';
 import { isDefined } from '../lib/isDefined';
+import type {GridCell} from '../lib/gridiron';
+import type {GridState} from '../reducers/grid';
+import type {WordBank} from '../lib/readcross/WordBank';
 import { autoFillGrid } from '../actions/gridSemantic';
+import { Direction } from '../actions/gridMeta';
 import './WordWizard.scss';
 
 
@@ -13,6 +17,11 @@ import './WordWizard.scss';
  * @property {Number}  crossIdx - Index of intersection in crossed word
  * @property {String}  crossing - word at given crossing
  */
+type Crossing = Readonly<{
+  at: number;
+  crossIdx: number;
+  crossing: string;
+}>;
 
 /**
  * Extract the word in the given direction from the grid at the given cursor.
@@ -26,19 +35,30 @@ import './WordWizard.scss';
  * @param  {Boolean} withCrosses - whether to extract crossings as well.
  *                                 Note if this is set, only one level of
  *                                 crossings will be extracted.
- * @return {String|{ word: String, crosses: Crossing[], focusIdx: number }}
+ * @return {{ word: String, crosses: Crossing[], focusIdx: number }}
  */
-function pullWordFromContent(content, width, cursor, direction, placeholder, withCrosses = false) {
-    const isAcross = direction === 'ACROSS';
-    const cell = content.get(cursor);
-    if (cell.get('type') === 'BLOCK') {
+function pullWordFromContent(
+  content: ReadonlyArray<GridCell>,
+  width: number,
+  cursor: number,
+  direction: Direction,
+  placeholder: string,
+  withCrosses = false): Readonly<{
+    word: string | null;
+    crosses: Crossing[];
+    focusIdx: number;
+  }> {
+    const isAcross = direction === Direction.Across;
+    const cell = content[cursor];
+    if (cell.type === 'BLOCK') {
         return { word: null, crosses: [], focusIdx: -1 };
     }
+
     const highlightKey = isAcross ? 'acrossWord' : 'downWord';
     const inc = isAcross ? 1 : width;
-    const highlightWord = cell.get(highlightKey);
+    const highlightWord = cell[highlightKey];
     // Initialize with given cell
-    let curWord = cell.get('value') || placeholder;
+    let curWord = cell.value || placeholder;
     let crosses = [];
     let curFocusIdx = 0;
     // Recursively pull initial crossing if requested. Note recursion depth is
@@ -51,14 +71,14 @@ function pullWordFromContent(content, width, cursor, direction, placeholder, wit
             content,
             width,
             cursor,
-            isAcross ? 'DOWN' : 'ACROSS',
+            isAcross ? Direction.Down : Direction.Across,
             placeholder,
             false
         );
         crosses.push({
             at: cursor,
             crossIdx: focusIdx,
-            crossing: word
+            crossing: word || '',
         });
     }
 
@@ -70,23 +90,23 @@ function pullWordFromContent(content, width, cursor, direction, placeholder, wit
             ptr += delta;
             // Check bounds, especially less than zero, because Immutable
             // supports negative indexing.
-            if (ptr < 0 || ptr >= content.size) {
+            if (ptr < 0 || ptr >= content.length) {
                 break;
             }
-            let nextCell = content.get(ptr);
-            if (nextCell && nextCell.get(highlightKey) === highlightWord) {
-                let value = nextCell.get('value') || placeholder;
+            let nextCell = content[ptr];
+            if (nextCell && nextCell[highlightKey] === highlightWord) {
+                let value = nextCell.value || placeholder;
                 let crossData;
                 if (withCrosses) {
                     let { word, focusIdx } = pullWordFromContent(
                         content,
                         width,
                         ptr,
-                        isAcross ? 'DOWN' : 'ACROSS',
+                        isAcross ? Direction.Down : Direction.Across,
                         placeholder,
                         false
                     );
-                    crossData = { crossing: word, at: ptr, crossIdx: focusIdx };
+                    crossData = { crossing: word || '', at: ptr, crossIdx: focusIdx };
                 }
                 // Postpend or prepend value depending on search direction.
                 if (delta > 0) {
@@ -118,19 +138,23 @@ function pullWordFromContent(content, width, cursor, direction, placeholder, wit
  * @param  {String} placeholder
  * @return {{ word: String, crosses: Crossing[] }}
  */
-function getCurrentWord(grid, placeholder = '*') {
-    const content = grid.get('content');
-    const cursor = grid.get('cursor');
-    const cursorCell = content.get(cursor);
+function getCurrentWord(grid: GridState, placeholder = '*') {
+    const content = grid.content;
+    const cursor = grid.cursor;
+    if (cursor === null) {
+        return null;
+    }
+
+    const cursorCell = content[cursor];
     if (!isDefined(cursorCell)) {
         return null;
     }
 
-    const cursorDirection = grid.get('cursorDirection');
+    const cursorDirection = grid.cursorDirection;
 
     let { word, crosses } = pullWordFromContent(
         content,
-        grid.get('width'),
+        grid.width,
         cursor,
         cursorDirection,
         placeholder,
@@ -157,11 +181,11 @@ function getCurrentWord(grid, placeholder = '*') {
  * @param  {{ word: string, crosses: Crossing[] }} query - word query
  * @return {WordMatch[]} - sorted by score and alphanumerically
  */
-function searchWordLists(lists, query) {
+function searchWordLists(lists: {[id: string]: WordBank}, query: {word: string, crosses: Crossing[]}) {
     // TODO One-level-deep crossing queries are sort of helpful, but a little
     // confusing to work with. Do we have to validate multiple levels?
-    const allLists = lists.valueSeq().toJS();
-    const searchAll = word =>
+    const allLists = Object.values(lists);
+    const searchAll = (word: string) =>
         !word ? Promise.resolve([]) : Promise
             .all(allLists.map(list => list.search(word)))
             // TODO may want to include source metadata. For now, just glom all
@@ -190,7 +214,7 @@ function searchWordLists(lists, query) {
                 let score = 0;
                 const hits = charsAtCrossings.map((chars, i) => {
                     const has = chars.has(match[i]);
-                    score += has;
+                    score += has? 1 : 0;
                     return has;
                 });
                 return {
@@ -215,7 +239,7 @@ function searchWordLists(lists, query) {
  * @param  {Crossing[]} crosses
  * @return {String}
  */
-function serializeCrosses(crosses) {
+function serializeCrosses(crosses: Crossing[]) {
     return crosses.map(c => c.crossing).join(',');
 }
 

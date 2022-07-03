@@ -16,6 +16,11 @@ export const store = createStore(
 );
 
 /**
+ * Crucible store.
+ */
+export type Store = typeof store;
+
+/**
  * Crucible dispatcher.
  */
 export type Dispatch = typeof store.dispatch;
