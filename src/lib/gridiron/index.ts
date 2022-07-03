@@ -6,6 +6,9 @@ import {IJSONWordIndex, WordBank} from '../readcross/WordBank';
 import {GridCell, IProgressStats, GridIronResponse, IWorkerMessage, IGridIronSolveMessage} from './types';
 import {Deferred} from "../deferred";
 
+// Re-export useful types.
+export {CellType, GridCell} from './types';
+
 
 function _sendAutoFillMessageToWorker(worker: Worker,
                                       grid: GridCell[],

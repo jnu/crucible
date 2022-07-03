@@ -143,6 +143,7 @@ const writeBinaryClue = (binaryString, { text, index, type }) => {
  * @return {string} - base64 encoded binary string
  */
 export const write = puzzle => {
+    // TODO: remove ImmutableJS
     const content = puzzle.get('content');
     const clues = puzzle.get('clues');
     const width = puzzle.get('width');

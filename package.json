@@ -47,7 +47,7 @@
     "mini-css-extract-plugin": "^2.6.1",
     "mkdirp": "^0.5.1",
     "mocha": "^3.1.1",
-    "pure-uuid": "^1.4.0",
+    "pure-uuid": "1.6.2",
     "raw-loader": "^0.5.1",
     "react": "16",
     "react-dom": "16",

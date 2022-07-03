@@ -4002,9 +4002,10 @@ punycode@^2.1.0:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-pure-uuid@^1.4.0:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/pure-uuid/-/pure-uuid-1.4.2.tgz#7d0d2b9d2669415d3f5feafbf8e87201c81166ea"
+pure-uuid@1.6.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/pure-uuid/-/pure-uuid-1.6.2.tgz#64f3032d54953b93b0585be3263a2629f1d60a04"
+  integrity sha512-WQ4xz74ApW6s0BToRuuyuMo9g0VHx1HljY0H2gPng+mqqz/K1yLj7sHZonZZQ2++WfHl/ZzruilWvuz+WtmxjQ==
 
 q@^1.1.2:
   version "1.4.1"

@@ -2,9 +2,12 @@ import * as crux from '../lib/crux';
 import { storageClient } from '../lib/index';
 import UUID from 'pure-uuid';
 import Immutable from 'immutable';
+import type {AutoSaveState} from '../reducers/autosave';
 
 
-
+/**
+ * Get a list of grid templates.
+ */
 export const fetchGridStateIndex = () => {
     return (dispatch, getState) => {
         dispatch({ type: 'REQUEST_GRID_SHAPE_INDEX' });
@@ -16,22 +19,23 @@ export const fetchGridStateIndex = () => {
     };
 };
 
-export const exportGridShape = name => {
+/**
+ * Save the current grid template.
+ */
+export const exportGridShape = (name: string) => {
     return (dispatch, getState) => {
         dispatch({ type: 'REQUEST_EXPORT_GRID_SHAPE' });
         const { grid } = getState();
-        const width = grid.get('width');
-        const height = grid.get('height');
+        const {width, height} = grid
         // Create empty copy of content and write.
-        const content = grid.get('content')
-            .map(cell => Immutable.Map({ type: cell.get('type') }));
-        const clues = Immutable.List();
-        const bitmap = crux.write(Immutable.Map({
+        const content = grid.content
+            .map(cell => ({ type: cell.type }));
+        const bitmap = crux.write({
             content,
-            clues,
+            clues: [],
             width,
             height
-        }));
+        });
         const uuid = new UUID(4);
         storageClient
             .save('gridShape', uuid.format(), { name, bitmap })
@@ -46,20 +50,34 @@ export const exportGridShape = name => {
     };
 };
 
-export const loadBitmap = (bitmap, id=null) => {
+/**
+ * Load a saved grid.
+ */
+export const loadBitmap = (bitmap: string, id: string | null = null) => {
     const grid = crux.read(bitmap);
     return {
         type: 'REPLACE_GRID',
         grid,
         id
-    };
+    } as const;
 };
 
+/**
+ * Load a clear grid.
+ */
 export const loadEmptyPuzzle = () => ({
     type: 'REPLACE_GRID'
-});
+} as const);
 
-export const importGridShape = uuid => {
+/**
+ * Action that clears and/or replaces the current grid.
+ */
+export type ReplaceGrid = ReturnType<typeof loadBitmap> & ReturnType<typeof loadEmptyPuzzle>;
+
+/**
+ * Load a grid template.
+ */
+export const importGridShape = (uuid: string) => {
     return (dispatch, getState) => {
         dispatch({ type: 'REQUEST_IMPORT_GRID_SHAPE' });
         storageClient
@@ -95,7 +113,10 @@ export const fetchPuzzleIndex = () => {
     };
 };
 
-export const loadPuzzle = uuid => {
+/**
+ * Load a puzzle with the given UUID.
+ */
+export const loadPuzzle = (uuid: string) => {
     return (dispatch, getState) => {
         dispatch({ type: 'REQUEST_LOAD_PUZZLE' });
         storageClient
@@ -114,10 +135,8 @@ export const loadPuzzle = uuid => {
  * Persist puzzle grid to storage without delay.
  */
 const doSaveGridNow = (dispatch, { grid }) => {
-    const id = grid.get('id');
-
     storageClient
-        .save('puzzle', id.format(), crux.write(grid))
+        .save('puzzle', grid.id.format(), crux.write(grid))
         .then(() => {
             dispatch({ type: 'AUTOSAVE_GRID_SUCCESS' });
         })
@@ -127,12 +146,24 @@ const doSaveGridNow = (dispatch, { grid }) => {
 };
 
 /**
+ * Initialize save action.
+ */
+export const AUTOSAVE_GRID_START = {
+  type: 'AUTOSAVE_GRID_START',
+} as const;
+
+/**
+ * Type of the initialize autosave grid start.
+ */
+export type AutoSaveGridStart = typeof AUTOSAVE_GRID_START;
+
+/**
  * Create an action Thunk for saving grid using the specified function.
  */
 const saveGridActionFactory = fn => {
     return () => {
         return (dispatch, getState) => {
-            dispatch({ type: 'AUTOSAVE_GRID_START' });
+            dispatch(AUTOSAVE_GRID_START);
             fn(dispatch, getState());
         };
     };
@@ -143,16 +174,33 @@ const saveGridActionFactory = fn => {
  */
 export const saveGridNow = saveGridActionFactory(doSaveGridNow);
 
-export const autoSaveStart = () => ({
-    type: 'AUTOSAVE_GRID_START'
-});
+/**
+ * Report that a save is starting.
+ */
+export const autoSaveStart = () => AUTOSAVE_GRID_START;
 
-export const autoSaveSuccess = state => ({
+/**
+ * Report a successful grid save.
+ */
+export const autoSaveSuccess = (state: AutoSaveState) => ({
     type: 'AUTOSAVE_GRID_SUCCESS',
     state
-});
+} as const);
 
-export const autoSaveError = error => ({
+/**
+ * Action that signals a successful save.
+ */
+export type AutoSaveSuccess = ReturnType<typeof autoSaveSuccess>;
+
+/**
+ * Report a failed grid save.
+ */
+export const autoSaveError = (error: Error) => ({
     type: 'AUTOSAVE_GRID_ERROR',
     error
-});
+} as const);
+
+/**
+ * Action that signals a failed save.
+ */
+export type AutoSaveError = ReturnType<typeof autoSaveError>;

@@ -1,7 +1,9 @@
 import { wordlistClient } from '../lib/index';
 
-
-export const loadWordList = key => {
+/**
+ * Load the word list with the given key.
+ */
+export const loadWordList = (key: string) => {
     return (dispatch, getState) => {
         dispatch({ type: 'REQUEST_WORDLIST', key });
         wordlistClient
