@@ -2,7 +2,11 @@ import React from 'react';
 import './LoadingAnimation.scss';
 
 
-export class LoadingAnimation extends React.Component {
+export type LoadingAnimationProps = Readonly<{
+  initializing: boolean;
+}>
+
+export class LoadingAnimation extends React.Component<LoadingAnimationProps> {
     render() {
         const squares = [];
         for (let i = 0; i < 4; i++) {

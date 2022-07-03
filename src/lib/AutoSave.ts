@@ -1,6 +1,7 @@
-const crux = require<any>('./crux');
+import UUID from 'pure-uuid';
 import {IStorageClient} from './StorageClient';
-import * as Immutable from 'immutable';
+
+const crux = require<any>('./crux');
 
 
 const NOOP = () => {};
@@ -16,7 +17,7 @@ interface IAutoSaveOpts<T> {
 }
 
 
-export class AutoSave<T extends Immutable.Map<string, any>> {
+export class AutoSave<T extends {id: UUID, [k: string]: any}> {
 
     public pollInterval: number = 5000;
 
@@ -83,7 +84,7 @@ export class AutoSave<T extends Immutable.Map<string, any>> {
     _doSave(state: T, bitmap: string) {
         this.onSaveStart();
         const ts = Date.now();
-        const id = state.get('id');
+        const id = state.id;
 
         this.storageClient
             .save('puzzle', id.format(), { ts, bitmap })

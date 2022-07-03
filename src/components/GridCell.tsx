@@ -1,25 +1,39 @@
 import React from 'react';
 import { shallowEqual } from 'recompose';
 import { bindAll } from 'lodash';
+import type {GridCell as TGridCell} from '../lib/gridiron';
 
+export type GridCellProps = {
+  cell: TGridCell;
+  focused: boolean;
+  highlight: boolean;
+  left: number;
+  top: number;
+  size: number;
+  index: number;
+  onFocus: (i: number, e: React.MouseEvent<HTMLDivElement>) => void;
+  onRequestContext: (i: number) => void;
+  onDoubleClick: (i: number, e: React.MouseEvent<HTMLDivElement>) => void;
+  onLoseContext: () => void;
+};
 
-export class GridCell extends React.Component {
+export class GridCell extends React.Component<GridCellProps> {
 
-    constructor(props) {
+    constructor(props: GridCellProps) {
         super(props);
         bindAll(this, 'doFocus', 'doContextMenu', 'doDoubleClick');
     }
 
-    shouldComponentUpdate(props, nextProps) {
-        return !shallowEqual(props, nextProps);
+    shouldComponentUpdate(nextProps: GridCellProps) {
+        return !shallowEqual(this.props, nextProps);
     }
 
-    doFocus(e) {
+    doFocus(e: React.MouseEvent<HTMLDivElement>) {
         const { index, onFocus } = this.props;
         onFocus(index, e);
     }
 
-    doContextMenu(e) {
+    doContextMenu(e: React.MouseEvent<HTMLDivElement>) {
         const { index, onRequestContext, onLoseContext } = this.props;
         e.preventDefault();
 
@@ -31,14 +45,14 @@ export class GridCell extends React.Component {
         onRequestContext(index);
     }
 
-    doDoubleClick(e) {
+    doDoubleClick(e: React.MouseEvent<HTMLDivElement>) {
         const { index, onDoubleClick } = this.props;
         onDoubleClick(index, e);
     }
 
-    getCellClassName(cell, focused, highlight) {
-        const annotation = cell.get('annotation');
-        const cns = ['GridCell', `GridCell-type-${cell.get('type').toLowerCase()}`];
+    getCellClassName(cell: TGridCell, focused: boolean, highlight: boolean) {
+        const annotation = cell.annotation;
+        const cns = ['GridCell', `GridCell-type-${cell.type.toLowerCase()}`];
         if (annotation) {
             cns.push(`GridCell-annotation-${annotation}`);
         }
@@ -72,13 +86,12 @@ export class GridCell extends React.Component {
                     height: size,
                     width: size
                 }}>
-                {!cell.get('startOfWord') ? null :
-                    <span className="GridCell_clueIdx">{cell.get('startClueIdx') + 1}</span>
+                {!cell.startOfWord ? null :
+                    <span className="GridCell_clueIdx">{cell.startClueIdx! + 1}</span>
                 }
-                {cell.get('type') === 'BLOCK' ? null :
-                    <span type="text"
-                          className="GridCell_value">
-                        {cell.get('value')}
+                {cell.type === 'BLOCK' ? null :
+                    <span className="GridCell_value">
+                        {cell.value}
                     </span>
                 }
             </div>

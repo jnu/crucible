@@ -6,16 +6,23 @@ import { isDefined } from '../lib/isDefined';
 import type {GridCell} from '../lib/gridiron';
 import type {GridState} from '../reducers/grid';
 import type {WordBank} from '../lib/readcross/WordBank';
+import type {WordlistState, Wordlist} from '../reducers/wordlist';
 import { autoFillGrid } from '../actions/gridSemantic';
 import { Direction } from '../actions/gridMeta';
+import { State, Dispatch } from '../store';
 import './WordWizard.scss';
 
 
 /**
- * @typedef Crossing
- * @property {Number}  at - cursor position of extracted word
- * @property {Number}  crossIdx - Index of intersection in crossed word
- * @property {String}  crossing - word at given crossing
+ * Search for a given word.
+ */
+type WordQuery = Readonly<{
+  word: string | null;
+  crosses: Crossing[];
+}>;
+
+/**
+ * Represent a crossed word.
  */
 type Crossing = Readonly<{
   at: number;
@@ -27,15 +34,6 @@ type Crossing = Readonly<{
  * Extract the word in the given direction from the grid at the given cursor.
  * Optionally extract all crossings with this word. The placeholder is used to
  * denote blank cells.
- * @param  {Immutable.List}  content - List of grid Cells
- * @param  {Number}  width - width of grid (used to iterate over DOWNs)
- * @param  {Number}  cursor - current cursor position
- * @param  {String}  direction - either ACROSS or DOWN; direction to extract
- * @param  {String}  placeholder - stand-in for empty cells
- * @param  {Boolean} withCrosses - whether to extract crossings as well.
- *                                 Note if this is set, only one level of
- *                                 crossings will be extracted.
- * @return {{ word: String, crosses: Crossing[], focusIdx: number }}
  */
 function pullWordFromContent(
   content: ReadonlyArray<GridCell>,
@@ -134,9 +132,6 @@ function pullWordFromContent(
 /**
  * Extract the current word from the grid, as well as all of the words that
  * cross this one. Use placeholder in lieu of missing values.
- * @param  {Grid} grid
- * @param  {String} placeholder
- * @return {{ word: String, crosses: Crossing[] }}
  */
 function getCurrentWord(grid: GridState, placeholder = '*') {
     const content = grid.content;
@@ -166,22 +161,25 @@ function getCurrentWord(grid: GridState, placeholder = '*') {
 
 
 /**
- * @typedef WordMatch
- * @property {Number} score - strength of match
- * @property {String} match - matched word
- * @property {Boolean[]} hits - indicates whether char in `match` would be
- *                              potentially acceptable at a crossing.
+ * Represent a search result. Score is the strength of match, the match is
+ * the matched word, and the hits indicate valid or invalid char positions.
  */
+type WordMatch = Readonly<{
+  score: number;
+  match: string;
+  hits: boolean[];
+}>
 
 
 /**
  * Search all word lists for the given query. The query consists of a word and
  * all the crossings of this word.
- * @param  {{ [id: string]: WordBank }} lists - word banks to query
- * @param  {{ word: string, crosses: Crossing[] }} query - word query
- * @return {WordMatch[]} - sorted by score and alphanumerically
  */
-function searchWordLists(lists: {[id: string]: WordBank}, query: {word: string, crosses: Crossing[]}) {
+function searchWordLists(lists: Wordlist, query: WordQuery) {
+    if (!query.word) {
+      return Promise.resolve([]);
+    }
+
     // TODO One-level-deep crossing queries are sort of helpful, but a little
     // confusing to work with. Do we have to validate multiple levels?
     const allLists = Object.values(lists);
@@ -256,9 +254,24 @@ const wordWizardStyle = {
 };
 
 
-class WordWizardView extends React.Component {
 
-    constructor(props) {
+type WordWizardViewState = Readonly<{
+  query: WordQuery | null;
+  matches: WordMatch[];
+  fetching: boolean;
+  error: Error | null;
+}>
+
+type WordWizardViewProps = Readonly<{
+  grid: GridState; 
+  wordlist: WordlistState;
+  dispatch: Dispatch;
+}>
+
+
+class WordWizardView extends React.Component<WordWizardViewProps, WordWizardViewState> {
+
+    constructor(props: WordWizardViewProps) {
         super(props);
         this.state = INITIAL_WIZARD_STATE;
         this._renderListRow = this._renderListRow.bind(this);
@@ -268,11 +281,8 @@ class WordWizardView extends React.Component {
     /**
      * Check if potential matches in state might have changed. Assume that
      * potential matches are deterministic given wordlist state and nextQuery.
-     * @param  {Wordlist} wordlist - wordlist state tree
-     * @param  {String} nextQuery - next query
-     * @return {boolean}
      */
-    _areMatchesCurrent(wordlist, nextQuery) {
+    _areMatchesCurrent(wordlist: WordlistState, nextQuery: WordQuery) {
         return (
             this.state.query &&
             nextQuery &&
@@ -282,7 +292,7 @@ class WordWizardView extends React.Component {
         );
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: WordWizardViewProps) {
         const nextQuery = getCurrentWord(nextProps.grid);
         // No current word means no query; reset to initial state.
         if (!nextQuery || !nextQuery.word) {
@@ -291,7 +301,7 @@ class WordWizardView extends React.Component {
         }
         // If potential matches might've changed, need to recomputed.
         if (!this._areMatchesCurrent(nextProps.wordlist, nextQuery)) {
-            const searchPromise = searchWordLists(nextProps.wordlist.get('lists'), nextQuery);
+            const searchPromise = searchWordLists(nextProps.wordlist.lists, nextQuery);
             // Set "now searching" state
             this.setState({
                 query: nextQuery,
@@ -324,7 +334,7 @@ class WordWizardView extends React.Component {
         }
     }
 
-    _renderListRow({ key, index, style }) {
+    _renderListRow({ key, index, style }: { key: string; index: number; style: React.CSSProperties}) {
         const { match, hits } = this.state.matches[index];
         return (
             <div key={key} style={style}>{
@@ -369,6 +379,6 @@ class WordWizardView extends React.Component {
 }
 
 
-const mapStateToProps = ({ grid, wordlist }) => ({ grid, wordlist });
+const mapStateToProps = ({ grid, wordlist }: State) => ({ grid, wordlist });
 
 export const WordWizard = connect(mapStateToProps)(pure(WordWizardView));

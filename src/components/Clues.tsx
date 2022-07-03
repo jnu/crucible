@@ -2,33 +2,53 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { pure } from 'recompose';
 import {
+    Direction,
     focusCell,
     setDirection
 } from '../actions';
+import type {Clue} from '../reducers/grid';
+import type { GridCell } from '../lib/gridiron';
+import type { State, Dispatch } from '../store';
 import './Clues.scss';
 
 
 const CLUE_HEADER_HEIGHT = 42;
 
-const getClueClassName = (i, selection, isPrimary) => {
+const getClueClassName = (i: number, selection: number | void | null, isPrimary: boolean) => {
     const cn = ["Clues_Clue"];
     if (i === selection) {
-        cn.push(["Clues_Clue-selected"]);
+        cn.push("Clues_Clue-selected");
 
         if (isPrimary) {
-            cn.push(["Clues_Clue-selected-primary"]);
+            cn.push("Clues_Clue-selected-primary");
         }
     }
     return cn.join(' ');
 };
 
+type CluesViewProps = Readonly<{
+  height: number;
+  title: string;
+  dispatch: Dispatch;
+  type: Direction;
+  cursorDirection: Direction;
+  leftOffset: number;
+  topOffset: number;
+  cursor: number | null;
+  clues: Clue[];
+  content: GridCell[];
+}>;
 
-class CluesView extends React.Component {
+class CluesView extends React.Component<CluesViewProps> {
 
-    onClickClue(clue, type) {
+    onClickClue(clue: Clue, type: Direction) {
         const { dispatch } = this.props;
-        dispatch(focusCell(clue.get(`${type}StartIdx`)));
-        dispatch(setDirection(type.toUpperCase()));
+        const field = type.toLowerCase() === 'across' ? 'acrossStartIdx' : 'downStartIdx';
+        const cell = clue[field];
+        if (cell !== null) {
+          dispatch(focusCell(cell));
+        }
+        dispatch(setDirection(type));
     }
 
     render() {
@@ -49,8 +69,10 @@ class CluesView extends React.Component {
         }
 
         const isPrimarySelection = cursorDirection.toLowerCase() === type.toLowerCase();
-        const cell = content.get(cursor);
-        const selection = cell && cell.get(`${type}Word`);
+        const cell = cursor !== null ? content[cursor] : null;
+        const selectionField = type === Direction.Across ? 'acrossWord' : 'downWord';
+        const selection = cell && cell[selectionField];
+        const clueField = type === Direction.Across ? 'across' : 'down';
 
         return (
             <div className={ `Clues Clues-${type.toLowerCase()}` } style={{
@@ -65,12 +87,12 @@ class CluesView extends React.Component {
                     <div className="Clues_spacer" />
                 </div>
                 <ol className="Clues_list" style={{ height: height - CLUE_HEADER_HEIGHT }}>
-                    {clues.map((clue, i) => clue.get(type) === null ? null :
+                    {clues.map((clue, i) => clue[clueField] === null ? null :
                         <li key={`${type}-${i}`}
                             className={getClueClassName(i, selection, isPrimarySelection)}
                             onClick={() => this.onClickClue(clue, type)}>
                             <span className="Clues_Clue_idx">{i + 1}</span>
-                            <span className="Clues_Clue_text">{clue.get(type)}</span>
+                            <span className="Clues_Clue_text">{clue[clueField]}</span>
                         </li>
                     )}
                 </ol>
@@ -80,13 +102,13 @@ class CluesView extends React.Component {
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: State) => {
     const { grid } = state;
     return {
-        clues: grid.get('clues'),
-        content: grid.get('content'),
-        cursor: grid.get('cursor'),
-        cursorDirection: grid.get('cursorDirection')
+        clues: grid.clues,
+        content: grid.content,
+        cursor: grid.cursor,
+        cursorDirection: grid.cursorDirection,
     };
 };
 

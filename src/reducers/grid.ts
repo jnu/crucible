@@ -2,7 +2,7 @@ import UUID from 'pure-uuid';
 
 import { isDefined } from '../lib/isDefined';
 import {fill, CellType} from '../lib/gridiron';
-import type {GridCell} from '../lib/gridiron';
+import type {GridCell, IProgressStats} from '../lib/gridiron';
 import {Direction} from '../actions/gridMeta';
 import type {ToggleSymmetricalGrid, SelectCell, SetCursorDirection, HideMenu, ShowMenu, MoveCursor} from '../actions/gridMeta';
 import type {
@@ -46,6 +46,9 @@ export type GridState = Readonly<{
   cursorDirection: Direction;
   menuCell: number | null;
   cellSize: number;
+  autoFilling: boolean;
+  autoFillStatus: IProgressStats | null;
+  autoFillError: Error | null;
 }>;
 
 /**
@@ -298,7 +301,12 @@ const createNewGrid = (): GridState => {
         cursor: null,
         cursorDirection: Direction.Across,
         menuCell: null,
-        cellSize: 30
+        cellSize: 30,
+
+        // Autofill state
+        autoFilling: false,
+        autoFillStatus: null,
+        autoFillError: null,
     };
 };
 
@@ -521,7 +529,7 @@ export const rUpdatePuzzleInfo = (state: GridState, action: UpdatePuzzleInfo) =>
 export const rAutoFillGridStart = (state: GridState, _action: AutoFillGridStart) => {
   return {...state,
     autoFilling: true,
-    autoFillStatus: {},
+    autoFillStatus: null,
     autoFillError: null,
   };
 };

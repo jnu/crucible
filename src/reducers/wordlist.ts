@@ -2,12 +2,17 @@ import type {Action} from '../actions';
 import type {WordBank} from '../lib/readcross/WordBank';
 
 /**
+ * Represent a group of wordlists.
+ */
+export type Wordlist = Readonly<{[k: string]: WordBank}>;
+
+/**
  * State of the wordlist store.
  */
 export type WordlistState = Readonly<{
   fetching: Set<string>;
   error: Error | null;
-  lists: {[k: string]: WordBank};
+  lists: Wordlist;
 }>;
 
 /**

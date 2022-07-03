@@ -13,26 +13,45 @@ import {
     requestCellContext,
     hideCellContext,
 } from '../actions';
+import { Direction } from '../actions/gridMeta';
+import type { CellUpdates } from '../actions/gridSemantic';
+import type { GridState } from '../reducers/grid';
+import type { State, Dispatch } from '../store';
+import { GridCell as TGridCell, CellType } from '../lib/gridiron';
 import * as Keys from '../lib/keys';
 import './GridContent.scss';
 
 
-const getNextDirection = direction => direction === 'ACROSS' ? 'DOWN' : 'ACROSS';
+const getNextDirection = (direction: Direction) => direction === Direction.Across ? Direction.Down : Direction.Across;
 
 
-class GridContentView extends React.Component {
+type GridContentViewProps = Pick<GridState,
+  'autoFilling'
+  | 'cursor'
+  | 'cursorDirection'
+  | 'content'
+  | 'width'
+  | 'height'
+  | 'cellSize'
+  | 'menuCell'
+  > & {dispatch: Dispatch};
 
-    constructor(props) {
+class GridContentView extends React.Component<GridContentViewProps> {
+
+    constructor(props: GridContentViewProps) {
         super(props);
         bindAll(this,
             'onFocusCell',
-            'onUpdateCell',
             'onLoseCellContext',
             'onRequestCellContext',
             'onKeyDown',
             'onDoubleClick',
         );
     }
+
+    private mouseClickListener: ((e: MouseEvent) => void) | null | undefined;
+    private keyDownListener: ((e: KeyboardEvent) => void) | null | undefined;
+    private gridContentRoot: HTMLDivElement | null | undefined;
 
     componentDidMount() {
         const cmp = this;
@@ -53,7 +72,7 @@ class GridContentView extends React.Component {
             }
 
             // Focus event
-            if (gridContentRoot.contains(target)) {
+            if (gridContentRoot.contains(target as HTMLElement)) {
                 cmp.setKeyListener(cmp);
             } else {
                 cmp.removeKeyListener(cmp);
@@ -70,14 +89,14 @@ class GridContentView extends React.Component {
         }
     }
 
-    removeKeyListener(cmp) {
+    removeKeyListener(cmp: GridContentView) {
         if (cmp.keyDownListener) {
             window.removeEventListener('keydown', cmp.keyDownListener);
             cmp.keyDownListener = null;
         }
     }
 
-    setKeyListener(cmp) {
+    setKeyListener(cmp: GridContentView) {
         if (cmp.keyDownListener) {
             return;
         }
@@ -100,20 +119,12 @@ class GridContentView extends React.Component {
         window.addEventListener('keydown', cmp.keyDownListener);
     }
 
-    onFocusCell(index) {
+    onFocusCell(index: number) {
         const { dispatch } = this.props;
         if (this.props.autoFilling) {
             return;
         }
         dispatch(focusCell(index));
-    }
-
-    onUpdateCell(index, updates) {
-        const { dispatch } = this.props;
-        if (this.props.autoFilling) {
-            return;
-        }
-        dispatch(updateCell(index, updates));
     }
 
     onLoseCellContext() {
@@ -124,7 +135,7 @@ class GridContentView extends React.Component {
         dispatch(hideCellContext());
     }
 
-    onRequestCellContext(index) {
+    onRequestCellContext(index: number) {
         const { dispatch } = this.props;
         if (this.props.autoFilling) {
             return;
@@ -132,7 +143,7 @@ class GridContentView extends React.Component {
         dispatch(requestCellContext(index));
     }
 
-    onKeyDown(e, index, cursorDirection, content) {
+    onKeyDown(e: KeyboardEvent, index: number | null, cursorDirection: Direction, content: TGridCell[]) {
         const { dispatch } = this.props;
 
         if (this.props.autoFilling) {
@@ -152,7 +163,7 @@ class GridContentView extends React.Component {
         switch (keyCode) {
             case Keys.DELETE:
             case Keys.BACKSPACE:
-                if (content.get(index).get('value')) {
+                if (content[index]?.value) {
                     return dispatch(updateCell(index, { value: '' }));
                 } else {
                     return dispatch(moveCursorAndUpdate(-1, { value: '' }));
@@ -164,25 +175,25 @@ class GridContentView extends React.Component {
                 // TODO implement word skip?
                 return;
             case Keys.DOWN:
-                return (cursorDirection === 'DOWN') ?
+                return (cursorDirection === Direction.Down) ?
                     dispatch(moveCursor(1)) :
-                    dispatch(setDirection('DOWN'));
+                    dispatch(setDirection(Direction.Down));
             case Keys.RIGHT:
-                return (cursorDirection === 'ACROSS') ?
+                return (cursorDirection === Direction.Across) ?
                     dispatch(moveCursor(1)) :
-                    dispatch(setDirection('ACROSS'));
+                    dispatch(setDirection(Direction.Across));
             case Keys.UP:
-                return (cursorDirection === 'DOWN') ?
+                return (cursorDirection === Direction.Down) ?
                     dispatch(moveCursor(-1)) :
-                    dispatch(setDirection('DOWN'));
+                    dispatch(setDirection(Direction.Down));
             case Keys.LEFT:
-                return (cursorDirection === 'ACROSS') ?
+                return (cursorDirection === Direction.Across) ?
                     dispatch(moveCursor(-1)) :
-                    dispatch(setDirection('ACROSS'));
+                    dispatch(setDirection(Direction.Across));
             case Keys.FSLASH: {
-                const curType = content.get(index).get('type');
+                const curType = content[index]?.type;
                 return dispatch(updateCell(index, {
-                    type: curType === 'BLOCK' ? 'CONTENT' : 'BLOCK'
+                    type: curType === 'BLOCK' ? CellType.Content : CellType.Block
                 }));
             }
             case 0:
@@ -217,9 +228,9 @@ class GridContentView extends React.Component {
             cursorDirection,
         } = this.props;
 
-        const cursorCell = cursor !== null && cursor !== undefined && content.get(cursor);
-        const highlightKey = cursorDirection === 'ACROSS' ? 'acrossWord' : 'downWord';
-        const highlightWord = cursorCell && cursorCell.get(highlightKey);
+        const cursorCell = cursor !== null && cursor !== undefined && content[cursor];
+        const highlightKey = cursorDirection === Direction.Across ? 'acrossWord' : 'downWord';
+        const highlightWord = cursorCell && cursorCell[highlightKey];
         const hasHighlight = !!cursorCell && highlightWord !== null && highlightWord !== undefined;
         // Grid is 1px larger than the sum of its cells due to border
         const gridStyle = {
@@ -241,13 +252,12 @@ class GridContentView extends React.Component {
                                   left={x}
                                   top={y}
                                   size={cellSize}
-                                  onChange={this.onUpdateCell}
                                   onFocus={this.onFocusCell}
                                   onDoubleClick={this.onDoubleClick}
                                   onLoseContext={this.onLoseCellContext}
                                   onRequestContext={this.onRequestCellContext}
                                   focused={cursor === i}
-                                  highlight={hasHighlight && highlightWord === cell.get(highlightKey)}>
+                                  highlight={hasHighlight && highlightWord === cell[highlightKey]}>
                         </GridCell>
                     );
                 })}
@@ -258,18 +268,18 @@ class GridContentView extends React.Component {
 
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: State) => {
     const { grid } = state;
 
     return {
-        content: grid.get('content'),
-        width: grid.get('width'),
-        height: grid.get('height'),
-        cellSize: grid.get('cellSize'),
-        menuCell: grid.get('menuCell'),
-        cursor: grid.get('cursor'),
-        cursorDirection: grid.get('cursorDirection'),
-        autoFilling: grid.get('autoFilling'),
+        content: grid.content,
+        width: grid.width,
+        height: grid.height,
+        cellSize: grid.cellSize,
+        menuCell: grid.menuCell,
+        cursor: grid.cursor,
+        cursorDirection: grid.cursorDirection,
+        autoFilling: grid.autoFilling,
     };
 };
 

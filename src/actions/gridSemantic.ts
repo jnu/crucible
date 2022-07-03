@@ -1,18 +1,18 @@
 import type { Direction } from './gridMeta';
 import { moveCursor } from './gridMeta';
 import {fill} from "../lib/gridiron";
-import type {CellType, GridCell} from '../lib/gridiron';
+import type {CellType, GridCell, IProgressStats} from '../lib/gridiron';
 import type {Dispatch, GetState} from '../store'
 import type {WordBank} from '../lib/readcross/WordBank';
 
 /**
  * Updated information to apply to a cell.
  */
-export type CellUpdates = Readonly<{
+export type CellUpdates = Readonly<Partial<{
   type: CellType;
-  annotation: string | void;
-  value: string | void;
-}>;
+  annotation: string;
+  value: string;
+}>>;
 
 /**
  * Resize the puzzle grid to the given dimensions.
@@ -57,7 +57,7 @@ export type AutoFillGridStart = typeof AUTO_FILL_GRID_START;
 /**
  * Update the UI with stats about auto-fill progress.
  */
-const autoFillGridStatsUpdate = (stats: unknown) => ({
+const autoFillGridStatsUpdate = (stats: IProgressStats) => ({
   type: 'AUTO_FILL_STATS_UPDATE',
   stats,
 } as const);

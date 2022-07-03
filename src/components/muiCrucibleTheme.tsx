@@ -34,4 +34,4 @@ export const muiCrucibleTheme = {
         clockCircleColor: fade(muiColors.darkBlack, 0.07),
         shadowColor: muiColors.fullBlack
   }
-}
+} as const;

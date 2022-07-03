@@ -1,7 +1,15 @@
 import React from 'react';
 
+export type DividerProps = Readonly<{
+  span: number;
+  align: 'vertical' | 'horizontal';
+  thickness: number;
+  color: string;
+  offset: number;
+  style?: React.CSSProperties;
+}>;
 
-export const Divider = ({ span, align, thickness, color, style, offset }) => {
+export const Divider = ({ span, align, thickness, color, style, offset }: DividerProps) => {
     const spanOffsetKey = align === 'vertical' ? 'top' : 'left';
     const generalOffsetKey = align === 'vertical' ? 'left' : 'top';
     const spanKey = align === 'vertical' ? 'height' : 'width';
@@ -13,7 +21,7 @@ export const Divider = ({ span, align, thickness, color, style, offset }) => {
         [spanOffsetKey]: `${(1 - span) * 50}%`,
         [spanKey]: `${span * 100}%`,
         [thicknessKey]: thickness || 1
-    };
+    } as const;
 
     if (style) {
         Object.assign(dividerStyle, style);

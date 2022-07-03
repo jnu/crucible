@@ -23,11 +23,27 @@ import { List, ListItem } from 'material-ui/List';
 import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
 import { bindAll } from 'lodash';
+import type {State, Dispatch} from '../store';
+import type {GridState} from '../reducers/grid';
+import type {MetaState} from '../reducers/meta';
 
 
-class GridMetaMenuView extends React.Component {
+type GridMetaMenuViewState = {
+  exportGridName: string;
+  newGridWidth: number;
+  newGridHeight: number;
+  anchorEl: React.ReactInstance | undefined;
+};
 
-    constructor(props) {
+type GridMetaMenuViewProps = {
+  dispatch: Dispatch; 
+  grid: GridState;
+  meta: MetaState;
+};
+
+class GridMetaMenuView extends React.Component<GridMetaMenuViewProps, GridMetaMenuViewState> {
+
+    constructor(props: GridMetaMenuViewProps) {
         super(props);
         bindAll(this,
             'openImportGridShapeDialog',
@@ -48,14 +64,14 @@ class GridMetaMenuView extends React.Component {
         );
         this.state = {
             exportGridName: '',
-            newGridWidth: props.grid.get('width'),
-            newGridHeight: props.grid.get('height'),
-            anchorEl: null
+            newGridWidth: props.grid.width,
+            newGridHeight: props.grid.height,
+            anchorEl: undefined
         };
     }
 
-    shouldComponentUpdate(props, nextProps) {
-        return !shallowEqual(props, nextProps);
+    shouldComponentUpdate(nextProps: GridMetaMenuViewProps, nextState: GridMetaMenuViewState) {
+        return !shallowEqual(this.props, nextProps) || !shallowEqual(this.state, nextState);
     }
 
     openImportGridShapeDialog() {
@@ -80,7 +96,7 @@ class GridMetaMenuView extends React.Component {
         dispatch(openMetaDialog('RESIZE_GRID'));
     }
 
-    openGridMenu(e) {
+    openGridMenu(e: React.MouseEvent) {
         const { dispatch } = this.props;
         this.setState({ anchorEl: e.currentTarget }, () => {
             dispatch(openMetaDialog('GRID_MENU'));
@@ -92,7 +108,7 @@ class GridMetaMenuView extends React.Component {
         dispatch(closeMetaDialog());
     }
 
-    importGrid(uuid) {
+    importGrid(uuid: string) {
         const { dispatch } = this.props;
         dispatch(importGridShape(uuid));
         this.closeDialog();
@@ -104,7 +120,7 @@ class GridMetaMenuView extends React.Component {
         this.closeDialog();
     }
 
-    loadPuzzle(uuid) {
+    loadPuzzle(uuid: string) {
         const { dispatch } = this.props;
         dispatch(loadPuzzle(uuid));
         this.closeDialog();
@@ -116,16 +132,16 @@ class GridMetaMenuView extends React.Component {
         this.closeDialog();
     }
 
-    updateExportName(e) {
-        this.setState({ exportGridName: e.target.value });
+    updateExportName(e: React.KeyboardEvent<HTMLInputElement>) {
+        this.setState({ exportGridName: (e.target as HTMLInputElement).value });
     }
 
-    updateNewWidth(e) {
-        this.setState({ newGridWidth: e.target.value });
+    updateNewWidth(e: React.KeyboardEvent<HTMLInputElement>) {
+        this.setState({ newGridWidth: +(e.target as HTMLInputElement).value });
     }
 
-    updateNewHeight(e) {
-        this.setState({ newGridHeight: e.target.value });
+    updateNewHeight(e: React.KeyboardEvent<HTMLInputElement>) {
+        this.setState({ newGridHeight: +(e.target as HTMLInputElement).value });
     }
 
     resizeGrid() {
@@ -147,7 +163,7 @@ class GridMetaMenuView extends React.Component {
         return (
             <div className="GridMetaMenu">
                 <FlatButton onClick={this.openGridMenu}>Grid</FlatButton>
-                <Popover open={meta.get('openDialog') === 'GRID_MENU'}
+                <Popover open={meta.openDialog === 'GRID_MENU'}
                          anchorEl={this.state.anchorEl}
                          anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
                          targetOrigin={{ horizontal: 'left', vertical: 'top' }}
@@ -169,22 +185,21 @@ class GridMetaMenuView extends React.Component {
                             Resize ...
                         </MenuItem>
                         <MenuItem onClick={this.toggleSymmetricalGrid}
-                                  checked={grid.get('symmetrical')}>
+                                  checked={grid.symmetrical}>
                             Symmetrical
                         </MenuItem>
                     </Menu>
                 </Popover>
                 <Dialog title="Import Grid Template"
-                        open={meta.get('openDialog') === 'IMPORT_GRID_SHAPE'}
+                        open={meta.openDialog === 'IMPORT_GRID_SHAPE'}
                         contentStyle={{ width: 400 }}
                         onRequestClose={this.closeDialog}
                         autoScrollBodyContent={true}
-                        actions={<FlatButton label="Cancel" primary={false} onClick={this.closeDialog} />}>
-                    {!meta.get('requestingGridShapeIndex') ?
+                        actions={[<FlatButton label="Cancel" primary={false} onClick={this.closeDialog} />]}>
+                    {!meta.requestingGridShapeIndex ?
                         <List>
-                            {meta.get('gridShapeIndex').map(obj => {
-                                const key = obj.get('key');
-                                const name = obj.get('name');
+                            {meta.gridShapeIndex.map(obj => {
+                                const {key, name} = obj;
                                 return (
                                     <ListItem key={key} onClick={() => this.importGrid(key)}>
                                         {name ? name : <span>Unnamed</span>}
@@ -196,10 +211,10 @@ class GridMetaMenuView extends React.Component {
                     }
                 </Dialog>
                 <Dialog title="Save Grid Template"
-                        open={meta.get('openDialog') === 'EXPORT_GRID_SHAPE'}
+                        open={meta.openDialog === 'EXPORT_GRID_SHAPE'}
                         contentStyle={{ width: 400 }}
                         onRequestClose={this.closeDialog}
-                        actions={
+                        actions={[
                         <div>
                             <FlatButton label="Cancel"
                                         primary={false}
@@ -208,21 +223,20 @@ class GridMetaMenuView extends React.Component {
                                         primary={true}
                                         onClick={this.exportGrid} />
                         </div>
-                        }>
+                        ]}>
                     <TextField hintText="Enter a name for this template"
                                onChange={this.updateExportName} />
                 </Dialog>
                 <Dialog title="Load Puzzle"
-                        open={meta.get('openDialog') === 'LOAD_PUZZLE'}
+                        open={meta.openDialog === 'LOAD_PUZZLE'}
                         contentStyle={{ width: 400 }}
                         autoScrollBodyContent={true}
                         onRequestClose={this.closeDialog}
-                        actions={<FlatButton label="Cancel" primary={false} onClick={this.closeDialog} />}>
-                    {!meta.get('requestingPuzzleIndex') ?
+                        actions={[<FlatButton label="Cancel" primary={false} onClick={this.closeDialog} />]}>
+                    {!meta.requestingPuzzleIndex ?
                         <List>
-                            {meta.get('puzzleIndex').map(obj => {
-                                const id = obj.get('id');
-                                const title = obj.get('title');
+                            {meta.puzzleIndex.map(obj => {
+                                const {id, title} = obj;
                                 return (
                                     <ListItem key={id} onClick={() => this.loadPuzzle(id)}>
                                         {title ? title : <span>(Untitled)</span>}
@@ -234,15 +248,15 @@ class GridMetaMenuView extends React.Component {
                     }
                 </Dialog>
                 <Dialog title="Resize Grid"
-                        open={meta.get('openDialog') === 'RESIZE_GRID'}
+                        open={meta.openDialog === 'RESIZE_GRID'}
                         contentStyle={{ width: 400 }}
                         autoScrollBodyContent={false}
                         onRequestClose={this.closeDialog}
-                        actions={
+                        actions={[
                         <div>
                             <FlatButton label="Cancel" primary={false} onClick={this.closeDialog} />
                             <RaisedButton label="Apply" primary={true} onClick={this.resizeGrid} />
-                        </div>}>
+                        </div>]}>
                         <div>
                             Width: <TextField name="ResizeGrid_Width_Input"
                                               value={this.state.newGridWidth}
@@ -261,7 +275,7 @@ class GridMetaMenuView extends React.Component {
     }
 }
 
-export const GridMetaMenu = connect(state => ({
+export const GridMetaMenu = connect((state: State) => ({
     meta: state.meta,
     grid: state.grid
 }))(GridMetaMenuView);

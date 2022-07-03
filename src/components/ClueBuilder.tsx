@@ -2,18 +2,28 @@ import React from 'react';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import { bindAll } from 'lodash';
-import { updateClue } from '../actions';
+import { Direction, updateClue } from '../actions';
+import type {State, Dispatch} from '../store';
+
+type ClueBuilderViewProps = Readonly<{
+  dispatch: Dispatch;
+  hasClue: boolean;
+  index: number;
+  direction: Direction;
+  value: string;
+  style: React.CSSProperties;
+}>;
 
 
-class ClueBuilderView extends React.Component {
+class ClueBuilderView extends React.Component<ClueBuilderViewProps> {
 
-    constructor(props) {
+    constructor(props: ClueBuilderViewProps) {
         super(props);
         bindAll(this, 'updateClueState');
     }
 
-    updateClueState(e) {
-        const value = e.target.value;
+    updateClueState(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+        const value = (e.target as HTMLTextAreaElement).value;
 
         const {
             dispatch,
@@ -64,15 +74,17 @@ class ClueBuilderView extends React.Component {
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: State) => {
     const { grid } = state;
-    const cursor = grid.get('cursor');
-    const direction = (grid.get('cursorDirection') || '').toLowerCase();
-    const cell = grid.get('content').get(cursor);
-    const index = cell ? cell.get(`${direction}Word`) : -1;
-    const clue = grid.get('clues').get(index);
-    const hasClue = !!(cell && clue && clue.has(direction));
-    const value = hasClue ? clue.get(direction) : null;
+    const cursor = grid.cursor;
+    const direction = (grid.cursorDirection || '').toLowerCase();
+    const cell = grid.content[cursor || -1];
+    const field = direction === Direction.Across ? 'acrossWord' : 'downWord';
+    const index = cell ? cell[field] : -1;
+    const clue = grid.clues[index || -1];
+    const clueField = direction === Direction.Across ? 'across' : 'down';
+    const hasClue = !!(cell && clue && clue[clueField]);
+    const value = hasClue ? clue[clueField] : null;
 
     return {
         hasClue,

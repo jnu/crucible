@@ -1,30 +1,42 @@
 import {Action} from '../actions';
+import type {Puzzle, SavedGridTemplate} from '../actions/storage';
 
 /**
  * Empty state of the meta store.
  */
 const DEFAULT_META_STATE = {
-    openDialog: null as string | null,
+    openDialog: null,
     requestingExport: false,
     requestingImport: false,
     requestingGridShapeIndex: false,
-    gridShapeIndex: [] as ReadonlyArray<string>,
+    gridShapeIndex: [],
     requestingPuzzle: false,
-    puzzleRequestError: null as Error | null,
+    puzzleRequestError: null,
     requestingPuzzleIndex: false,
     puzzleIndexRequestError: null,
-    puzzleIndex: [] as ReadonlyArray<string>,
+    puzzleIndex: [],
 } as const;
 
 /**
  * Type of the meta store.
  */
-export type MetaState = typeof DEFAULT_META_STATE;
+export type MetaState = Readonly<{
+  openDialog: string | null;
+  requestingExport: boolean;
+  requestingImport: boolean;
+  requestingGridShapeIndex: boolean;
+  gridShapeIndex: ReadonlyArray<SavedGridTemplate>;
+  requestingPuzzle: boolean;
+  puzzleRequestError: Error | null;
+  requestingPuzzleIndex: boolean;
+  puzzleIndexRequestError: Error | null;
+  puzzleIndex: ReadonlyArray<Puzzle>;
+}>;
 
 /**
  * Reducer to apply state changes to the meta store.
  */
-export const meta = (state = DEFAULT_META_STATE, action: Action) => {
+export const meta = (state = DEFAULT_META_STATE, action: Action): MetaState => {
     switch (action.type) {
         case 'OPEN_META_DIALOG':
             return {...state, openDialog: action.key};
@@ -60,7 +72,7 @@ export const meta = (state = DEFAULT_META_STATE, action: Action) => {
         case 'RECEIVE_PUZZLE_SUCCESS':
             return {...state,
                 requestingPuzzle: false,
-                requestPuzzleError: null,
+                puzzleRequestError: null,
             };
         case 'RECEIVE_PUZZLE_ERROR':
             return {...state,

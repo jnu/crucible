@@ -143,30 +143,29 @@ const writeBinaryClue = (binaryString, { text, index, type }) => {
  * @return {string} - base64 encoded binary string
  */
 export const write = puzzle => {
-    // TODO: remove ImmutableJS
-    const content = puzzle.get('content');
-    const clues = puzzle.get('clues');
-    const width = puzzle.get('width');
-    const height = puzzle.get('height');
-    const author = utf8.encode(puzzle.get('author', ''));
-    const title = utf8.encode(puzzle.get('title', ''));
-    const description = utf8.encode(puzzle.get('description', ''));
-    const copyright = utf8.encode(puzzle.get('copyright', ''));
+    const content = puzzle.content;
+    const clues = puzzle.clues;
+    const width = puzzle.width;
+    const height = puzzle.height;
+    const author = utf8.encode(puzzle.author || '');
+    const title = utf8.encode(puzzle.title || '');
+    const description = utf8.encode(puzzle.description || '');
+    const copyright = utf8.encode(puzzle.copyright || '');
     const currentTS = Date.now();
-    const dateCreated = puzzle.get('dateCreated', currentTS);
-    const lastModified = puzzle.get('lastModified', currentTS);
+    const dateCreated = puzzle.dateCreated || currentTS;
+    const lastModified = puzzle.lastModified || currentTS;
 
     const binStr = new BinaryString();
 
     // Collect stats
-    const isEmpty = !content.some(cell => !!cell.get('value'));
+    const isEmpty = !content.some(cell => !!cell.value);
 
     let numClues = 0;
     let clueContentLength = 0;
 
     const encodedClues = clues.map(clue => {
-        const across = clue.get('across');
-        const down = clue.get('down');
+        const across = clue.across;
+        const down = clue.down;
         const hasAcross = isDefined(across);
         const hasDown = isDefined(down);
         numClues += hasAcross + hasDown;
@@ -227,8 +226,8 @@ export const write = puzzle => {
 
     // Write content body
     content.forEach(cell => {
-        const value = cell.get('type') === 'BLOCK' ?
-            null : cell.get('value', '');
+        const value = cell.type === 'BLOCK' ?
+            null : (cell.value || '');
         binStr.write(serializeValue(TYPE_CT0, value), cellEncodingWidth);
     });
 

@@ -3,6 +3,9 @@ import { storageClient } from '../lib/index';
 import UUID from 'pure-uuid';
 import type {AutoSaveState} from '../reducers/autosave';
 import type {Dispatch, GetState, State} from '../store';
+import type {GridCell} from '../lib/gridiron';
+import type {Clue} from '../reducers/grid';
+
 
 
 /**
@@ -121,6 +124,7 @@ export type ReplaceGrid = ReturnType<typeof loadBitmap> & ReturnType<typeof load
  * Serialized grid template.
  */
 export type SavedGridTemplate = Readonly<{
+  key: string;
   name: string;
   bitmap: string;
 }>;
@@ -178,7 +182,7 @@ export type RequestPuzzleIndex = typeof REQUEST_PUZZLE_INDEX;
 /**
  * Receive the puzzle index.
  */
-const receivePuzzleIndexSuccess = (data: ReadonlyArray<string>) => ({
+const receivePuzzleIndexSuccess = (data: ReadonlyArray<Puzzle>) => ({
   type: 'RECEIVE_PUZZLE_INDEX_SUCCESS',
   data,
 } as const);
@@ -201,6 +205,24 @@ const receivePuzzleIndexError = (error: Error) => ({
  */
 export type ReceivePuzzleIndexError = ReturnType<typeof receivePuzzleIndexError>;
 
+
+// TODO XXX Move to Crux
+export type Puzzle = Readonly<{
+  id: string;
+  content: GridCell[];
+  clues: Clue[];
+  annotations: null;
+  author: string;
+  title: string;
+  copyright: string;
+  description: string;
+  dateCreated: number;
+  lastModified: number;
+  height: number;
+  width: number;
+}>;
+
+
 /**
  * Fetch all puzzles (TODO paging)
  */
@@ -213,7 +235,11 @@ export const fetchPuzzleIndex = () => {
                 // TODO Crux should have a fast meta-data parsing function,
                 // since we don't need to parse the whole puzzle here, and
                 // waste time/memory.
-                const data = index.map(({ bitmap, key }) => crux.read(bitmap).set('id', key));
+                const data = index.map(({ bitmap, key }) => {
+                   const puz = crux.read(bitmap);
+                   puz.id = key;
+                   return puz as Puzzle;
+                });
                 dispatch(receivePuzzleIndexSuccess(data));
             })
             .catch(error => dispatch(receivePuzzleIndexError(error)));

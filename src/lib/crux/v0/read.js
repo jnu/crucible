@@ -1,4 +1,3 @@
-import Immutable from 'immutable';
 import { isDefined } from '../../isDefined';
 import { castValue, TYPE_TS, TYPE_CT0 } from '../types';
 import * as utf8 from 'utf8';
@@ -45,8 +44,7 @@ const readDate = binaryString => {
 /**
  * Read the body of a Crux file as a binary string. It is expected that the
  * binary string reader's cursor is pointing to the body of the file when it
- * is passed here. The parsed content, clues, and annotations will be returned
- * as an Immutable Map.
+ * is passed here.
  * @param  {BinaryStringReader} binaryString
  * @param  {CruxHeaderV0} header
  * @return {{ content, clues }}
@@ -118,7 +116,7 @@ export const read = (binaryString, header) => {
     const dateCreated = readDate(binaryString);
     const lastModified = readDate(binaryString);
 
-    return Immutable.fromJS({
+    return {
         content,
         clues,
         annotations: null,
@@ -130,5 +128,5 @@ export const read = (binaryString, header) => {
         lastModified,
         height: gridHeight,
         width: gridWidth
-    });
+    };
 };

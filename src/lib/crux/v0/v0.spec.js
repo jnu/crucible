@@ -1,6 +1,5 @@
 /* global chai,require */
 /* eslint-env mocha */
-import Immutable from 'immutable';
 import { BinaryStringReader } from '../../BinaryString';
 import { write, read, headerSchema } from './';
 import { parseHeaderWithSchema } from '../read';
@@ -14,7 +13,7 @@ const grid15x15_full = require('test-data/grid/15x15_full.json');
 /**
  * Create a mock Crux puzzle object from JSON test-data.
  */
-const createPuzzle = puzzle => Immutable.fromJS(puzzle);
+const createPuzzle = puzzle => ({...puzzle});
 
 /**
  * Get the BinaryStringReader and header from binary data.

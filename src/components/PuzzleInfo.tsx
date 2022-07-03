@@ -3,18 +3,26 @@ import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import { bindAll } from 'lodash';
 import { updatePuzzleInfo } from '../actions';
+import type { State, Dispatch } from '../store';
+
 import './PuzzleInfo.scss';
 
 
-class PuzzleInfoView extends React.Component {
+type PuzzleInfoViewProps = {
+  style: React.CSSProperties;
+  value: string;
+  dispatch: Dispatch;
+};
 
-    constructor(props) {
+class PuzzleInfoView extends React.Component<PuzzleInfoViewProps> {
+
+    constructor(props: PuzzleInfoViewProps) {
         super(props);
         bindAll(this, 'updatePuzzleTitle');
     }
 
-    updatePuzzleTitle(e) {
-        const value = e.target.value;
+    updatePuzzleTitle(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+        const value = (e.target as HTMLTextAreaElement).value;
 
         const {
             dispatch,
@@ -45,8 +53,8 @@ class PuzzleInfoView extends React.Component {
 }
 
 
-const mapStateToProps = state => ({
-    value: state.grid.get('title')
+const mapStateToProps = (state: State) => ({
+    value: state.grid.title,
 });
 
 export const PuzzleInfo = connect(mapStateToProps)(PuzzleInfoView);

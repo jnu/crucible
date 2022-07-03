@@ -3,33 +3,41 @@ import { pure } from 'recompose';
 import { connect } from 'react-redux';
 import './PuzzleStats.scss';
 import { isDefined } from '../lib/isDefined';
+import type {GridCell} from '../lib/gridiron';
+import type { State } from '../store';
+import type { GridState, Clue } from '../reducers/grid';
 
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 
-const PuzzleCounts = pure(({ content, clues }) => {
+type PuzzleCountsProps = Readonly<{
+  content: GridCell[]
+  clues: Clue[];
+}>
+
+const PuzzleCounts = pure(({ content, clues }: PuzzleCountsProps) => {
     let total = 0;
     let blocks = 0;
 
     const counts = content.reduce((stats, cell) => {
-        const type = cell.get('type');
+        const type = cell.type;
         if (type !== 'CONTENT') {
             blocks++;
             return stats;
         }
         total++;
-        const letter = cell.get('value');
+        const letter = cell.value;
         if (!letter) {
             return stats;
         }
         const currentStat = stats[letter];
         stats[letter] = (currentStat || 0) + 1;
         return stats;
-    }, {});
+    }, {} as {[k: string]: number});
 
     const clueCount = clues.reduce((n, clue) => {
-        return n + isDefined(clue.get('across')) + isDefined(clue.get('down'));
+        return n + Number(isDefined(clue.across)) + Number(isDefined(clue.down));
     }, 0);
 
     return (
@@ -60,15 +68,19 @@ const PuzzleCounts = pure(({ content, clues }) => {
 });
 
 
-const PuzzleStatsView = pure(({ grid, onResize }) => {
+type PuzzleStatsViewProps = Readonly<{
+  grid: GridState;
+}>
+
+const PuzzleStatsView = pure(({ grid }: PuzzleStatsViewProps) => {
     return (
         <div className="PuzzleStats">
-            <PuzzleCounts content={grid.get('content')} clues={grid.get('clues')} />
+            <PuzzleCounts content={grid.content} clues={grid.clues} />
         </div>
     );
 });
 
 
-const mapStateToProps = ({ grid }) => ({ grid });
+const mapStateToProps = ({ grid }: State) => ({ grid });
 
 export const PuzzleStats = connect(mapStateToProps)(PuzzleStatsView);

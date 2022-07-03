@@ -10,6 +10,10 @@ import {PuzzleInfo} from './PuzzleInfo';
 import {WordWizard} from './WordWizard';
 import {GridVerticalDivider, GridHorizontalDivider} from './GridDividers';
 import {LoadingAnimation} from './LoadingAnimation';
+import type {State, Dispatch} from '../store';
+import type {IProgressStats} from '../lib/gridiron';
+import { Direction} from '../actions';
+
 import './Layout.scss';
 
 
@@ -23,11 +27,15 @@ const CLUE_BUILDER_HEIGHT = 50;
 const MAR_SMALL = 20;
 const MAR_BIG = 40;
 
+type StatProps = Readonly<{
+  title: React.ReactNode;
+  children: React.ReactNode;
+}>;
 
 /**
  * React component to display a single statistic.
  */
-const Stat = ({title, children}) => (
+const Stat = ({title, children}: StatProps) => (
     <div style={{display: 'flex', margin: '5px 0'}}>
         <div style={{flexBasis: 10, flexGrow: 1}}>{title}</div>
         <div>{children}</div>
@@ -35,9 +43,21 @@ const Stat = ({title, children}) => (
 );
 
 
-class LayoutView extends React.Component {
+type LayoutViewProps = Readonly<{
+  dispatch: Dispatch;
+  width: number;
+  height: number;
+  cellSize: number;
+  viewportWidth: number;
+  viewportHeight: number;
+  autoFilling: boolean;
+  autoFillStatus: IProgressStats | null;
+  autoFillError: Error | null;
+}>
 
-    shouldComponentUpdate(props, nextProps) {
+class LayoutView extends React.Component<LayoutViewProps> {
+
+    shouldComponentUpdate(props: LayoutViewProps, nextProps: LayoutViewProps) {
         return !shallowEqual(props, nextProps);
     }
 
@@ -72,10 +92,10 @@ class LayoutView extends React.Component {
             width: puzzleContainerWidth - 2 * MAR_SMALL,
             left: MAR_SMALL,
             position: 'relative'
-        };
+        } as const;
 
         // Puzzle info styles
-        const puzzleInfoStyle = { height: PUZZLE_INFO_HEIGHT };
+        const puzzleInfoStyle = { height: PUZZLE_INFO_HEIGHT } as const;
 
         // Reckon clue container styles
         const collapseClueCols = viewportWidth < (puzzleContainerWidth + 2 * CLUE_COL_MIN_WIDTH);
@@ -83,22 +103,22 @@ class LayoutView extends React.Component {
         const clueContainerStyle = {
             height: puzzleContainerHeight,
             width: collapseClueCols ? CLUE_COL_MIN_WIDTH : 2 * CLUE_COL_MIN_WIDTH
-        };
+        } as const;
 
         const lowerHorizontTop = puzzleContainerHeight + MAR_BIG + PUZZLE_INFO_HEIGHT;
         const lowerContainerStyle = {
             position: 'absolute',
             top: lowerHorizontTop,
             height: PUZZLE_STATS_HEIGHT
-        };
+        } as const;
         const puzzleStatsStyle = {
             position: 'absolute',
             left: 0
-        };
+        } as const;
         const wordWizardStyle = {
             position: 'absolute',
             left: 2 * MAR_BIG + PUZZLE_STATS_WIDTH
-        };
+        } as const;
 
         const autoFillOverlay = this.props.autoFilling && this.renderAutoFillOverlay();
 
@@ -119,13 +139,13 @@ class LayoutView extends React.Component {
                     <GridVerticalDivider offset={puzzleContainerWidth} />
                     <div className="Layout_GridClues-container Layout_VerticalContainer"
                          style={clueContainerStyle}>
-                        <Clues type="across"
+                        <Clues type={Direction.Across}
                                title="Across"
                                topOffset={0}
                                leftOffset={0}
                                height={clueColHeight}
                         />
-                        <Clues type="down"
+                        <Clues type={Direction.Down}
                                title="Down"
                                topOffset={collapseClueCols ? clueColHeight : 0}
                                leftOffset={collapseClueCols ? 0 : CLUE_COL_MIN_WIDTH}
@@ -202,17 +222,17 @@ class LayoutView extends React.Component {
 
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: State) => {
     const { grid, screen } = state;
     return {
-        width: grid.get('width'),
-        height: grid.get('height'),
-        cellSize: grid.get('cellSize'),
-        viewportWidth: screen.get('viewportWidth'),
-        viewportHeight: screen.get('viewportHeight'),
-        autoFilling: grid.get('autoFilling'),
-        autoFillStatus: grid.get('autoFillStatus'),
-        autoFillError: grid.get('autoFillError'),
+        width: grid.width,
+        height: grid.height,
+        cellSize: grid.cellSize,
+        viewportWidth: screen.viewportWidth,
+        viewportHeight: screen.viewportHeight,
+        autoFilling: grid.autoFilling,
+        autoFillStatus: grid.autoFillStatus,
+        autoFillError: grid.autoFillError,
     };
 };
 
