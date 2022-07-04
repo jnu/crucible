@@ -77,19 +77,19 @@ class ClueBuilderView extends React.Component<ClueBuilderViewProps> {
 const mapStateToProps = (state: State) => {
     const { grid } = state;
     const cursor = grid.cursor;
-    const direction = (grid.cursorDirection || '').toLowerCase();
     const cell = grid.content[cursor || -1];
-    const field = direction === Direction.Across ? 'acrossWord' : 'downWord';
+    const field = grid.cursorDirection === Direction.Across ? 'acrossWord' : 'downWord';
     const index = cell ? cell[field] : -1;
     const clue = grid.clues[index || -1];
-    const clueField = direction === Direction.Across ? 'across' : 'down';
-    const hasClue = !!(cell && clue && clue[clueField]);
+    const clueField = grid.cursorDirection === Direction.Across ? 'across' : 'down';
+    const hasClue = !!clue;
     const value = hasClue ? clue[clueField] : null;
+  console.log("CLUE", hasClue, value, clue, cell)
 
     return {
         hasClue,
         index,
-        direction,
+        direction: grid.cursorDirection,
         value
     };
 };
