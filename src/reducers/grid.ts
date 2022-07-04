@@ -480,30 +480,28 @@ export const rMoveCursor = (state: GridState, action: MoveCursor) => {
 /**
  * Create a new grid and merge the given state into it (if any).
  */
-export const rReplaceGrid = (_state: GridState, action: ReplaceGrid) => {
+export const rReplaceGrid = (state: GridState, action: ReplaceGrid) => {
     const { grid, id } = action;
-    let newGrid = {...createNewGrid()};
+    let newGrid: Partial<GridState> = {};
 
     if (grid) {
         const { content, clues } = updateGridContent(
-            newGrid.content,
-            newGrid.clues,
-            newGrid.height,
-            newGrid.width,
+            grid.content,
+            grid.clues,
+            grid.height,
+            grid.width,
         );
 
         // The update procedure doesn't do a good job migrating clues when
         // no metadata is present yet (which it isn't when restoring from
         // a file). Just overwrite for now. TODO fix update procedure.
         // updated.set('clues', originalClues);
-        newGrid = {...newGrid, ...grid, content, clues}
+        newGrid = {...grid, content, clues}
+    } else {
+      newGrid = createNewGrid();
     }
 
-    if (id) {
-        newGrid.id = id;
-    }
-
-    return newGrid;
+    return {...state, ...newGrid, id};
 };
 
 /**

@@ -1,6 +1,5 @@
 import {Action} from '../actions';
-import type {SavedGridTemplate} from '../actions/storage';
-import type {CruxPuzzle} from '../lib/crux';
+import type {SavedGridTemplate, PuzzleIndexItem} from '../actions/storage';
 
 /**
  * Empty state of the meta store.
@@ -18,6 +17,7 @@ const DEFAULT_META_STATE = {
     puzzleIndex: [],
 } as const;
 
+
 /**
  * Type of the meta store.
  */
@@ -31,7 +31,7 @@ export type MetaState = Readonly<{
   puzzleRequestError: Error | null;
   requestingPuzzleIndex: boolean;
   puzzleIndexRequestError: Error | null;
-  puzzleIndex: ReadonlyArray<CruxPuzzle>;
+  puzzleIndex: ReadonlyArray<PuzzleIndexItem>;
 }>;
 
 /**

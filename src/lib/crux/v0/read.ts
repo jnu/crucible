@@ -18,10 +18,17 @@ const readUnicodeString = (binaryString: BinaryStringReader, length: number) => 
 
     const buffer = new Array(length);
     for (let i = 0; i < length; i++) {
-        buffer.push(String.fromCharCode(binaryString.read(8)));
+        const c = binaryString.read(8);
+        buffer[i] = String.fromCharCode(c);
     }
 
-    return utf8.decode(buffer.join(''));
+    const s = buffer.join('');
+    try {
+      return utf8.decode(s);
+    } catch (e) {
+      console.warn("Failed to decode string!", e);
+      return s;
+    }
 };
 
 
@@ -112,7 +119,6 @@ export const read = (binaryString: BinaryStringReader, header: CruxHeader) => {
     const lastModified = readDate(binaryString);
 
     return {
-        id: '',
         content,
         clues,
         annotations: null,

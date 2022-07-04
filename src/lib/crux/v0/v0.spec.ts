@@ -1,24 +1,25 @@
-/* global chai,require */
-/* eslint-env mocha */
+import * as chai from 'chai';
 import { BinaryStringReader } from '../../BinaryString';
 import { write, read, headerSchema } from './';
 import { parseHeaderWithSchema } from '../read';
-const grid5x5_empty = require('test-data/grid/5x5_empty.json');
-const grid5x5_partialNoClues = require('test-data/grid/5x5_partial_noClues.json');
-const grid5x5_partialNoCluesWithMeta = require('test-data/grid/5x5_partial_noClues_withMeta.json');
-const grid5x5_partialCluesWithMeta = require('test-data/grid/5x5_partial_cluesWithMeta.json');
-const grid15x15_full = require('test-data/grid/15x15_full.json');
+
+const td = (p: string) => require(p.replace('test-data', '../../../../test-data'));
+const grid5x5_empty = td('test-data/grid/5x5_empty.json');
+const grid5x5_partialNoClues = td('test-data/grid/5x5_partial_noClues.json');
+const grid5x5_partialNoCluesWithMeta = td('test-data/grid/5x5_partial_noClues_withMeta.json');
+const grid5x5_partialCluesWithMeta = td('test-data/grid/5x5_partial_cluesWithMeta.json');
+const grid15x15_full = td('test-data/grid/15x15_full.json');
 
 
 /**
  * Create a mock Crux puzzle object from JSON test-data.
  */
-const createPuzzle = puzzle => ({...puzzle});
+const createPuzzle = (puzzle: any): any => ({...puzzle});
 
 /**
  * Get the BinaryStringReader and header from binary data.
  */
-const getHeaderAndBinStr = str => {
+const getHeaderAndBinStr = (str: string) => {
     const binStr = new BinaryStringReader(str);
     return {
         binStr,
@@ -39,7 +40,7 @@ describe('Crux: v0 read/write', () => {
             const { binStr, header } = getHeaderAndBinStr('ABQpAAAAAAAAAAAAAAAAABv7+xX/eMZV/3jOg');
             const puzzle = read(binStr, header);
 
-            chai.expect(puzzle.toJS()).to.eql({
+            chai.expect(puzzle).to.eql({
                 content: [
                     { "type": "BLOCK", "value": null },
                     { "type": "BLOCK", "value": null },
@@ -91,7 +92,7 @@ describe('Crux: v0 read/write', () => {
             const { binStr, header } = getHeaderAndBinStr('ABQtAAAAAAAAAAAAAAAAAAACGAIQhCQIChCY6EgUsAFf94xlX/eM6');
             const puzzle = read(binStr, header);
 
-            chai.expect(puzzle.toJS()).to.eql({
+            chai.expect(puzzle).to.eql({
                 clues: [],
                 annotations: null,
                 content: [
@@ -143,7 +144,7 @@ describe('Crux: v0 read/write', () => {
             const { binStr, header } = getHeaderAndBinStr('ABQtAAAAAAAAACYA+AOgC4ACGAIQhCQIChCY6EgUsAMOGIGfDvHRlciBww7zFvMWCxJnCoeKAoEjDr8OfIHB1xbrFumxlIGnFoSB3xK/FgmQhQ29weXJpZ2h0IMKpIDIwMTYsIEpvZSBOdWRlbGzQmNC+0YHQuNGEINCd0YPQtNC10LvRjFf94xlX/eM6');
             const puzzle = read(binStr, header);
 
-            chai.expect(puzzle.toJS()).to.eql({
+            chai.expect(puzzle).to.eql({
                 clues: [],
                 annotations: null,
                 content: [
@@ -195,7 +196,7 @@ describe('Crux: v0 read/write', () => {
             const { binStr, header } = getHeaderAndBinStr('ABQtAAFnAAAAACoAAAOACoABDQsH2qZym6aarjKfQAAAAAABAAAGAAAUAAAwBqQ3trK5E7mQNDCxNLoAcBZQdXJ2ZXlvciBvZiBjb2xkIG1lYXRzASAQhMLIQObSztwCgEkRpY2tpbnNvbiwgZm9yIG9uZQGAAAOAA0JrRgNCw0YLQutC+0LUg0LjQvNGPQ29weXJpZ2h0IMKpIFB1xb16TMKjIETDumTEk3DDu8W+esWCw6vCtWXDr8WbdMSZclgBx/pYAcpp');
             const puzzle = read(binStr, header);
 
-            chai.expect(puzzle.toJS()).to.eql({
+            chai.expect(puzzle).to.eql({
                 "annotations": null,
                 "width": 5,
                 "height": 5,
@@ -257,7 +258,7 @@ describe('Crux: v0 read/write', () => {
             const { binStr, header } = getHeaderAndBinStr('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');
             const puzzle = read(binStr, header);
 
-            chai.expect(puzzle.toJS()).to.eql({
+            chai.expect(puzzle).to.eql({
                 "annotations": null,
                 "width": 15,
                 "height": 15,

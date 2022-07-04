@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { crucibleApp } from './reducers';
+import type { GridState } from './reducers/grid';
 import { App } from './components/App';
 import { debounce } from 'lodash';
 import {
@@ -35,7 +36,7 @@ doResize();
 
 
 // Set up auto-saver
-const autosaver = new AutoSave({
+const autosaver = new AutoSave<GridState>({
     getState: () => {
         const { grid } = store.getState();
         return grid;
@@ -73,6 +74,8 @@ if (DEBUG) {
         // @ts-ignore
         storageClient: require('./lib/index').storageClient,
         // @ts-ignore
-        wordlistClient: require('./lib/index').wordlistClient
+        wordlistClient: require('./lib/index').wordlistClient,
+        // @ts-ignore
+        crux: require('./lib/crux'),
     };
 }

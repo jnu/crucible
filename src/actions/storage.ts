@@ -1,12 +1,21 @@
+import UUID from 'pure-uuid';
+
 import * as crux from '../lib/crux';
 import { storageClient } from '../lib/index';
-import UUID from 'pure-uuid';
 import type {AutoSaveState} from '../reducers/autosave';
 import type {Dispatch, GetState, State} from '../store';
 import type {CruxPuzzle, GridCell, Clue} from '../lib/crux';
 import type {GridState} from '../reducers/grid';
 
 
+/**
+ * Partial value of a puzzle used in the index.
+ */
+export type PuzzleIndexItem = {
+  id: string;
+  title: string;
+  description: string;
+};
 
 /**
  * Get a list of grid templates.
@@ -90,7 +99,6 @@ export const exportGridShape = (name: string) => {
               }
             });
         const bitmap = crux.write({
-            id: '',
             content,
             clues: [],
             width,
@@ -132,7 +140,8 @@ export const loadBitmap = (bitmap: string, id: string | null = null) => {
  * Load a clear grid.
  */
 export const loadEmptyPuzzle = () => ({
-    type: 'REPLACE_GRID'
+    type: 'REPLACE_GRID',
+    id: (new UUID(4).format()),
 } as const);
 
 /**
@@ -202,7 +211,7 @@ export type RequestPuzzleIndex = typeof REQUEST_PUZZLE_INDEX;
 /**
  * Receive the puzzle index.
  */
-const receivePuzzleIndexSuccess = (data: ReadonlyArray<CruxPuzzle>) => ({
+const receivePuzzleIndexSuccess = (data: ReadonlyArray<PuzzleIndexItem>) => ({
   type: 'RECEIVE_PUZZLE_INDEX_SUCCESS',
   data,
 } as const);
@@ -240,8 +249,7 @@ export const fetchPuzzleIndex = () => {
                 // waste time/memory.
                 const data = index.map(({ bitmap, key }) => {
                    const puz = crux.read(bitmap);
-                   puz.id = key;
-                   return puz
+                   return {...puz, id: key} as PuzzleIndexItem
                 });
                 dispatch(receivePuzzleIndexSuccess(data));
             })

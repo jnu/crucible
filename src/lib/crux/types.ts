@@ -129,7 +129,6 @@ export type Clue = {
  * Represent a crossword puzzle.
  */
 export type CruxPuzzle = {
-  id: string;
   content: GridCell[];
   clues: Clue[];
   annotations?: null;
