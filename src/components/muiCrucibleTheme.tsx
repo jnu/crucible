@@ -8,7 +8,7 @@ export const muiCrucibleTheme = {
   },
   palette: {
     primary: {
-      main: muiColors.red[500],
+      main: muiColors.lightBlue.A400,
     },
     secondary: {
       main: muiColors.pink.A200,

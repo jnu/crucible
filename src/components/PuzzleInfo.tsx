@@ -25,7 +25,8 @@ export const PuzzleInfo = ({style}: PuzzleInfoProps) => {
         <TextField
           name="PuzzleInfo_Title_Input"
           value={value}
-          helperText="Puzzle title"
+          label="Puzzle title"
+          variant="standard"
           onChange={updatePuzzleTitle}
         />
       </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import TextField from '@mui/material/TextField';
 import {bindAll} from 'lodash';
 import {Direction, updateClue} from '../actions';
+import {isDefined} from '../lib/isDefined';
 import type {State, Dispatch} from '../store';
 import {useSelector, useDispatch} from '../store';
 
@@ -58,20 +59,20 @@ export const ClueBuilder = ({style}: ClueBuilderProps) => {
 
   const {index, direction, value, hasClue} = props;
 
-  const dirAbbr = (direction || '').substr(0, 1).toUpperCase();
-  const label = `${(index || 0) + 1}-${dirAbbr}`;
+  const label = isDefined(index)
+    ? `${index} ${direction.toLowerCase()}`
+    : 'Clue';
 
   return (
     <div className="ClueBuilder" style={style}>
       {!hasClue ? null : (
         <div>
-          <span className="ClueBuilder_Label" style={{paddingRight: 12}}>
-            {label}
-          </span>
           <TextField
             name="ClueBuiler_Input"
+            variant="standard"
+            placeholder="Enter clue"
             value={value}
-            helperText="Enter clue"
+            label={label}
             style={{width: 'calc(100% - 60px)'}}
             onChange={updateClueState}
           />
