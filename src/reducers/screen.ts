@@ -25,7 +25,7 @@ export const rUpdateScreenSize = (state: ScreenState, action: ScreenResize) => {
 
     return {
       ...state,
-      viewportwidth: width || state.viewportWidth,
+      viewportWidth: width || state.viewportWidth,
       viewportHeight: height || state.viewportHeight,
     };
 };
@@ -33,7 +33,7 @@ export const rUpdateScreenSize = (state: ScreenState, action: ScreenResize) => {
 /**
  * Reducer to apply screen state updates.
  */
-export const screen = (state = DEFAULT_SCREEN_STATE, action: Action) => {
+export const screen = (state = DEFAULT_SCREEN_STATE, action: Action): ScreenState => {
     switch (action.type) {
         case 'SCREEN_RESIZE':
             return rUpdateScreenSize(state, action);

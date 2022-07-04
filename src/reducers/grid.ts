@@ -618,7 +618,7 @@ const dispatchGridAction = (state: GridState, action: Action): GridState => {
  * NB: the default argument for `state` is evaluated only when state is
  * undefined, not on each reducer evaluation.
  */
-export const grid = (state = createNewGrid(), action: Action) => {
+export const grid = (state = createNewGrid(), action: Action): GridState => {
     const newState = dispatchGridAction(state, action);
     // Update last modified time as necessary
     if (newState !== state) {

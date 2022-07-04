@@ -1,4 +1,5 @@
 import type { Action } from '../actions';
+import type {GridState} from './grid';
 
 /**
  * Represent state of the automatic saving feature.
@@ -24,7 +25,7 @@ const DEFAULT_AUTOSAVE_STATE: AutoSaveState<null> = {
 /**
  * Autosave reducer.
  */
-export const autosave = (state = DEFAULT_AUTOSAVE_STATE, action: Action) => {
+export const autosave = (state = DEFAULT_AUTOSAVE_STATE, action: Action): AutoSaveState<GridState> => {
     switch (action.type) {
         case 'REPLACE_GRID':
             return DEFAULT_AUTOSAVE_STATE;

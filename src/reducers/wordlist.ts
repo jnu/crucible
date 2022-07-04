@@ -27,7 +27,7 @@ const DEFAULT_WORDLIST_STATE: WordlistState = {
 /**
  * Reduce actions related to the wordlist store.
  */
-export const wordlist = (state = DEFAULT_WORDLIST_STATE, action: Action) => {
+export const wordlist = (state = DEFAULT_WORDLIST_STATE, action: Action): WordlistState => {
     switch (action.type) {
         case 'REQUEST_WORDLIST':
             state.fetching.add(action.key);
