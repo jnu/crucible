@@ -71,7 +71,6 @@ const mapStateToProps = (state: State) => {
     grid.cursorDirection === Direction.Across ? 'across' : 'down';
   const hasClue = !!clue;
   const value = hasClue ? clue[clueField] : null;
-  console.log('CLUE', hasClue, value, clue, cell);
 
   return {
     hasClue,
