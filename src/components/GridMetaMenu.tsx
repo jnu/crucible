@@ -11,7 +11,6 @@ import {
   loadEmptyPuzzle,
   resize,
 } from '../actions';
-import Popover from '@mui/material/Popover';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
@@ -71,6 +70,7 @@ export const GridMetaMenu = () => {
   };
 
   const closeDialog = () => {
+    setAnchorEl(null);
     dispatch(closeMetaDialog());
   };
 
@@ -116,37 +116,45 @@ export const GridMetaMenu = () => {
     closeDialog();
   };
 
+  const gridMenuOpen = meta.openDialog === 'GRID_MENU' && !!anchorEl;
+
   // Render the menu
   return (
     <div className="GridMetaMenu">
-      <Button variant="text" onClick={openGridMenu}>
+      <Button
+        id="grid-menu-button"
+        aria-controls={gridMenuOpen ? 'grid-menu' : undefined}
+        aria-haspopup={true}
+        aria-expanded={gridMenuOpen ? true : undefined}
+        onClick={openGridMenu}>
         Grid
       </Button>
-      <Popover
-        open={meta.openDialog === 'GRID_MENU'}
+
+      <Menu
+        MenuListProps={{'aria-labelledby': 'grid-menu-button'}}
         anchorEl={anchorEl}
-        anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-        onClose={closeDialog}>
-        <Menu open={meta.openDialog === 'GRID_MENU'}>
-          <MenuItem onClick={makeNewPuzzle}>New Puzzle</MenuItem>
-          <MenuItem onClick={openLoadPuzzleDialog}>Load Puzzle</MenuItem>
-          <MenuItem onClick={openExportGridShapeDialog}>
-            Save Grid Template
-          </MenuItem>
-          <MenuItem onClick={openImportGridShapeDialog}>
-            Load Grid Template
-          </MenuItem>
-          <MenuItem onClick={openResizeGridDialog}>Resize ...</MenuItem>
-          <MenuItem onClick={toggleSymmetricalGrid}>
-            {grid.symmetrical ? (
-              <ListItemIcon>
-                <Check />
-              </ListItemIcon>
-            ) : null}
-            Symmetrical
-          </MenuItem>
-        </Menu>
-      </Popover>
+        onClose={closeDialog}
+        id="grid-menu"
+        open={gridMenuOpen}>
+        <MenuItem onClick={makeNewPuzzle}>New Puzzle</MenuItem>
+        <MenuItem onClick={openLoadPuzzleDialog}>Load Puzzle</MenuItem>
+        <MenuItem onClick={openExportGridShapeDialog}>
+          Save Grid Template
+        </MenuItem>
+        <MenuItem onClick={openImportGridShapeDialog}>
+          Load Grid Template
+        </MenuItem>
+        <MenuItem onClick={openResizeGridDialog}>Resize ...</MenuItem>
+        <MenuItem onClick={toggleSymmetricalGrid}>
+          {grid.symmetrical ? (
+            <ListItemIcon>
+              <Check />
+            </ListItemIcon>
+          ) : null}
+          Symmetrical
+        </MenuItem>
+      </Menu>
+
       <Dialog
         title="Import Grid Template"
         open={meta.openDialog === 'IMPORT_GRID_SHAPE'}
@@ -229,20 +237,20 @@ export const GridMetaMenu = () => {
         onClose={closeDialog}>
         <DialogContent>
           <div>
-            Width:{' '}
             <TextField
               name="ResizeGrid_Width_Input"
               value={newGridWidth}
-              helperText="Enter puzzle width"
+              variant="standard"
+              label="Puzzle width"
               onChange={updateNewWidth}
             />
           </div>
           <div>
-            Height:{' '}
             <TextField
               name="ResizeGrid_Height_Input"
               value={newGridHeight}
-              helperText="Enter puzzle height"
+              variant="standard"
+              label="Puzzle height"
               onChange={updateNewHeight}
             />
           </div>
