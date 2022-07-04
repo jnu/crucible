@@ -1,5 +1,5 @@
 import React from 'react';
-import {render} from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import {crucibleApp} from './reducers';
 import type {GridState} from './reducers/grid';
 import {App} from './components/App';
@@ -53,7 +53,8 @@ autosaver.start();
 initWordList(store);
 
 // Render the app.
-render(<App store={store} />, document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
+root.render(<App store={store} />);
 
 // Install debug utils for local development.
 if (DEBUG) {
