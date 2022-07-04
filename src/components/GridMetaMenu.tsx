@@ -158,9 +158,8 @@ export const GridMetaMenu = () => {
       <Dialog
         title="Import Grid Template"
         open={meta.openDialog === 'IMPORT_GRID_SHAPE'}
-        maxWidth="sm"
         onClose={closeDialog}
-        scroll="body">
+        scroll="paper">
         <DialogContent>
           {!meta.requestingGridShapeIndex ? (
             <List>
@@ -187,16 +186,18 @@ export const GridMetaMenu = () => {
       <Dialog
         title="Save Grid Template"
         open={meta.openDialog === 'EXPORT_GRID_SHAPE'}
-        maxWidth="sm"
         onClose={closeDialog}>
         <DialogContent>
           <TextField
-            helperText="Enter a name for this template"
+            variant="standard"
+            label="Template name"
             onChange={updateExportName}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeDialog}>Cancel</Button>
+          <Button onClick={closeDialog} variant="text">
+            Cancel
+          </Button>
           <Button variant="text" onClick={exportGrid}>
             Save
           </Button>
@@ -206,8 +207,7 @@ export const GridMetaMenu = () => {
       <Dialog
         title="Load Puzzle"
         open={meta.openDialog === 'LOAD_PUZZLE'}
-        maxWidth="sm"
-        scroll="body"
+        scroll="paper"
         onClose={closeDialog}>
         <DialogContent>
           {!meta.requestingPuzzleIndex ? (
@@ -233,7 +233,6 @@ export const GridMetaMenu = () => {
       <Dialog
         title="Resize Grid"
         open={meta.openDialog === 'RESIZE_GRID'}
-        maxWidth="sm"
         onClose={closeDialog}>
         <DialogContent>
           <div>
