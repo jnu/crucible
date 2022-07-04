@@ -2,7 +2,7 @@ import type {Direction} from './gridMeta';
 import {moveCursor} from './gridMeta';
 import {fill} from '../lib/gridiron';
 import type {IProgressStats} from '../lib/gridiron';
-import type {CellType, GridCell} from '../lib/crux';
+import type {CellType, Cell} from '../lib/crux';
 import type {Dispatch, GetState} from '../store';
 import type {WordBank} from '../lib/readcross/WordBank';
 
@@ -78,7 +78,7 @@ export type AutoFillGridStatsUpdate = ReturnType<
 /**
  * Pass on a fully filled grid.
  */
-const autoFillGridDone = (content: ReadonlyArray<GridCell>) =>
+const autoFillGridDone = (content: ReadonlyArray<Cell>) =>
   ({
     type: 'AUTO_FILL_GRID_DONE',
     content,

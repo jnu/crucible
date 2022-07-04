@@ -4,7 +4,7 @@ import {isDefined} from '../lib/isDefined';
 import {fill} from '../lib/gridiron';
 import type {IProgressStats} from '../lib/gridiron';
 import {CellType} from '../lib/crux';
-import type {GridCell, Clue} from '../lib/crux';
+import type {Cell, Clue} from '../lib/crux';
 import {Direction} from '../actions/gridMeta';
 import type {
   ToggleSymmetricalGrid,
@@ -34,10 +34,29 @@ import type {Action} from '../actions';
  *     - Explore auto-adjusting other things on block entering
  */
 
+/**
+ * Augmented representation of the clue.
+ */
 export type GridClue = Clue & {
   acrossStartIdx: number | null;
   downStartIdx: number | null;
 };
+
+/**
+ * Supplemental fields for working with cells in the grid.
+ */
+export type GridCellNotes = {
+  startOfWord?: boolean;
+  startClueIdx?: number;
+  acrossWord?: number;
+  downWord?: number;
+  annotation?: string;
+};
+
+/**
+ * Augmented representation of the cell.
+ */
+export type GridCell = Cell & GridCellNotes;
 
 /**
  * Represent state of the grid store.
@@ -71,12 +90,7 @@ export type GridState = Readonly<{
  */
 const BLOCK_CELL = {
   type: CellType.Block,
-  annotation: undefined,
-  value: undefined,
-  acrossWord: undefined,
-  downWord: undefined,
-  startOfWord: false,
-  startClueIdx: undefined,
+  value: null,
 } as const;
 
 /**

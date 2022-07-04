@@ -3,15 +3,14 @@ import {pure} from 'recompose';
 import {connect} from 'react-redux';
 import './PuzzleStats.scss';
 import {isDefined} from '../lib/isDefined';
-import type {GridCell, Clue} from '../lib/crux';
 import type {State} from '../store';
-import type {GridState} from '../reducers/grid';
+import type {GridState, GridCell, GridClue} from '../reducers/grid';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 type PuzzleCountsProps = Readonly<{
   content: GridCell[];
-  clues: Clue[];
+  clues: GridClue[];
 }>;
 
 const PuzzleCounts = pure(({content, clues}: PuzzleCountsProps) => {

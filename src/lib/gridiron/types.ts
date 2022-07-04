@@ -1,19 +1,21 @@
 import {IJSONWordIndex} from '../readcross/WordBank';
-import {GridContentCell, GridBlockCell} from '../crux';
+import type {GridCellNotes} from '../../reducers/grid';
+import type {BlockCell, ContentCell} from '../crux';
 
 /**
  * A content cell, i.e. a square in the grid containing a letter.
  */
-export type IGridContentCell = GridContentCell & {
-  _id?: string;
-  _acrossWordRef?: IGridWord;
-  _downWordRef?: IGridWord;
-};
+export type IGridContentCell = ContentCell &
+  GridCellNotes & {
+    _id?: string;
+    _acrossWordRef?: IGridWord;
+    _downWordRef?: IGridWord;
+  };
 
 /**
  * A block (i.e., non-content cell).
  */
-export type IGridBlockCell = GridBlockCell;
+export type IGridBlockCell = BlockCell & GridCellNotes;
 
 /**
  * Use a slightly modified grid cell during iteration.

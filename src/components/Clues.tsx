@@ -2,8 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {pure} from 'recompose';
 import {Direction, focusCell, setDirection} from '../actions';
-import type {GridCell} from '../lib/crux';
-import type {GridClue} from '../reducers/grid';
+import type {GridCell, GridClue} from '../reducers/grid';
 import type {State, Dispatch} from '../store';
 import './Clues.scss';
 
@@ -83,26 +82,22 @@ class CluesView extends React.Component<CluesViewProps> {
           top: topOffset,
           left: leftOffset,
           position: 'absolute',
-        }}
-      >
+        }}>
         <div
           className="Clues_header-container"
-          style={{height: CLUE_HEADER_HEIGHT}}
-        >
+          style={{height: CLUE_HEADER_HEIGHT}}>
           <span className="Clues_header">{title}</span>
           <div className="Clues_spacer" />
         </div>
         <ol
           className="Clues_list"
-          style={{height: height - CLUE_HEADER_HEIGHT}}
-        >
+          style={{height: height - CLUE_HEADER_HEIGHT}}>
           {clues.map((clue, i) =>
             clue[clueField] === null ? null : (
               <li
                 key={`${type}-${i}`}
                 className={getClueClassName(i, selection, isPrimarySelection)}
-                onClick={() => this.onClickClue(clue, type)}
-              >
+                onClick={() => this.onClickClue(clue, type)}>
                 <span className="Clues_Clue_idx">{i + 1}</span>
                 <span className="Clues_Clue_text">{clue[clueField]}</span>
               </li>

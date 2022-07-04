@@ -15,9 +15,9 @@ import {
 } from '../actions';
 import {Direction} from '../actions/gridMeta';
 import type {CellUpdates} from '../actions/gridSemantic';
-import type {GridState} from '../reducers/grid';
+import type {GridState, GridCell as TGridCell} from '../reducers/grid';
 import type {State, Dispatch} from '../store';
-import {GridCell as TGridCell, CellType} from '../lib/crux';
+import {CellType} from '../lib/crux';
 import * as Keys from '../lib/keys';
 import './GridContent.scss';
 
@@ -243,8 +243,7 @@ class GridContentView extends React.Component<GridContentViewProps> {
       <div
         className="GridContent"
         ref={(target) => (this.gridContentRoot = target)}
-        style={gridStyle}
-      >
+        style={gridStyle}>
         {content.map((cell, i) => {
           const y = ~~(i / width);
           const x = i % width;
@@ -261,8 +260,9 @@ class GridContentView extends React.Component<GridContentViewProps> {
               onLoseContext={this.onLoseCellContext}
               onRequestContext={this.onRequestCellContext}
               focused={cursor === i}
-              highlight={hasHighlight && highlightWord === cell[highlightKey]}
-            ></GridCell>
+              highlight={
+                hasHighlight && highlightWord === cell[highlightKey]
+              }></GridCell>
           );
         })}
         <CellContextMenu />

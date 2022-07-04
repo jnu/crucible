@@ -4,7 +4,7 @@ import * as crux from '../lib/crux';
 import {storageClient} from '../lib/index';
 import type {AutoSaveState} from '../reducers/autosave';
 import type {Dispatch, GetState, State} from '../store';
-import type {CruxPuzzle, GridCell, Clue} from '../lib/crux';
+import type {CruxPuzzle} from '../lib/crux';
 import type {GridState} from '../reducers/grid';
 
 /**

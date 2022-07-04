@@ -4,7 +4,7 @@ export {
   CruxPuzzle,
   Clue,
   CellType,
-  GridContentCell,
-  GridBlockCell,
-  GridCell,
+  ContentCell,
+  BlockCell,
+  Cell,
 } from './types';

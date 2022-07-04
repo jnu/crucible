@@ -154,7 +154,7 @@ export type Clue = {
  * Represent a crossword puzzle.
  */
 export type CruxPuzzle = {
-  content: GridCell[];
+  content: Cell[];
   clues: Clue[];
   annotations?: null;
   author: string;
@@ -178,33 +178,23 @@ export enum CellType {
 /**
  * A content cell, i.e. a square in the grid containing a letter.
  */
-export type GridContentCell = {
+export type ContentCell = {
   type: CellType.Content;
-  startClueIdx: number;
-  acrossWord: number;
-  downWord: number;
   value: string;
-  annotation?: string;
-  startOfWord: boolean;
 };
 
 /**
  * A block (i.e., non-content cell).
  */
-export type GridBlockCell = {
+export type BlockCell = {
   type: CellType.Block;
-  value?: void;
-  acrossWord?: void;
-  downWord?: void;
-  startClueIdx?: void;
-  annotation?: void;
-  startOfWord: boolean;
+  value?: null;
 };
 
 /**
  * Either a content cell or a block cell.
  */
-export type GridCell = GridContentCell | GridBlockCell;
+export type Cell = ContentCell | BlockCell;
 
 /**
  * Description of a metadata field.

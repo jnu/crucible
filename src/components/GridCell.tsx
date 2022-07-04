@@ -1,7 +1,7 @@
 import React from 'react';
 import {shallowEqual} from 'recompose';
 import {bindAll} from 'lodash';
-import type {GridCell as TGridCell} from '../lib/crux';
+import type {GridCell as TGridCell} from '../reducers/grid';
 
 export type GridCellProps = {
   cell: TGridCell;
@@ -78,8 +78,7 @@ export class GridCell extends React.Component<GridCellProps> {
           top: top * size,
           height: size,
           width: size,
-        }}
-      >
+        }}>
         {!cell.startOfWord ? null : (
           <span className="GridCell_clueIdx">{cell.startClueIdx! + 1}</span>
         )}

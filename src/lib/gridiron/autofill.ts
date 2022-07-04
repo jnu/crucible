@@ -2,6 +2,7 @@ import {WordBank} from '../readcross/WordBank';
 import {Future} from '../Future';
 import {v4} from '../uuid';
 import {shuffle} from '../shuffle';
+import {isDefined} from '../isDefined';
 import {GridCell, IGridContentCell, IProgressStats, IGridWord} from './types';
 
 /**
@@ -82,10 +83,21 @@ function processGrid(grid: GridCell[]): IGridInfo {
     if (cell.type === 'BLOCK') {
       continue;
     }
+
     // Ensure that cell has a unique ID. The ID itself is arbitrary.
     cell._id = cell._id || v4();
-    _addCellToGridWords(acrossWords, cell, cell.acrossWord);
-    _addCellToGridWords(downWords, cell, cell.downWord);
+
+    if (!isDefined(cell.acrossWord)) {
+      console.warn('Cell missing across word annotation!', cell);
+    } else {
+      _addCellToGridWords(acrossWords, cell, cell.acrossWord);
+    }
+
+    if (!isDefined(cell.downWord)) {
+      console.warn('Cell missing down word annotation!', cell);
+    } else {
+      _addCellToGridWords(downWords, cell, cell.downWord);
+    }
   }
 
   // Add reference links to cells.
@@ -93,8 +105,12 @@ function processGrid(grid: GridCell[]): IGridInfo {
     if (cell.type === 'BLOCK') {
       continue;
     }
-    cell._acrossWordRef = acrossWords[cell.acrossWord];
-    cell._downWordRef = downWords[cell.downWord];
+    if (isDefined(cell.acrossWord)) {
+      cell._acrossWordRef = acrossWords[cell.acrossWord];
+    }
+    if (isDefined(cell.downWord)) {
+      cell._downWordRef = downWords[cell.downWord];
+    }
   }
 
   return {
