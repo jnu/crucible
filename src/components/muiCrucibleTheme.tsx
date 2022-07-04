@@ -1,36 +1,30 @@
-import * as muiColors from 'material-ui/styles/colors';
-import {fade} from 'material-ui/utils/colorManipulator';
+import * as muiColors from '@mui/material/colors';
+import {alpha} from '@mui/system';
 
 export const muiCrucibleTheme = {
-  spacing: {
-    iconSize: 24,
-    desktopGutter: 24,
-    desktopGutterMore: 32,
-    desktopGutterLess: 16,
-    desktopGutterMini: 8,
-    desktopKeylineIncrement: 64,
-    desktopDropDownMenuItemHeight: 32,
-    desktopDropDownMenuFontSize: 15,
-    desktopDrawerMenuItemHeight: 48,
-    desktopSubheaderHeight: 48,
-    desktopToolbarHeight: 56,
+  spacing: [0, 4, 8, 16, 32, 64],
+  typography: {
+    fontFamily: 'Radley, serif',
   },
-  fontFamily: 'Radley, serif',
   palette: {
-    primary1Color: muiColors.red500,
-    primary2Color: muiColors.red700,
-    primary3Color: muiColors.grey400,
-    accent1Color: muiColors.pinkA200,
-    accent2Color: muiColors.grey100,
-    accent3Color: muiColors.grey500,
-    textColor: muiColors.grey900,
-    secondaryTextColor: fade(muiColors.grey900, 0.54),
-    alternateTextColor: muiColors.white,
-    canvasColor: muiColors.white,
-    borderColor: muiColors.grey300,
-    disabledColor: fade(muiColors.darkBlack, 0.3),
-    pickerHeaderColor: muiColors.cyan500,
-    clockCircleColor: fade(muiColors.darkBlack, 0.07),
-    shadowColor: muiColors.fullBlack,
+    primary: {
+      main: muiColors.lightBlue.A400,
+    },
+    secondary: {
+      main: muiColors.pink.A200,
+      contrastText: muiColors.grey[100],
+      light: muiColors.grey[500],
+    },
+    text: {
+      primary: muiColors.grey[900],
+      secondary: alpha(muiColors.grey[900], 0.54),
+      disabled: alpha(muiColors.common.black, 0.3),
+    },
+    background: {
+      paper: muiColors.common.white,
+    },
+    divider: muiColors.grey[300],
+    //pickerHeaderColor: muiColors.cyan500,
+    //clockCircleColor: alpha(muiColors.darkBlack, 0.07),
   },
 } as const;

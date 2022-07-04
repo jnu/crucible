@@ -1,5 +1,4 @@
 import React from 'react';
-import {shallowEqual} from 'recompose';
 import {bindAll} from 'lodash';
 import {isDefined} from '../lib/isDefined';
 import type {GridCell as TGridCell} from '../reducers/grid';
@@ -13,7 +12,7 @@ export type GridCellProps = {
   size: number;
   index: number;
   onFocus: (i: number, e: React.MouseEvent<HTMLDivElement>) => void;
-  onRequestContext: (i: number) => void;
+  onRequestContext: (i: number, x: number, y: number) => void;
   onDoubleClick: (i: number, e: React.MouseEvent<HTMLDivElement>) => void;
   onLoseContext: () => void;
 };
@@ -25,7 +24,7 @@ export class GridCell extends React.Component<GridCellProps> {
   }
 
   shouldComponentUpdate(nextProps: GridCellProps) {
-    return !shallowEqual(this.props, nextProps);
+    return this.props !== nextProps;
   }
 
   doFocus(e: React.MouseEvent<HTMLDivElement>) {
@@ -42,7 +41,7 @@ export class GridCell extends React.Component<GridCellProps> {
       document.removeEventListener('click', globalClickHandler);
     };
     document.addEventListener('click', globalClickHandler);
-    onRequestContext(index);
+    onRequestContext(index, e.clientX, e.clientY);
   }
 
   doDoubleClick(e: React.MouseEvent<HTMLDivElement>) {

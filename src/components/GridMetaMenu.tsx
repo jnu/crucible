@@ -1,6 +1,4 @@
-import React from 'react';
-import {shallowEqual} from 'recompose';
-import {connect} from 'react-redux';
+import React, {useState, useEffect} from 'react';
 import {
   exportGridShape,
   importGridShape,
@@ -8,214 +6,167 @@ import {
   closeMetaDialog,
   fetchGridStateIndex,
   fetchPuzzleIndex,
-  toggleSymmetricalGrid,
-  loadPuzzle,
+  toggleSymmetricalGrid as aToggleSymmetricalGrid,
+  loadPuzzle as aLoadPuzzle,
   loadEmptyPuzzle,
   resize,
 } from '../actions';
-import Popover from 'material-ui/Popover';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import Dialog from 'material-ui/Dialog';
-import {List, ListItem} from 'material-ui/List';
-import CircularProgress from 'material-ui/CircularProgress';
-import TextField from 'material-ui/TextField';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Check from '@mui/icons-material/Check';
+import CircularProgress from '@mui/material/CircularProgress';
+import TextField from '@mui/material/TextField';
 import {bindAll} from 'lodash';
 import type {State, Dispatch} from '../store';
+import {useSelector, useDispatch} from '../store';
 import type {GridState} from '../reducers/grid';
 import type {MetaState} from '../reducers/meta';
 
-type GridMetaMenuViewState = {
-  exportGridName: string;
-  newGridWidth: number;
-  newGridHeight: number;
-  anchorEl: React.ReactInstance | undefined;
-};
+export const GridMetaMenu = () => {
+  const dispatch = useDispatch();
+  const {grid, meta} = useSelector((x) => x);
+  const [exportGridName, setExportGridName] = useState('');
+  const [newGridWidth, setNewGridWidth] = useState(grid.width);
+  const [newGridHeight, setNewGridHeight] = useState(grid.height);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-type GridMetaMenuViewProps = {
-  dispatch: Dispatch;
-  grid: GridState;
-  meta: MetaState;
-};
+  useEffect(() => {
+    if (!anchorEl) {
+      return;
+    }
+    dispatch(openMetaDialog('GRID_MENU'));
+  }, [anchorEl]);
 
-class GridMetaMenuView extends React.Component<
-  GridMetaMenuViewProps,
-  GridMetaMenuViewState
-> {
-  constructor(props: GridMetaMenuViewProps) {
-    super(props);
-    bindAll(
-      this,
-      'openImportGridShapeDialog',
-      'openExportGridShapeDialog',
-      'openLoadPuzzleDialog',
-      'openResizeGridDialog',
-      'openGridMenu',
-      'closeDialog',
-      'importGrid',
-      'exportGrid',
-      'loadPuzzle',
-      'makeNewPuzzle',
-      'resizeGrid',
-      'updateExportName',
-      'updateNewWidth',
-      'updateNewHeight',
-      'toggleSymmetricalGrid',
-    );
-    this.state = {
-      exportGridName: '',
-      newGridWidth: props.grid.width,
-      newGridHeight: props.grid.height,
-      anchorEl: undefined,
-    };
-  }
-
-  shouldComponentUpdate(
-    nextProps: GridMetaMenuViewProps,
-    nextState: GridMetaMenuViewState,
-  ) {
-    return (
-      !shallowEqual(this.props, nextProps) ||
-      !shallowEqual(this.state, nextState)
-    );
-  }
-
-  openImportGridShapeDialog() {
-    const {dispatch} = this.props;
+  const openImportGridShapeDialog = () => {
     dispatch(fetchGridStateIndex());
     dispatch(openMetaDialog('IMPORT_GRID_SHAPE'));
-  }
+  };
 
-  openExportGridShapeDialog() {
-    const {dispatch} = this.props;
+  const openExportGridShapeDialog = () => {
     dispatch(openMetaDialog('EXPORT_GRID_SHAPE'));
-  }
+  };
 
-  openLoadPuzzleDialog() {
-    const {dispatch} = this.props;
+  const openLoadPuzzleDialog = () => {
     dispatch(fetchPuzzleIndex());
     dispatch(openMetaDialog('LOAD_PUZZLE'));
-  }
+  };
 
-  openResizeGridDialog() {
-    const {dispatch} = this.props;
+  const openResizeGridDialog = () => {
     dispatch(openMetaDialog('RESIZE_GRID'));
-  }
+  };
 
-  openGridMenu(e: React.MouseEvent) {
-    const {dispatch} = this.props;
-    this.setState({anchorEl: e.currentTarget}, () => {
-      dispatch(openMetaDialog('GRID_MENU'));
-    });
-  }
+  const openGridMenu = (e: React.MouseEvent) => {
+    setAnchorEl(e.currentTarget as HTMLElement);
+    // NOTE: setting the anchorEl triggers the useEffect hook defined above,
+    // where the menu is actually opened. This avoids a race between setting
+    // the anchor el and opening the dialog.
+  };
 
-  closeDialog() {
-    const {dispatch} = this.props;
+  const closeDialog = () => {
+    setAnchorEl(null);
     dispatch(closeMetaDialog());
-  }
+  };
 
-  importGrid(uuid: string) {
-    const {dispatch} = this.props;
+  const importGrid = (uuid: string) => {
     dispatch(importGridShape(uuid));
-    this.closeDialog();
-  }
+    closeDialog();
+  };
 
-  exportGrid() {
-    const {dispatch} = this.props;
-    dispatch(exportGridShape(this.state.exportGridName));
-    this.closeDialog();
-  }
+  const exportGrid = () => {
+    dispatch(exportGridShape(exportGridName));
+    closeDialog();
+  };
 
-  loadPuzzle(uuid: string) {
-    const {dispatch} = this.props;
-    dispatch(loadPuzzle(uuid));
-    this.closeDialog();
-  }
+  const loadPuzzle = (uuid: string) => {
+    dispatch(aLoadPuzzle(uuid));
+    closeDialog();
+  };
 
-  makeNewPuzzle() {
-    const {dispatch} = this.props;
+  const makeNewPuzzle = () => {
     dispatch(loadEmptyPuzzle());
-    this.closeDialog();
-  }
+    closeDialog();
+  };
 
-  updateExportName(e: React.KeyboardEvent<HTMLInputElement>) {
-    this.setState({exportGridName: (e.target as HTMLInputElement).value});
-  }
+  const updateExportName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setExportGridName((e.target as HTMLInputElement).value);
+  };
 
-  updateNewWidth(e: React.KeyboardEvent<HTMLInputElement>) {
-    this.setState({newGridWidth: +(e.target as HTMLInputElement).value});
-  }
+  const updateNewWidth = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewGridWidth(+(e.target as HTMLInputElement).value);
+  };
 
-  updateNewHeight(e: React.KeyboardEvent<HTMLInputElement>) {
-    this.setState({newGridHeight: +(e.target as HTMLInputElement).value});
-  }
+  const updateNewHeight = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewGridHeight(+(e.target as HTMLInputElement).value);
+  };
 
-  resizeGrid() {
-    const {dispatch} = this.props;
-    const {newGridWidth, newGridHeight} = this.state;
+  const resizeGrid = () => {
     dispatch(resize(+newGridWidth, +newGridHeight));
-    this.closeDialog();
-  }
+    closeDialog();
+  };
 
-  toggleSymmetricalGrid() {
-    const {dispatch} = this.props;
-    dispatch(toggleSymmetricalGrid());
-    this.closeDialog();
-  }
+  const toggleSymmetricalGrid = () => {
+    dispatch(aToggleSymmetricalGrid());
+    closeDialog();
+  };
 
-  render() {
-    const {meta, grid} = this.props;
+  const gridMenuOpen = meta.openDialog === 'GRID_MENU' && !!anchorEl;
 
-    return (
-      <div className="GridMetaMenu">
-        <FlatButton onClick={this.openGridMenu}>Grid</FlatButton>
-        <Popover
-          open={meta.openDialog === 'GRID_MENU'}
-          anchorEl={this.state.anchorEl}
-          anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-          targetOrigin={{horizontal: 'left', vertical: 'top'}}
-          onRequestClose={this.closeDialog}
-        >
-          <Menu>
-            <MenuItem onClick={this.makeNewPuzzle}>New Puzzle</MenuItem>
-            <MenuItem onClick={this.openLoadPuzzleDialog}>Load Puzzle</MenuItem>
-            <MenuItem onClick={this.openExportGridShapeDialog}>
-              Save Grid Template
-            </MenuItem>
-            <MenuItem onClick={this.openImportGridShapeDialog}>
-              Load Grid Template
-            </MenuItem>
-            <MenuItem onClick={this.openResizeGridDialog}>Resize ...</MenuItem>
-            <MenuItem
-              onClick={this.toggleSymmetricalGrid}
-              checked={grid.symmetrical}
-            >
-              Symmetrical
-            </MenuItem>
-          </Menu>
-        </Popover>
-        <Dialog
-          title="Import Grid Template"
-          open={meta.openDialog === 'IMPORT_GRID_SHAPE'}
-          contentStyle={{width: 400}}
-          onRequestClose={this.closeDialog}
-          autoScrollBodyContent={true}
-          actions={[
-            <FlatButton
-              label="Cancel"
-              primary={false}
-              onClick={this.closeDialog}
-            />,
-          ]}
-        >
+  // Render the menu
+  return (
+    <div className="GridMetaMenu">
+      <Button
+        id="grid-menu-button"
+        aria-controls={gridMenuOpen ? 'grid-menu' : undefined}
+        aria-haspopup={true}
+        aria-expanded={gridMenuOpen ? true : undefined}
+        onClick={openGridMenu}>
+        Grid
+      </Button>
+
+      <Menu
+        MenuListProps={{'aria-labelledby': 'grid-menu-button'}}
+        anchorEl={anchorEl}
+        onClose={closeDialog}
+        id="grid-menu"
+        open={gridMenuOpen}>
+        <MenuItem onClick={makeNewPuzzle}>New Puzzle</MenuItem>
+        <MenuItem onClick={openLoadPuzzleDialog}>Load Puzzle</MenuItem>
+        <MenuItem onClick={openExportGridShapeDialog}>
+          Save Grid Template
+        </MenuItem>
+        <MenuItem onClick={openImportGridShapeDialog}>
+          Load Grid Template
+        </MenuItem>
+        <MenuItem onClick={openResizeGridDialog}>Resize ...</MenuItem>
+        <MenuItem onClick={toggleSymmetricalGrid}>
+          {grid.symmetrical ? (
+            <ListItemIcon>
+              <Check />
+            </ListItemIcon>
+          ) : null}
+          Symmetrical
+        </MenuItem>
+      </Menu>
+
+      <Dialog
+        title="Import Grid Template"
+        open={meta.openDialog === 'IMPORT_GRID_SHAPE'}
+        onClose={closeDialog}
+        scroll="paper">
+        <DialogContent>
           {!meta.requestingGridShapeIndex ? (
             <List>
               {meta.gridShapeIndex.map((obj) => {
                 const {key, name} = obj;
                 return (
-                  <ListItem key={key} onClick={() => this.importGrid(key)}>
+                  <ListItem key={key} onClick={() => importGrid(key)}>
                     {name ? name : <span>Unnamed</span>}
                   </ListItem>
                 );
@@ -224,52 +175,47 @@ class GridMetaMenuView extends React.Component<
           ) : (
             <CircularProgress />
           )}
-        </Dialog>
-        <Dialog
-          title="Save Grid Template"
-          open={meta.openDialog === 'EXPORT_GRID_SHAPE'}
-          contentStyle={{width: 400}}
-          onRequestClose={this.closeDialog}
-          actions={[
-            <div>
-              <FlatButton
-                label="Cancel"
-                primary={false}
-                onClick={this.closeDialog}
-              />
-              <RaisedButton
-                label="Save"
-                primary={true}
-                onClick={this.exportGrid}
-              />
-            </div>,
-          ]}
-        >
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" onClick={closeDialog}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        title="Save Grid Template"
+        open={meta.openDialog === 'EXPORT_GRID_SHAPE'}
+        onClose={closeDialog}>
+        <DialogContent>
           <TextField
-            hintText="Enter a name for this template"
-            onChange={this.updateExportName}
+            variant="standard"
+            label="Template name"
+            onChange={updateExportName}
           />
-        </Dialog>
-        <Dialog
-          title="Load Puzzle"
-          open={meta.openDialog === 'LOAD_PUZZLE'}
-          contentStyle={{width: 400}}
-          autoScrollBodyContent={true}
-          onRequestClose={this.closeDialog}
-          actions={[
-            <FlatButton
-              label="Cancel"
-              primary={false}
-              onClick={this.closeDialog}
-            />,
-          ]}
-        >
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDialog} variant="text">
+            Cancel
+          </Button>
+          <Button variant="text" onClick={exportGrid}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        title="Load Puzzle"
+        open={meta.openDialog === 'LOAD_PUZZLE'}
+        scroll="paper"
+        onClose={closeDialog}>
+        <DialogContent>
           {!meta.requestingPuzzleIndex ? (
             <List>
               {meta.puzzleIndex.map((obj) => {
                 const {id, title} = obj;
                 return (
-                  <ListItem key={id} onClick={() => this.loadPuzzle(id)}>
+                  <ListItem key={id} onClick={() => loadPuzzle(id)}>
                     {title ? title : <span>(Untitled)</span>}
                   </ListItem>
                 );
@@ -278,53 +224,43 @@ class GridMetaMenuView extends React.Component<
           ) : (
             <CircularProgress />
           )}
-        </Dialog>
-        <Dialog
-          title="Resize Grid"
-          open={meta.openDialog === 'RESIZE_GRID'}
-          contentStyle={{width: 400}}
-          autoScrollBodyContent={false}
-          onRequestClose={this.closeDialog}
-          actions={[
-            <div>
-              <FlatButton
-                label="Cancel"
-                primary={false}
-                onClick={this.closeDialog}
-              />
-              <RaisedButton
-                label="Apply"
-                primary={true}
-                onClick={this.resizeGrid}
-              />
-            </div>,
-          ]}
-        >
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDialog}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        title="Resize Grid"
+        open={meta.openDialog === 'RESIZE_GRID'}
+        onClose={closeDialog}>
+        <DialogContent>
           <div>
-            Width:{' '}
             <TextField
               name="ResizeGrid_Width_Input"
-              value={this.state.newGridWidth}
-              hintText="Enter puzzle width"
-              onChange={this.updateNewWidth}
+              value={newGridWidth}
+              variant="standard"
+              label="Puzzle width"
+              onChange={updateNewWidth}
             />
           </div>
           <div>
-            Height:{' '}
             <TextField
               name="ResizeGrid_Height_Input"
-              value={this.state.newGridHeight}
-              hintText="Enter puzzle height"
-              onChange={this.updateNewHeight}
+              value={newGridHeight}
+              variant="standard"
+              label="Puzzle height"
+              onChange={updateNewHeight}
             />
           </div>
-        </Dialog>
-      </div>
-    );
-  }
-}
-
-export const GridMetaMenu = connect((state: State) => ({
-  meta: state.meta,
-  grid: state.grid,
-}))(GridMetaMenuView);
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" onClick={closeDialog}>
+            Cancel
+          </Button>
+          <Button onClick={resizeGrid}>Apply</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};

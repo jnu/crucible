@@ -1,9 +1,9 @@
 import React from 'react';
 import {Divider} from './Divider';
-import * as muiColors from 'material-ui/styles/colors';
+import * as muiColors from '@mui/material/colors';
 
 const THICKNESS = 1;
-const COLOR = muiColors.grey300;
+const COLOR = muiColors.grey[300];
 const V_SPAN = 0.95;
 const H_SPAN = 1.0;
 

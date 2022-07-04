@@ -1,65 +1,15 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import TextField from 'material-ui/TextField';
+import TextField from '@mui/material/TextField';
 import {bindAll} from 'lodash';
 import {Direction, updateClue} from '../actions';
+import {isDefined} from '../lib/isDefined';
 import type {State, Dispatch} from '../store';
+import {useSelector, useDispatch} from '../store';
 
-type ClueBuilderViewProps = Readonly<{
-  dispatch: Dispatch;
-  hasClue: boolean;
-  index: number;
-  direction: Direction;
-  value: string;
-  style: React.CSSProperties;
-}>;
-
-class ClueBuilderView extends React.Component<ClueBuilderViewProps> {
-  constructor(props: ClueBuilderViewProps) {
-    super(props);
-    bindAll(this, 'updateClueState');
-  }
-
-  updateClueState(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    const value = (e.target as HTMLTextAreaElement).value;
-
-    const {dispatch, hasClue, index, direction} = this.props;
-
-    if (!hasClue) {
-      return;
-    }
-
-    dispatch(updateClue(direction, index, value));
-  }
-
-  render() {
-    const {index, direction, value, hasClue, style} = this.props;
-
-    const dirAbbr = (direction || '').substr(0, 1).toUpperCase();
-    const label = `${index + 1}-${dirAbbr}`;
-
-    return (
-      <div className="ClueBuilder" style={style}>
-        {!hasClue ? null : (
-          <div>
-            <span className="ClueBuilder_Label" style={{paddingRight: 12}}>
-              {label}
-            </span>
-            <TextField
-              name="ClueBuiler_Input"
-              value={value}
-              hintText="Enter clue"
-              style={{width: 'calc(100% - 60px)'}}
-              onChange={this.updateClueState}
-            />
-          </div>
-        )}
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state: State) => {
+/**
+ * Pull local info from the global state.
+ */
+const selectProps = (state: State) => {
   const {grid} = state;
   const cursor = grid.cursor;
   const cell = grid.content[cursor!];
@@ -80,4 +30,54 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-export const ClueBuilder = connect(mapStateToProps)(ClueBuilderView);
+/**
+ * Props for the cluebuilder.
+ */
+export type ClueBuilderProps = {
+  style?: React.CSSProperties;
+};
+
+/**
+ * View for editing clues.
+ */
+export const ClueBuilder = ({style}: ClueBuilderProps) => {
+  const dispatch = useDispatch();
+  const props = useSelector(selectProps);
+
+  // Clue update handler
+  const updateClueState = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = (e.target as HTMLTextAreaElement).value;
+
+    const {hasClue, index, direction} = props;
+
+    if (!hasClue) {
+      return;
+    }
+
+    dispatch(updateClue(direction, index!, value));
+  };
+
+  const {index, direction, value, hasClue} = props;
+
+  const label = isDefined(index)
+    ? `${index + 1} ${direction.toLowerCase()}`
+    : 'Clue';
+
+  return (
+    <div className="ClueBuilder" style={style}>
+      {!hasClue ? null : (
+        <div>
+          <TextField
+            name="ClueBuiler_Input"
+            variant="standard"
+            placeholder="Enter clue"
+            value={value}
+            label={label}
+            style={{width: 'calc(100% - 60px)'}}
+            onChange={updateClueState}
+          />
+        </div>
+      )}
+    </div>
+  );
+};

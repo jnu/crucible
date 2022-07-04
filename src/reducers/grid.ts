@@ -79,6 +79,8 @@ export type GridState = Readonly<{
   cursor: number | null;
   cursorDirection: Direction;
   menuCell: number | null;
+  menuX: number | null;
+  menuY: number | null;
   cellSize: number;
   autoFilling: boolean;
   autoFillStatus: IProgressStats | null;
@@ -366,6 +368,8 @@ const createNewGrid = (): GridState => {
     cursor: null,
     cursorDirection: Direction.Across,
     menuCell: null,
+    menuX: null,
+    menuY: null,
     cellSize: 30,
 
     // Autofill state
@@ -472,6 +476,8 @@ export const rSetCursorDirection = (
 export const rHideMenu = (state: GridState, _action: HideMenu) => ({
   ...state,
   menuCell: null,
+  menuX: null,
+  menuY: null,
 });
 
 /**
@@ -480,6 +486,8 @@ export const rHideMenu = (state: GridState, _action: HideMenu) => ({
 export const rShowMenu = (state: GridState, action: ShowMenu) => ({
   ...state,
   menuCell: snapToBounds({state, index: action.index}),
+  menuX: action.x,
+  menuY: action.y,
 });
 
 /**

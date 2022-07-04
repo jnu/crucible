@@ -1,69 +1,49 @@
 import React from 'react';
-import {pure} from 'recompose';
-import {connect} from 'react-redux';
-import Paper from 'material-ui/Paper';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import {isDefined} from '../lib/isDefined';
 import {hideCellContext, updateCell} from '../actions';
 import {CellType} from '../lib/crux';
-import type {GridState} from '../reducers/grid';
+import {useDispatch, useSelector} from '../store';
 import type {State, Dispatch} from '../store';
+import type {GridState} from '../reducers/grid';
 import './CellContextMenu.scss';
 
-const getMenuPosition = (index: number, cellSize: number, width: number) => {
-  const x = index % width;
-  const y = ~~(index / width);
-  return {
-    position: 'absolute',
-    left: x * cellSize + cellSize / 2,
-    top: y * cellSize,
-  } as const;
-};
+/**
+ * Context menu that provides options for a cell in the grid.
+ */
+export const CellContextMenu = () => {
+  const dispatch = useDispatch();
+  const {menuCell, menuX, menuY, content, cellSize, width} = useSelector(
+    ({grid}) => grid,
+  );
 
-type CellContextMenuViewProps = {
-  grid: GridState;
-  dispatch: Dispatch;
-};
-
-const CellContextMenuView = ({grid, dispatch}: CellContextMenuViewProps) => {
-  const menuCell = grid.menuCell;
-
-  if (menuCell === null || menuCell === undefined) {
-    return null;
-  }
-
-  const width = grid.width;
-  const content = grid.content;
-  const cellSize = grid.cellSize;
-  const cell = content[menuCell];
+  const cell = content[menuCell!];
   const toggleToType =
-    cell.type === CellType.Content ? CellType.Block : CellType.Content;
+    cell?.type === CellType.Content ? CellType.Block : CellType.Content;
 
   return (
-    <div
-      className="CellContextMenu"
-      style={getMenuPosition(menuCell, cellSize, width)}
-    >
-      <Paper>
-        <Menu onEscKeyDown={() => dispatch(hideCellContext())}>
-          <MenuItem
-            primaryText="Toggle Block"
-            onClick={() =>
-              dispatch(
-                updateCell(menuCell, {
-                  type: toggleToType,
-                  annotation: undefined,
-                  value: undefined,
-                }),
-              )
-            }
-          />
-        </Menu>
-      </Paper>
-    </div>
+    <Menu
+      anchorReference="anchorPosition"
+      anchorPosition={
+        isDefined(menuX) && isDefined(menuY)
+          ? {top: menuY, left: menuX}
+          : undefined
+      }
+      open={isDefined(menuCell)}
+      onClose={() => dispatch(hideCellContext())}>
+      <MenuItem
+        onClick={() =>
+          dispatch(
+            updateCell(menuCell!, {
+              type: toggleToType,
+              annotation: undefined,
+              value: undefined,
+            }),
+          )
+        }>
+        Toggle Block
+      </MenuItem>
+    </Menu>
   );
 };
-
-export const CellContextMenu = connect((state: State) => ({
-  grid: state.grid,
-}))(pure(CellContextMenuView));

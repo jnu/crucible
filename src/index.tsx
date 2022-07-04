@@ -1,6 +1,5 @@
 import React from 'react';
-import {render} from 'react-dom';
-import {Provider} from 'react-redux';
+import {createRoot} from 'react-dom/client';
 import {crucibleApp} from './reducers';
 import type {GridState} from './reducers/grid';
 import {App} from './components/App';
@@ -53,13 +52,11 @@ autosaver.start();
 // TODO all things should init through functions like this.
 initWordList(store);
 
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root'),
-);
+// Render the app.
+const root = createRoot(document.getElementById('root')!);
+root.render(<App store={store} />);
 
+// Install debug utils for local development.
 if (DEBUG) {
   // @ts-ignore
   window.__app__ = {
