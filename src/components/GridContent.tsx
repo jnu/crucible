@@ -1,9 +1,7 @@
-import React from 'react';
-import {connect} from 'react-redux';
-import {pure} from 'recompose';
-import {bindAll} from 'lodash';
+import React, {useEffect, useRef} from 'react';
 import {GridCell} from './GridCell';
 import {CellContextMenu} from './CellContextMenu';
+import {isDefined} from '../lib/isDefined';
 import {
   updateCell,
   focusCell,
@@ -17,140 +15,110 @@ import {Direction} from '../actions/gridMeta';
 import type {CellUpdates} from '../actions/gridSemantic';
 import type {GridState, GridCell as TGridCell} from '../reducers/grid';
 import type {State, Dispatch} from '../store';
+import {useSelector, useDispatch} from '../store';
 import {CellType} from '../lib/crux';
 import * as Keys from '../lib/keys';
 import './GridContent.scss';
 
+/**
+ * Pull relevant fields out of global state.
+ */
+const selectProps = (state: State) => {
+  const {grid} = state;
+
+  return {
+    content: grid.content,
+    width: grid.width,
+    height: grid.height,
+    cellSize: grid.cellSize,
+    menuCell: grid.menuCell,
+    cursor: grid.cursor,
+    cursorDirection: grid.cursorDirection,
+    autoFilling: grid.autoFilling,
+  };
+};
+
+/**
+ * Toggle the cursor direction.
+ */
 const getNextDirection = (direction: Direction) =>
   direction === Direction.Across ? Direction.Down : Direction.Across;
 
-type GridContentViewProps = Pick<
-  GridState,
-  | 'autoFilling'
-  | 'cursor'
-  | 'cursorDirection'
-  | 'content'
-  | 'width'
-  | 'height'
-  | 'cellSize'
-  | 'menuCell'
-> & {dispatch: Dispatch};
+/**
+ * Container for all the puzzle squares.
+ */
+export const GridContent = () => {
+  const gridContentRoot = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch();
+  const {
+    autoFilling,
+    cursor,
+    cursorDirection,
+    content,
+    width,
+    height,
+    cellSize,
+  } = useSelector(selectProps);
 
-class GridContentView extends React.Component<GridContentViewProps> {
-  constructor(props: GridContentViewProps) {
-    super(props);
-    bindAll(
-      this,
-      'onFocusCell',
-      'onLoseCellContext',
-      'onRequestCellContext',
-      'onKeyDown',
-      'onDoubleClick',
-    );
-  }
-
-  private mouseClickListener: ((e: MouseEvent) => void) | null | undefined;
-  private keyDownListener: ((e: KeyboardEvent) => void) | null | undefined;
-  private gridContentRoot: HTMLDivElement | null | undefined;
-
-  componentDidMount() {
-    const cmp = this;
-
-    cmp.mouseClickListener = (e) => {
-      const {gridContentRoot} = cmp;
-      const {target} = e;
-
-      if (cmp.props.autoFilling) {
-        return;
-      }
-
-      if (!gridContentRoot) {
-        if (DEBUG) {
-          console.warn('Did not find grid content root');
-        }
-        return;
-      }
-
-      // Focus event
-      if (gridContentRoot.contains(target as HTMLElement)) {
-        cmp.setKeyListener(cmp);
-      } else {
-        cmp.removeKeyListener(cmp);
-      }
-    };
-
-    window.addEventListener('click', cmp.mouseClickListener);
-  }
-
-  componentWillUnmount() {
-    this.removeKeyListener(this);
-    if (this.mouseClickListener) {
-      window.removeEventListener('click', this.mouseClickListener);
-    }
-  }
-
-  removeKeyListener(cmp: GridContentView) {
-    if (cmp.keyDownListener) {
-      window.removeEventListener('keydown', cmp.keyDownListener);
-      cmp.keyDownListener = null;
-    }
-  }
-
-  setKeyListener(cmp: GridContentView) {
-    if (cmp.keyDownListener) {
-      return;
-    }
-
-    cmp.keyDownListener = (e) => {
-      const handler = cmp.onKeyDown;
-      const {cursor, cursorDirection, content} = cmp.props;
-      if (!handler) {
-        return;
-      }
-      handler(e, cursor, cursorDirection, content);
-      e.preventDefault();
-    };
-
-    window.addEventListener('keydown', cmp.keyDownListener);
-  }
-
-  onFocusCell(index: number) {
-    const {dispatch} = this.props;
-    if (this.props.autoFilling) {
+  // Handle clicking into a cell
+  const onFocusCell = (index: number) => {
+    if (autoFilling) {
       return;
     }
     dispatch(focusCell(index));
-  }
+  };
 
-  onLoseCellContext() {
-    const {dispatch} = this.props;
-    if (this.props.autoFilling) {
+  // Handle clicking out of a cell
+  const onLoseCellContext = () => {
+    if (autoFilling) {
       return;
     }
     dispatch(hideCellContext());
-  }
+  };
 
-  onRequestCellContext(index: number) {
-    const {dispatch} = this.props;
-    if (this.props.autoFilling) {
+  // Handle left click on a cell
+  const onRequestCellContext = (index: number) => {
+    if (autoFilling) {
       return;
     }
     dispatch(requestCellContext(index));
-  }
+  };
 
-  onKeyDown(
+  // Mouse click listener
+  const mouseClickListener = (e: MouseEvent) => {
+    const {target} = e;
+
+    if (autoFilling || !gridContentRoot.current) {
+      return;
+    }
+
+    if (!gridContentRoot) {
+      if (DEBUG) {
+        console.warn('Did not find grid content root');
+      }
+      return;
+    }
+
+    // Focus event
+    if (gridContentRoot.current.contains(target as HTMLElement)) {
+      setKeyListener();
+    } else {
+      removeKeyListener();
+    }
+  };
+
+  // Key handler
+  const onKeyDown = (
     e: KeyboardEvent,
     index: number | null,
     cursorDirection: Direction,
     content: TGridCell[],
-  ) {
-    const {dispatch} = this.props;
-
-    if (this.props.autoFilling) {
+  ) => {
+    if (autoFilling) {
       return;
     }
 
-    if (index === undefined || index === null) {
+    if (!isDefined(index)) {
       return;
     }
 
@@ -212,78 +180,79 @@ class GridContentView extends React.Component<GridContentViewProps> {
         }
       }
     }
-  }
+  };
 
-  onDoubleClick() {
-    const {dispatch, cursorDirection} = this.props;
-    if (this.props.autoFilling) {
+  // Keyboard event handler.
+  const keyListener = (e: KeyboardEvent) => {
+    onKeyDown(e, cursor, cursorDirection, content);
+    e.preventDefault();
+  };
+
+  // Remove a global delegated keydown listener.
+  const removeKeyListener = () => {
+    window.removeEventListener('keydown', keyListener);
+  };
+
+  // Add a global delegated keydown listener.
+  const setKeyListener = () => {
+    removeKeyListener();
+    window.addEventListener('keydown', keyListener);
+  };
+
+  // Handle double clicks on the grid.
+  const onDoubleClick = () => {
+    if (autoFilling) {
       return;
     }
     dispatch(setDirection(getNextDirection(cursorDirection)));
-  }
-
-  render() {
-    const {content, width, height, cellSize, cursor, cursorDirection} =
-      this.props;
-
-    const cursorCell =
-      cursor !== null && cursor !== undefined && content[cursor];
-    const highlightKey =
-      cursorDirection === Direction.Across ? 'acrossWord' : 'downWord';
-    const highlightWord = cursorCell && cursorCell[highlightKey];
-    const hasHighlight =
-      !!cursorCell && highlightWord !== null && highlightWord !== undefined;
-    // Grid is 1px larger than the sum of its cells due to border
-    const gridStyle = {
-      width: width * cellSize + 2,
-      height: height * cellSize + 2,
-    };
-
-    return (
-      <div
-        className="GridContent"
-        ref={(target) => (this.gridContentRoot = target)}
-        style={gridStyle}>
-        {content.map((cell, i) => {
-          const y = ~~(i / width);
-          const x = i % width;
-          return (
-            <GridCell
-              cell={cell}
-              key={i}
-              index={i}
-              left={x}
-              top={y}
-              size={cellSize}
-              onFocus={this.onFocusCell}
-              onDoubleClick={this.onDoubleClick}
-              onLoseContext={this.onLoseCellContext}
-              onRequestContext={this.onRequestCellContext}
-              focused={cursor === i}
-              highlight={
-                hasHighlight && highlightWord === cell[highlightKey]
-              }></GridCell>
-          );
-        })}
-        <CellContextMenu />
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state: State) => {
-  const {grid} = state;
-
-  return {
-    content: grid.content,
-    width: grid.width,
-    height: grid.height,
-    cellSize: grid.cellSize,
-    menuCell: grid.menuCell,
-    cursor: grid.cursor,
-    cursorDirection: grid.cursorDirection,
-    autoFilling: grid.autoFilling,
   };
-};
 
-export const GridContent = connect(mapStateToProps)(pure(GridContentView));
+  // Set up event handlers when the grid is rendered.
+  useEffect(() => {
+    window.addEventListener('click', mouseClickListener);
+
+    return () => {
+      removeKeyListener();
+      window.removeEventListener('click', mouseClickListener);
+    };
+  }, [gridContentRoot.current]);
+
+  // Render the grid.
+  const cursorCell = cursor !== null && cursor !== undefined && content[cursor];
+  const highlightKey =
+    cursorDirection === Direction.Across ? 'acrossWord' : 'downWord';
+  const highlightWord = cursorCell && cursorCell[highlightKey];
+  const hasHighlight =
+    !!cursorCell && highlightWord !== null && highlightWord !== undefined;
+  // Grid is 1px larger than the sum of its cells due to border
+  const gridStyle = {
+    width: width * cellSize + 2,
+    height: height * cellSize + 2,
+  };
+
+  return (
+    <div className="GridContent" ref={gridContentRoot} style={gridStyle}>
+      {content.map((cell, i) => {
+        const y = ~~(i / width);
+        const x = i % width;
+        return (
+          <GridCell
+            cell={cell}
+            key={i}
+            index={i}
+            left={x}
+            top={y}
+            size={cellSize}
+            onFocus={onFocusCell}
+            onDoubleClick={onDoubleClick}
+            onLoseContext={onLoseCellContext}
+            onRequestContext={onRequestCellContext}
+            focused={cursor === i}
+            highlight={hasHighlight && highlightWord === cell[highlightKey]}
+          />
+        );
+      })}
+      <CellContextMenu />
+    </div>
+  );
+};

@@ -1,5 +1,4 @@
 import React from 'react';
-import {shallowEqual} from 'recompose';
 import {bindAll} from 'lodash';
 import {isDefined} from '../lib/isDefined';
 import type {GridCell as TGridCell} from '../reducers/grid';
@@ -25,7 +24,7 @@ export class GridCell extends React.Component<GridCellProps> {
   }
 
   shouldComponentUpdate(nextProps: GridCellProps) {
-    return !shallowEqual(this.props, nextProps);
+    return this.props !== nextProps;
   }
 
   doFocus(e: React.MouseEvent<HTMLDivElement>) {

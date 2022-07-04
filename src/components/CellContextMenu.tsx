@@ -1,12 +1,11 @@
 import React from 'react';
-import {pure} from 'recompose';
-import {connect} from 'react-redux';
-import Paper from 'material-ui/Paper';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
+import Paper from '@mui/material/Paper';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import {hideCellContext, updateCell} from '../actions';
 import {CellType} from '../lib/crux';
 import type {GridState} from '../reducers/grid';
+import {useDispatch, useSelector} from '../store';
 import type {State, Dispatch} from '../store';
 import './CellContextMenu.scss';
 
@@ -20,12 +19,9 @@ const getMenuPosition = (index: number, cellSize: number, width: number) => {
   } as const;
 };
 
-type CellContextMenuViewProps = {
-  grid: GridState;
-  dispatch: Dispatch;
-};
-
-const CellContextMenuView = ({grid, dispatch}: CellContextMenuViewProps) => {
+export const CellContextMenu = () => {
+  const dispatch = useDispatch();
+  const grid = useSelector(({grid}) => grid);
   const menuCell = grid.menuCell;
 
   if (menuCell === null || menuCell === undefined) {
@@ -42,12 +38,10 @@ const CellContextMenuView = ({grid, dispatch}: CellContextMenuViewProps) => {
   return (
     <div
       className="CellContextMenu"
-      style={getMenuPosition(menuCell, cellSize, width)}
-    >
+      style={getMenuPosition(menuCell, cellSize, width)}>
       <Paper>
-        <Menu onEscKeyDown={() => dispatch(hideCellContext())}>
+        <Menu open={true} onClose={() => dispatch(hideCellContext())}>
           <MenuItem
-            primaryText="Toggle Block"
             onClick={() =>
               dispatch(
                 updateCell(menuCell, {
@@ -56,14 +50,11 @@ const CellContextMenuView = ({grid, dispatch}: CellContextMenuViewProps) => {
                   value: undefined,
                 }),
               )
-            }
-          />
+            }>
+            Toggle Block
+          </MenuItem>
         </Menu>
       </Paper>
     </div>
   );
 };
-
-export const CellContextMenu = connect((state: State) => ({
-  grid: state.grid,
-}))(pure(CellContextMenuView));
