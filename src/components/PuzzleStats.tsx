@@ -1,19 +1,19 @@
 import React from 'react';
-import {pure} from 'recompose';
-import {connect} from 'react-redux';
-import './PuzzleStats.scss';
 import {isDefined} from '../lib/isDefined';
+import {useSelector} from '../store';
 import type {State} from '../store';
 import type {GridState, GridCell, GridClue} from '../reducers/grid';
 
+import './PuzzleStats.scss';
+
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-type PuzzleCountsProps = Readonly<{
-  content: GridCell[];
-  clues: GridClue[];
-}>;
+/**
+ * Render histogram of letter counts, cell counts, and word sums.
+ */
+export const PuzzleCounts = () => {
+  const {clues, content} = useSelector(({grid}) => grid);
 
-const PuzzleCounts = pure(({content, clues}: PuzzleCountsProps) => {
   let total = 0;
   let blocks = 0;
 
@@ -64,20 +64,15 @@ const PuzzleCounts = pure(({content, clues}: PuzzleCountsProps) => {
       </ol>
     </div>
   );
-});
+};
 
-type PuzzleStatsViewProps = Readonly<{
-  grid: GridState;
-}>;
-
-const PuzzleStatsView = pure(({grid}: PuzzleStatsViewProps) => {
+/**
+ * Wrapper for the puzzle stat information.
+ */
+export const PuzzleStats = () => {
   return (
     <div className="PuzzleStats">
-      <PuzzleCounts content={grid.content} clues={grid.clues} />
+      <PuzzleCounts />
     </div>
   );
-});
-
-const mapStateToProps = ({grid}: State) => ({grid});
-
-export const PuzzleStats = connect(mapStateToProps)(PuzzleStatsView);
+};

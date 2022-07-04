@@ -1,6 +1,4 @@
-import React from 'react';
-import {pure} from 'recompose';
-import {connect} from 'react-redux';
+import React, {useState, useEffect} from 'react';
 import {List} from 'react-virtualized';
 import {isDefined} from '../lib/isDefined';
 import type {GridState, GridCell} from '../reducers/grid';
@@ -8,7 +6,8 @@ import type {WordBank} from '../lib/readcross/WordBank';
 import type {WordlistState, Wordlist} from '../reducers/wordlist';
 import {autoFillGrid} from '../actions/gridSemantic';
 import {Direction} from '../actions/gridMeta';
-import {State, Dispatch} from '../store';
+import {useSelector, useDispatch} from '../store';
+import type {State, Dispatch} from '../store';
 import './WordWizard.scss';
 
 /**
@@ -236,164 +235,128 @@ function searchWordLists(lists: Wordlist, query: WordQuery) {
 
 /**
  * Serialize crossing array for semantic comparison
- * @param  {Crossing[]} crosses
- * @return {String}
  */
-function serializeCrosses(crosses: Crossing[]) {
+const serializeCrosses = (crosses: Crossing[]) => {
   return crosses.map((c) => c.crossing).join(',');
-}
-
-const INITIAL_WIZARD_STATE = {
-  query: null,
-  matches: [],
-  fetching: false,
-  error: null,
 };
 
-const wordWizardStyle = {
-  height: '100%',
-};
+/**
+ * UI for showing magically relevant words based on the current grid.
+ */
+export const WordWizard = () => {
+  const dispatch = useDispatch();
+  const {grid, wordlist} = useSelector((x) => x);
+  const [query, setQuery] = useState<WordQuery | null>(null);
+  const [matches, setMatches] = useState<WordMatch[]>([]);
+  const [fetching, setFetching] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-type WordWizardViewState = Readonly<{
-  query: WordQuery | null;
-  matches: WordMatch[];
-  fetching: boolean;
-  error: Error | null;
-}>;
+  // Reset state to initial blank state.
+  const resetState = () => {
+    setQuery(null);
+    setMatches([]);
+    setFetching(false);
+    setError(null);
+  };
 
-type WordWizardViewProps = Readonly<{
-  grid: GridState;
-  wordlist: WordlistState;
-  dispatch: Dispatch;
-}>;
-
-class WordWizardView extends React.Component<
-  WordWizardViewProps,
-  WordWizardViewState
-> {
-  constructor(props: WordWizardViewProps) {
-    super(props);
-    this.state = INITIAL_WIZARD_STATE;
-    this._renderListRow = this._renderListRow.bind(this);
-    this._autoFillGrid = this._autoFillGrid.bind(this);
-  }
+  const _autoFillGrid = () => {
+    dispatch(autoFillGrid(wordlist));
+  };
 
   /**
    * Check if potential matches in state might have changed. Assume that
    * potential matches are deterministic given wordlist state and nextQuery.
    */
-  _areMatchesCurrent(wordlist: WordlistState, nextQuery: WordQuery) {
+  const _areMatchesCurrent = (
+    wordlist: WordlistState,
+    nextQuery: WordQuery,
+  ) => {
     return (
-      this.state.query &&
+      query &&
       nextQuery &&
-      this.state.query.word === nextQuery.word &&
-      this.props.wordlist === wordlist &&
-      serializeCrosses(this.state.query.crosses) ===
-        serializeCrosses(nextQuery.crosses)
+      query.word === nextQuery.word &&
+      wordlist === wordlist &&
+      serializeCrosses(query.crosses) === serializeCrosses(nextQuery.crosses)
     );
-  }
+  };
 
-  componentWillReceiveProps(nextProps: WordWizardViewProps) {
-    const nextQuery = getCurrentWord(nextProps.grid);
+  useEffect(() => {
+    const nextQuery = getCurrentWord(grid);
     // No current word means no query; reset to initial state.
     if (!nextQuery || !nextQuery.word) {
-      this.setState(INITIAL_WIZARD_STATE);
+      resetState();
       return;
     }
     // If potential matches might've changed, need to recomputed.
-    if (!this._areMatchesCurrent(nextProps.wordlist, nextQuery)) {
-      const searchPromise = searchWordLists(
-        nextProps.wordlist.lists,
-        nextQuery,
-      );
+    if (!_areMatchesCurrent(wordlist, nextQuery)) {
+      const searchPromise = searchWordLists(wordlist.lists, nextQuery);
+
       // Set "now searching" state
-      this.setState({
-        query: nextQuery,
-        matches: [],
-        fetching: true,
-        error: null,
-      });
+      setFetching(true);
+      setMatches([]);
+      setQuery(nextQuery);
+      setError(null);
+
       // Update state when promise returns.
       searchPromise
-        .then((matches) => {
+        .then((foundMatches) => {
           // Only update if state is current, otherwise drop.
-          if (this._areMatchesCurrent(nextProps.wordlist, nextQuery)) {
-            this.setState({
-              matches,
-              fetching: false,
-              error: null,
-            });
+          if (_areMatchesCurrent(wordlist, nextQuery)) {
+            setMatches(foundMatches);
+            setError(null);
+            setFetching(false);
           }
         })
         .catch((error) => {
           // Only update if state is current, otherwise drop.
-          if (this._areMatchesCurrent(nextProps.wordlist, nextQuery)) {
-            this.setState({
-              matches: [],
-              fetching: false,
-              error,
-            });
+          if (_areMatchesCurrent(wordlist, nextQuery)) {
+            setFetching(false);
+            setMatches([]);
+            setError(error);
           }
         });
     }
-  }
+  }, [grid, wordlist]);
 
-  _renderListRow({
-    key,
-    index,
-    style,
-  }: {
-    key: string;
-    index: number;
-    style: React.CSSProperties;
-  }) {
-    const {match, hits} = this.state.matches[index];
-    return (
-      <div key={key} style={style}>
-        {hits.map((hit, i) => (
-          <span key={`key-${i}`} className={hit ? 'match-hit' : 'match-miss'}>
-            {match[i]}
-          </span>
-        ))}
+  // Render matches in a virtualized list for performance
+  const matchesUi =
+    query === null ? (
+      <div>{/* TODO: placeholder? */}</div>
+    ) : fetching ? (
+      <div>Finding words ...</div>
+    ) : error ? (
+      <div>Error fetching words: {error}</div>
+    ) : (
+      <div>
+        <List
+          width={300}
+          height={90}
+          rowCount={matches.length}
+          rowHeight={15}
+          rowRenderer={({key, index, style}) => {
+            const {match, hits} = matches[index];
+            return (
+              <div key={key} style={style}>
+                {hits.map((hit, i) => (
+                  <span
+                    key={`key-${i}`}
+                    className={hit ? 'match-hit' : 'match-miss'}>
+                    {match[i]}
+                  </span>
+                ))}
+              </div>
+            );
+          }}
+        />
       </div>
     );
-  }
 
-  _autoFillGrid() {
-    this.props.dispatch(autoFillGrid(this.props.wordlist));
-  }
-
-  render() {
-    const {query, fetching, matches, error} = this.state;
-    const matchesUi =
-      query === null ? (
-        <div>{/* TODO: placeholder? */}</div>
-      ) : fetching ? (
-        <div>Finding words ...</div>
-      ) : error ? (
-        <div>Error fetching words: {error}</div>
-      ) : (
-        <div>
-          <List
-            width={300}
-            height={90}
-            rowCount={matches.length}
-            rowHeight={15}
-            rowRenderer={this._renderListRow}
-          />
-        </div>
-      );
-    return (
-      <div className="WordWizard" style={wordWizardStyle}>
-        <div>
-          <button onClick={this._autoFillGrid}>Auto Fill</button>
-        </div>
-        <div>{matchesUi}</div>
+  return (
+    <div className="WordWizard" style={{height: '100%'}}>
+      <div>
+        <button onClick={_autoFillGrid}>Auto Fill</button>
       </div>
-    );
-  }
-}
-
-const mapStateToProps = ({grid, wordlist}: State) => ({grid, wordlist});
-
-export const WordWizard = connect(mapStateToProps)(pure(WordWizardView));
+      <div>{matchesUi}</div>
+    </div>
+  );
+};
