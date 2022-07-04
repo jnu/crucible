@@ -1,6 +1,7 @@
 import React from 'react';
 import {shallowEqual} from 'recompose';
 import {bindAll} from 'lodash';
+import {isDefined} from '../lib/isDefined';
 import type {GridCell as TGridCell} from '../reducers/grid';
 
 export type GridCellProps = {
@@ -61,7 +62,13 @@ export class GridCell extends React.Component<GridCellProps> {
     if (highlight) {
       cns.push('GridCell-highlight');
     }
-    if ((cell.acrossWordLength || 0) < 3 || (cell.downWordLength || 0) < 3) {
+    // Show visual validation for unchecked crosses and too-short words
+    if (
+      !isDefined(cell.acrossWord) ||
+      !isDefined(cell.downWord) ||
+      (cell.acrossWordLength || 0) < 3 ||
+      (cell.downWordLength || 0) < 3
+    ) {
       cns.push('GridCell-invalid');
     }
     return cns.join(' ');
