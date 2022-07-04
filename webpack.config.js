@@ -41,7 +41,7 @@ const webpackConfig = {
     context: path.resolve(SRC_ROOT),
 
     entry: {
-        app: './index.js'
+        app: './index.tsx'
     },
 
     output: {

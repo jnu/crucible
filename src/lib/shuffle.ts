@@ -5,18 +5,18 @@
  * @returns {T[]}
  */
 export function shuffle<T>(array: T[]) {
-    const A = array.slice();
-    let m = A.length;
-    let t: T | null = null;
-    let i: number;
+  const A = array.slice();
+  let m = A.length;
+  let t: T | null = null;
+  let i: number;
 
-    while (m) {
-        i = Math.floor(Math.random() * m--);
+  while (m) {
+    i = Math.floor(Math.random() * m--);
 
-        t = A[m];
-        A[m] = A[i];
-        A[i] = t;
-    }
+    t = A[m];
+    A[m] = A[i];
+    A[i] = t;
+  }
 
-    return A;
+  return A;
 }

@@ -10,13 +10,14 @@ module.exports = function(config) {
         basePath: '',
 
         files: [
-            { pattern: 'node_modules/babel-polyfill/dist/polyfill.js', watched: false },
             { pattern: 'node_modules/chai/chai.js', watched: false },
             'src/**/*.spec.js'
         ],
 
         preprocessors: {
-          'src/**/*.js': ['webpack']
+          'src/**/*.js': ['webpack'],
+          'src/**/*.ts': ['webpack'],
+          'src/**/*.tsx': ['webpack'],
         },
 
         frameworks: ['mocha', 'sinon'],
@@ -54,11 +55,11 @@ module.exports = function(config) {
             module: {
                 rules: [
                     {
-                        test: /\.jsx?$/,
+                        test: /\.(t|j)sx?$/,
                         include: [SRC_DIR, /tiny-trie/],
                         use: [{
-                            loader: 'babel-loader',
-                            options: { cacheDirectory: true }
+                            loader: 'ts-loader',
+                            options: { configFile: 'tsconfig.json' }
                         }]
                     },
                     {
@@ -72,7 +73,7 @@ module.exports = function(config) {
                 ]
             },
             resolve: {
-                extensions: ['.js', '.jsx'],
+                extensions: ['.js', '.jsx', '.ts', '.tsx'],
                 modules: [path.resolve(__dirname, 'node_modules')],
                 alias: {
                     'test-data': TEST_DATA_DIR

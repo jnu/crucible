@@ -1,9 +1,8 @@
-import { WordBank } from './WordBank';
-import { BrowserStorageClient } from '../BrowserStorageClient';
+import {WordBank} from './WordBank';
+import {BrowserStorageClient} from '../BrowserStorageClient';
 
 import * as wl_nyt16Year from 'data/dist/nyt16Year';
 import {IDawgs} from 'data/common';
-
 
 /**
  * Map from wordlist key to wordlist module loading function. The module loader
@@ -16,34 +15,29 @@ import {IDawgs} from 'data/common';
  *
  * @type {{ [key: string]: () => Promise<{[key: number]: String}>}}
  */
-const PREMADE_LISTS = [
-    wl_nyt16Year
-].reduce((agg, mod) => {
-    const id = mod.id;
-    const load = mod.load;
-    let loader = load;
-    if (DEBUG) {
-        loader = () => {
-            console.info(`Loading wordlist ${id} ...`);
-            return load();
-        };
-    }
-    agg[id] = loader;
-    return agg;
+const PREMADE_LISTS = [wl_nyt16Year].reduce((agg, mod) => {
+  const id = mod.id;
+  const load = mod.load;
+  let loader = load;
+  if (DEBUG) {
+    loader = () => {
+      console.info(`Loading wordlist ${id} ...`);
+      return load();
+    };
+  }
+  agg[id] = loader;
+  return agg;
 }, {} as {[key: string]: () => Promise<{[key: number]: string}>});
-
 
 const WORDLIST_KEY = 'wordlist';
 
-
 interface IWordListClientParams {
-    local: BrowserStorageClient;
+  local: BrowserStorageClient;
 }
 
 interface ICacheEntry<T> {
-    data: T;
+  data: T;
 }
-
 
 /**
  * Manage loading of async wordlist modules.
@@ -51,62 +45,64 @@ interface ICacheEntry<T> {
  * TODO saving custom wordlists?
  */
 export class WordListClient {
+  private _cache: BrowserStorageClient;
 
-    private _cache: BrowserStorageClient;
+  private _requests: {[key: string]: Promise<WordBank> | null};
 
-    private _requests: {[key: string]: Promise<WordBank> | null};
+  constructor(opts: IWordListClientParams) {
+    this._cache = opts.local;
+    this._requests = {};
+  }
 
-    constructor(opts: IWordListClientParams) {
-        this._cache = opts.local;
-        this._requests = {};
+  /**
+   * Load a wordlist by key.
+   * @param  {String} key
+   * @return {Promise<WordBank>}
+   */
+  load(key: string) {
+    // Use request cache to glom any redundant, concurrent requests for
+    // the same entity.
+    let req = this._requests[key];
+    if (!req) {
+      // Pass through values and errors from real fetch, but clear the
+      // key in the requests cache so it can be refetched. Ideally the
+      // underlying fetch uses some smart cache layer (even just defer
+      // to the browser).
+      req = this._requests[key] = this._fetchWordlistByKey(key)
+        .then((v) => {
+          this._requests[key] = null;
+          return v;
+        })
+        .catch((e) => {
+          this._requests[key] = null;
+          throw e;
+        });
     }
+    return req;
+  }
 
-    /**
-     * Load a wordlist by key.
-     * @param  {String} key
-     * @return {Promise<WordBank>}
-     */
-    load(key: string) {
-        // Use request cache to glom any redundant, concurrent requests for
-        // the same entity.
-        let req = this._requests[key];
-        if (!req) {
-            // Pass through values and errors from real fetch, but clear the
-            // key in the requests cache so it can be refetched. Ideally the
-            // underlying fetch uses some smart cache layer (even just defer
-            // to the browser).
-            req = this._requests[key] = this._fetchWordlistByKey(key)
-                .then(v => {
-                    this._requests[key] = null;
-                    return v;
-                })
-                .catch(e => {
-                    this._requests[key] = null;
-                    throw e;
-                });
-        }
-        return req;
-    }
-
-    /**
-     * Fetch a wordlist from cache if possible, or load asynchronously.
-     * @private
-     * @param  {String} key
-     * @return {Promise<WordBank>}
-     */
-    _fetchWordlistByKey(key: string) {
-        return this._cache.load<ICacheEntry<IDawgs>>(WORDLIST_KEY, key)
-            .then(cacheHit => cacheHit.data)
-            .catch(() => PREMADE_LISTS[key]()
-                .then(data => this._cache.save<ICacheEntry<IDawgs>>(WORDLIST_KEY, key, { data }))
-                .then(cached => cached.data)
-            )
-            .then(data => new WordBank(data))
-            .catch(e => {
-                console.error(`Failed to load wordlist ${key}.`, e);
-                // TODO multitransport logging
-                throw e;
-            });
-    }
-
+  /**
+   * Fetch a wordlist from cache if possible, or load asynchronously.
+   * @private
+   * @param  {String} key
+   * @return {Promise<WordBank>}
+   */
+  _fetchWordlistByKey(key: string) {
+    return this._cache
+      .load<ICacheEntry<IDawgs>>(WORDLIST_KEY, key)
+      .then((cacheHit) => cacheHit.data)
+      .catch(() =>
+        PREMADE_LISTS[key]()
+          .then((data) =>
+            this._cache.save<ICacheEntry<IDawgs>>(WORDLIST_KEY, key, {data}),
+          )
+          .then((cached) => cached.data),
+      )
+      .then((data) => new WordBank(data))
+      .catch((e) => {
+        console.error(`Failed to load wordlist ${key}.`, e);
+        // TODO multitransport logging
+        throw e;
+      });
+  }
 }

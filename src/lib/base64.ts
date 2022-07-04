@@ -20,6 +20,6 @@ abcdefghijklmnopqrstuvwxyz\
  * @constant {Object}
  */
 export const BASE64_CHAR_TO_INT = BASE64_INT_TO_CHAR.reduce((agg, char, i) => {
-    agg[char] = i;
-    return agg;
+  agg[char] = i;
+  return agg;
 }, {} as {[key: string]: number});
