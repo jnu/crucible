@@ -60,7 +60,7 @@ export const ClueBuilder = ({style}: ClueBuilderProps) => {
   const {index, direction, value, hasClue} = props;
 
   const label = isDefined(index)
-    ? `${index} ${direction.toLowerCase()}`
+    ? `${index + 1} ${direction.toLowerCase()}`
     : 'Clue';
 
   return (
