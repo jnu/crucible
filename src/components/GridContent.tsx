@@ -15,7 +15,7 @@ import {Direction} from '../actions/gridMeta';
 import type {CellUpdates} from '../actions/gridSemantic';
 import type {GridState, GridCell as TGridCell} from '../reducers/grid';
 import type {State, Dispatch} from '../store';
-import {useSelector, useDispatch} from '../store';
+import {useSelector, useDispatch, useStore} from '../store';
 import {CellType} from '../lib/crux';
 import * as Keys from '../lib/keys';
 import './GridContent.scss';
@@ -38,6 +38,67 @@ const selectProps = (state: State) => {
   };
 };
 
+// Key handler
+const onKeyDown = (keyCode: number, grid: GridState, dispatch: Dispatch) => {
+  const {content, cursorDirection, cursor: index} = grid;
+  if (!isDefined(index)) {
+    return;
+  }
+
+  switch (keyCode) {
+    case Keys.DELETE:
+    case Keys.BACKSPACE:
+      if (content[index]?.value) {
+        return dispatch(updateCell(index, {value: ''}));
+      } else {
+        return dispatch(moveCursorAndUpdate(-1, {value: ''}));
+      }
+    case Keys.SPACE:
+      return dispatch(setDirection(getNextDirection(cursorDirection)));
+    case Keys.ENTER:
+    case Keys.TAB:
+      // TODO implement word skip?
+      return;
+    case Keys.DOWN:
+      return cursorDirection === Direction.Down
+        ? dispatch(moveCursor(1))
+        : dispatch(setDirection(Direction.Down));
+    case Keys.RIGHT:
+      return cursorDirection === Direction.Across
+        ? dispatch(moveCursor(1))
+        : dispatch(setDirection(Direction.Across));
+    case Keys.UP:
+      return cursorDirection === Direction.Down
+        ? dispatch(moveCursor(-1))
+        : dispatch(setDirection(Direction.Down));
+    case Keys.LEFT:
+      return cursorDirection === Direction.Across
+        ? dispatch(moveCursor(-1))
+        : dispatch(setDirection(Direction.Across));
+    case Keys.FSLASH: {
+      const curType = content[index]?.type;
+      return dispatch(
+        updateCell(index, {
+          type: curType === 'BLOCK' ? CellType.Content : CellType.Block,
+        }),
+      );
+    }
+    case 0:
+      return;
+    default: {
+      const value = String.fromCharCode(keyCode);
+      if (!/[^ -~]/.test(value)) {
+        dispatch(
+          updateCell(index, {
+            value: value.toUpperCase(),
+          }),
+        );
+        return dispatch(moveCursor(1));
+      }
+    }
+  }
+};
+
 /**
  * Toggle the cursor direction.
  */
@@ -48,6 +109,7 @@ const getNextDirection = (direction: Direction) =>
  * Container for all the puzzle squares.
  */
 export const GridContent = () => {
+  const store = useStore();
   const gridContentRoot = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
   const {
@@ -88,11 +150,11 @@ export const GridContent = () => {
   const mouseClickListener = (e: MouseEvent) => {
     const {target} = e;
 
-    if (autoFilling || !gridContentRoot.current) {
+    if (autoFilling) {
       return;
     }
 
-    if (!gridContentRoot) {
+    if (!gridContentRoot.current) {
       if (DEBUG) {
         console.warn('Did not find grid content root');
       }
@@ -101,90 +163,27 @@ export const GridContent = () => {
 
     // Focus event
     if (gridContentRoot.current.contains(target as HTMLElement)) {
+      console.log('SETTING KEY LISTENENR');
       setKeyListener();
     } else {
+      console.log('REMOVING KEY LISTENER');
       removeKeyListener();
-    }
-  };
-
-  // Key handler
-  const onKeyDown = (
-    e: KeyboardEvent,
-    index: number | null,
-    cursorDirection: Direction,
-    content: TGridCell[],
-  ) => {
-    if (autoFilling) {
-      return;
-    }
-
-    if (!isDefined(index)) {
-      return;
-    }
-
-    if (e.metaKey) {
-      return;
-    }
-
-    const keyCode = e.which || e.keyCode || 0;
-
-    switch (keyCode) {
-      case Keys.DELETE:
-      case Keys.BACKSPACE:
-        if (content[index]?.value) {
-          return dispatch(updateCell(index, {value: ''}));
-        } else {
-          return dispatch(moveCursorAndUpdate(-1, {value: ''}));
-        }
-      case Keys.SPACE:
-        return dispatch(setDirection(getNextDirection(cursorDirection)));
-      case Keys.ENTER:
-      case Keys.TAB:
-        // TODO implement word skip?
-        return;
-      case Keys.DOWN:
-        return cursorDirection === Direction.Down
-          ? dispatch(moveCursor(1))
-          : dispatch(setDirection(Direction.Down));
-      case Keys.RIGHT:
-        return cursorDirection === Direction.Across
-          ? dispatch(moveCursor(1))
-          : dispatch(setDirection(Direction.Across));
-      case Keys.UP:
-        return cursorDirection === Direction.Down
-          ? dispatch(moveCursor(-1))
-          : dispatch(setDirection(Direction.Down));
-      case Keys.LEFT:
-        return cursorDirection === Direction.Across
-          ? dispatch(moveCursor(-1))
-          : dispatch(setDirection(Direction.Across));
-      case Keys.FSLASH: {
-        const curType = content[index]?.type;
-        return dispatch(
-          updateCell(index, {
-            type: curType === 'BLOCK' ? CellType.Content : CellType.Block,
-          }),
-        );
-      }
-      case 0:
-        return;
-      default: {
-        const value = String.fromCharCode(keyCode);
-        if (!/[^ -~]/.test(value)) {
-          dispatch(
-            updateCell(index, {
-              value: value.toUpperCase(),
-            }),
-          );
-          return dispatch(moveCursor(1));
-        }
-      }
     }
   };
 
   // Keyboard event handler.
   const keyListener = (e: KeyboardEvent) => {
-    onKeyDown(e, cursor, cursorDirection, content);
+    if (e.metaKey) {
+      return;
+    }
+    const keyCode = e.which || e.keyCode || 0;
+    const {grid} = store.getState();
+    if (grid.autoFilling) {
+      return;
+    }
+
+    onKeyDown(keyCode, grid, store.dispatch);
+
     e.preventDefault();
   };
 
@@ -215,7 +214,7 @@ export const GridContent = () => {
       removeKeyListener();
       window.removeEventListener('click', mouseClickListener);
     };
-  }, [gridContentRoot.current]);
+  }, []);
 
   // Render the grid.
   const cursorCell = cursor !== null && cursor !== undefined && content[cursor];
