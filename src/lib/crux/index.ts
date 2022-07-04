@@ -1,5 +1,5 @@
-export { read } from './read';
-export { write } from './write';
+export {read} from './read';
+export {write} from './write';
 export {
   CruxPuzzle,
   Clue,

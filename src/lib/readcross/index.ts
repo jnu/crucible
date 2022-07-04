@@ -1,1 +1,1 @@
-export { WordListClient } from './WordListClient';
+export {WordListClient} from './WordListClient';

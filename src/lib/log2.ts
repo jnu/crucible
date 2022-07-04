@@ -8,13 +8,12 @@
  * @return {Number}
  */
 export function fast_floor_log2(x: number) {
-    let n = 0;
-    while (x >>= 1) {
-        n++;
-    }
-    return n;
+  let n = 0;
+  while ((x >>= 1)) {
+    n++;
+  }
+  return n;
 }
-
 
 /**
  * Cached inverse of log10(2) for log2 calculation.
@@ -28,5 +27,5 @@ const INV_LOG2 = 1 / Math.log(2);
  * @return {Number}
  */
 export function log2(x: number) {
-    return Math.log(x) * INV_LOG2;
+  return Math.log(x) * INV_LOG2;
 }

@@ -1,7 +1,6 @@
 import React from 'react';
-import { Divider } from './Divider';
+import {Divider} from './Divider';
 import * as muiColors from 'material-ui/styles/colors';
-
 
 const THICKNESS = 1;
 const COLOR = muiColors.grey300;
@@ -12,8 +11,22 @@ export type GridDividerProps = Readonly<{
   offset: number;
 }>;
 
-export const GridVerticalDivider = ({ offset }: GridDividerProps) =>
-    <Divider align="vertical" span={V_SPAN} color={COLOR} thickness={THICKNESS} offset={offset} />;
+export const GridVerticalDivider = ({offset}: GridDividerProps) => (
+  <Divider
+    align="vertical"
+    span={V_SPAN}
+    color={COLOR}
+    thickness={THICKNESS}
+    offset={offset}
+  />
+);
 
-export const GridHorizontalDivider = ({ offset }: GridDividerProps) =>
-    <Divider align="horizontal" span={H_SPAN} color={COLOR} thickness={THICKNESS} offset={offset} />;
+export const GridHorizontalDivider = ({offset}: GridDividerProps) => (
+  <Divider
+    align="horizontal"
+    span={H_SPAN}
+    color={COLOR}
+    thickness={THICKNESS}
+    offset={offset}
+  />
+);

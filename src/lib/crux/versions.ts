@@ -1,19 +1,18 @@
 import {
-    write as v0_write,
-    read as v0_read,
-    headerSchema as v0_headerSchema
+  write as v0_write,
+  read as v0_read,
+  headerSchema as v0_headerSchema,
 } from './v0';
-
 
 /**
  * Map of version number to reader, writer, and header schema.
  */
 const VERSIONS = {
-    0: {
-        read: v0_read,
-        write: v0_write,
-        headerSchema: v0_headerSchema
-    }
+  0: {
+    read: v0_read,
+    write: v0_write,
+    headerSchema: v0_headerSchema,
+  },
 } as const;
 
 /**
@@ -42,14 +41,16 @@ export const validateVersion = (v: unknown) => {
  * Get the interface for reading/writing a Crux file. By default get the latest
  * version, or the one that was specified.
  */
-export const getCruxFileInterface = (version: keyof typeof VERSIONS | null = null) => {
-    if (version === null) {
-        version = _currentVersion;
-    }
+export const getCruxFileInterface = (
+  version: keyof typeof VERSIONS | null = null,
+) => {
+  if (version === null) {
+    version = _currentVersion;
+  }
 
-    if (!VERSIONS.hasOwnProperty(version)) {
-        throw new Error(`Invalid crux version ${version}`);
-    }
+  if (!VERSIONS.hasOwnProperty(version)) {
+    throw new Error(`Invalid crux version ${version}`);
+  }
 
-    return {...VERSIONS[version]};
+  return {...VERSIONS[version]};
 };

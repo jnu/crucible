@@ -1,4 +1,4 @@
-import { log2 } from '../log2';
+import {log2} from '../log2';
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Puzzle binary file types
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,16 +25,15 @@ export const TYPE_TS = 'ts' as const;
  * Any of the available data types in the file format.
  */
 export type CruxDataType =
-  typeof TYPE_UINT |
-  typeof TYPE_BOOL |
-  typeof TYPE_CT0 |
-  typeof TYPE_TS;
+  | typeof TYPE_UINT
+  | typeof TYPE_BOOL
+  | typeof TYPE_CT0
+  | typeof TYPE_TS;
 
 /**
  * Any of the values that can be stored in the available data types.
  */
 export type CruxDataValue = string | boolean | number | null;
-
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Private character tables used for casting
@@ -46,19 +45,48 @@ export type CruxDataValue = string | boolean | number | null;
  * @type {Array}
  */
 const CHAR_TABLE_0 = [
-    null, '',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-    'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '?', '-', '/', '!'
+  null,
+  '',
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z',
+  '?',
+  '-',
+  '/',
+  '!',
 ];
 /**
  * Inverse of Character Table #0.
  * @type {Array}
  */
 const INV_CHAR_TABLE_0 = CHAR_TABLE_0.reduce((map, char, i) => {
-    // NOTE: JS would implicitly convert `null` to `"null"`here; we do it
-    // explicitly because TypeScript cares.
-    map[char === null ? 'null' : char] = i;
-    return map;
+  // NOTE: JS would implicitly convert `null` to `"null"`here; we do it
+  // explicitly because TypeScript cares.
+  map[char === null ? 'null' : char] = i;
+  return map;
 }, {} as {[k: string]: number});
 
 /**
@@ -66,7 +94,6 @@ const INV_CHAR_TABLE_0 = CHAR_TABLE_0.reduce((map, char, i) => {
  * @type {Integer}
  */
 export const CT0_BIT_WIDTH = Math.ceil(log2(CHAR_TABLE_0.length));
-
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Casting functions. Reference types defined above.s
@@ -76,42 +103,40 @@ export const CT0_BIT_WIDTH = Math.ceil(log2(CHAR_TABLE_0.length));
  * Cast an unsigned int to a type.
  */
 export const castValue = (type: CruxDataType, value: number) => {
-    switch (type) {
-        case TYPE_UINT:
-            return value;
-        case TYPE_BOOL:
-            return !!value;
-        case TYPE_TS:
-            return value * 1000;
-        case TYPE_CT0:
-            return CHAR_TABLE_0[value];
-        default:
-            throw new TypeError(`Unknown type: ${type}`);
-    }
+  switch (type) {
+    case TYPE_UINT:
+      return value;
+    case TYPE_BOOL:
+      return !!value;
+    case TYPE_TS:
+      return value * 1000;
+    case TYPE_CT0:
+      return CHAR_TABLE_0[value];
+    default:
+      throw new TypeError(`Unknown type: ${type}`);
+  }
 };
-
 
 /**
  * Serialize a given type as an unsigned int. This is the inverse of castValue.
  */
 export const serializeValue = (type: CruxDataType, value: unknown) => {
-    switch (type) {
-        case TYPE_UINT:
-            return value as number;
-        case TYPE_BOOL:
-            return +(value as boolean);
-        case TYPE_TS:
-            return ~~(+(value as number) / 1000);
-        case TYPE_CT0:
-            if (!INV_CHAR_TABLE_0.hasOwnProperty(value as string)) {
-                throw new Error(`Can't encoded value ${value} as CT0`);
-            }
-            return INV_CHAR_TABLE_0[value as string];
-        default:
-            throw new TypeError(`Unknown type: ${type}`);
-    }
+  switch (type) {
+    case TYPE_UINT:
+      return value as number;
+    case TYPE_BOOL:
+      return +(value as boolean);
+    case TYPE_TS:
+      return ~~(+(value as number) / 1000);
+    case TYPE_CT0:
+      if (!INV_CHAR_TABLE_0.hasOwnProperty(value as string)) {
+        throw new Error(`Can't encoded value ${value} as CT0`);
+      }
+      return INV_CHAR_TABLE_0[value as string];
+    default:
+      throw new TypeError(`Unknown type: ${type}`);
+  }
 };
-
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Type definitions.
@@ -154,26 +179,26 @@ export enum CellType {
  * A content cell, i.e. a square in the grid containing a letter.
  */
 export type GridContentCell = {
-    type: CellType.Content;
-    startClueIdx: number;
-    acrossWord: number;
-    downWord: number;
-    value: string;
-    annotation?: string;
-    startOfWord: boolean;
-}
+  type: CellType.Content;
+  startClueIdx: number;
+  acrossWord: number;
+  downWord: number;
+  value: string;
+  annotation?: string;
+  startOfWord: boolean;
+};
 
 /**
  * A block (i.e., non-content cell).
  */
 export type GridBlockCell = {
-    type: CellType.Block;
-    value?: void;
-    acrossWord?: void;
-    downWord?: void;
-    startClueIdx?: void;
-    annotation?: void;
-    startOfWord: boolean;
+  type: CellType.Block;
+  value?: void;
+  acrossWord?: void;
+  downWord?: void;
+  startClueIdx?: void;
+  annotation?: void;
+  startOfWord: boolean;
 };
 
 /**

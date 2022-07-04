@@ -1,8 +1,8 @@
-import { Reducer, combineReducers } from 'redux';
-import { grid } from './grid';
-import { screen } from './screen';
-import { meta } from './meta';
-import { wordlist } from './wordlist';
+import {Reducer, combineReducers} from 'redux';
+import {grid} from './grid';
+import {screen} from './screen';
+import {meta} from './meta';
+import {wordlist} from './wordlist';
 
 export type CombinedState = {
   grid: ReturnType<typeof grid>;
@@ -12,8 +12,8 @@ export type CombinedState = {
 };
 
 export const crucibleApp = combineReducers({
-    grid,
-    screen,
-    meta,
-    wordlist
+  grid,
+  screen,
+  meta,
+  wordlist,
 }) as Reducer<CombinedState>;

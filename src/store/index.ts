@@ -1,6 +1,6 @@
 import thunkMiddleware from 'redux-thunk';
 import {createLogger} from 'redux-logger';
-import { createStore, applyMiddleware } from 'redux';
+import {createStore, applyMiddleware} from 'redux';
 
 import {crucibleApp} from '../reducers';
 
@@ -8,11 +8,8 @@ import {crucibleApp} from '../reducers';
  * Crucible application redux store.
  */
 export const store = createStore(
-    crucibleApp,
-    applyMiddleware(
-        thunkMiddleware,
-        createLogger(),
-    )
+  crucibleApp,
+  applyMiddleware(thunkMiddleware, createLogger()),
 );
 
 /**
