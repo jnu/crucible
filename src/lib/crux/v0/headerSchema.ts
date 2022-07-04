@@ -1,6 +1,18 @@
 import { TYPE_UINT } from '../types';
 import { HDR_VERSION_WIDTH } from '../constants';
 
+export type CruxHeaderV0 = {
+  version: number;
+  gridWidth: number;
+  gridHeight: number;
+  cellEncodingWidth: number;
+  cluesLength: number;
+  annotationsLength: number;
+  titleLength: number;
+  descriptionLength: number;
+  authorLength: number;
+  copyrightLength: number;
+};
 
 export const headerSchema = [
     {

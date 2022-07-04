@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallowEqual } from 'recompose';
 import { bindAll } from 'lodash';
-import type {GridCell as TGridCell} from '../lib/gridiron';
+import type {GridCell as TGridCell} from '../lib/crux';
 
 export type GridCellProps = {
   cell: TGridCell;

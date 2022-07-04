@@ -2,7 +2,7 @@ import {WordBank} from '../readcross/WordBank';
 import {Future} from '../Future';
 import {v4} from '../uuid';
 import {shuffle} from '../shuffle';
-import {IGridContentCell, GridCell, IProgressStats, IGridWord} from "./types";
+import {GridCell, IGridContentCell, IProgressStats, IGridWord} from "./types";
 
 
 /**

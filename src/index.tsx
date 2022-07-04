@@ -42,8 +42,12 @@ const autosaver = new AutoSave({
     },
     storageClient,
     onSaveStart: () => store.dispatch(autoSaveStart()),
-    onSaveSuccess: grid => store.dispatch(autoSaveSuccess(grid)),
-    onSaveError: e => store.dispatch(autoSaveError(e))
+    onSaveSuccess: grid => {
+      store.dispatch(autoSaveSuccess(grid));
+    },
+    onSaveError: e => {
+      store.dispatch(autoSaveError(e));
+    },
 });
 autosaver.start();
 
@@ -62,10 +66,13 @@ render(
 
 
 if (DEBUG) {
+    // @ts-ignore
     window.__app__ = {
         store,
         actions: require('./actions'),
+        // @ts-ignore
         storageClient: require('./lib/index').storageClient,
+        // @ts-ignore
         wordlistClient: require('./lib/index').wordlistClient
     };
 }

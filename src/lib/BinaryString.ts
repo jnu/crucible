@@ -14,7 +14,7 @@ import {
  * Interface for writing binary data into a Base64-encoded string
  * @class
  */
-class BinaryString {
+export class BinaryString {
 
     /**
      * Data buffer

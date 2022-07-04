@@ -1,4 +1,4 @@
-import BinaryString from '../../BinaryString';
+import {BinaryString} from '../../BinaryString';
 import { isDefined } from '../../isDefined';
 import { HDR_VERSION_WIDTH } from '../constants';
 import {
@@ -9,77 +9,68 @@ import {
     serializeValue,
     TYPE_CT0,
     TYPE_TS,
-    CT0_BIT_WIDTH
+    CT0_BIT_WIDTH,
+    CruxPuzzle,
 } from '../types';
+
 import * as utf8 from 'utf8';
 
 
 /**
  * This current version of Crux.
- * @type {Number}
  */
 const CRUX_VERSION = 0;
 
 /**
  * Bits in a byte
- * @type {Number}
  */
 const BYTE_LENGTH = 8;
 
 /**
  * Number of bits needed to encode the CONTENT vs BLOCK distinction.
- * @type {Number}
  */
 const EMPTY_CELL_LENGTH = 1;
 
 /**
  * Number of bits to encode a solution to a CONTENT cell.
- * @type {Number}
  */
 const CHAR_CELL_LENGTH = CT0_BIT_WIDTH;
 
 /**
  * Number of bits to encode the number of bits used to encode each cell.
  * (No, that's not a typo. See README for more info.)
- * @type {Number}
  */
 const CELL_ENCODING_LENGTH_LENGTH = 3;
 
 /**
  * Number of bits that encode each clue's index, direction, etc.
- * @type {Number}
  */
 const CLUE_META_LENGTH = 23;
 
 /**
  * Number of bits used to encode grid dimension (width or height).
- * @type {Number}
  */
 const GRID_DIM_LENGTH = 7;
 
 /**
  * Number of bits used to encode the length (in bits) of each meta-data field.
  * Namely, the fields are author, title, description, copyright.
- * @type {Number}
  */
 const META_FIELD_LENGTH_LENGTH = 14;
 
 /**
  * Number of bits used to encode the length (in bits) of the clue section.
- * @type {Number}
  */
 const CLUE_LENGTH_LENGTH = 25;
 
 /**
  * Number of bits used to encode timestamps.
- * @type {Number}
  */
 const TS_LENGTH = 32;
 
 /**
  * Number of bits used to encode the length (in bits) of the annotations
  * section.
- * @type {Number}
  */
 const ANNOTATIONS_LENGTH_LENGTH = 24;
 
@@ -88,11 +79,8 @@ const ANNOTATIONS_LENGTH_LENGTH = 24;
  * ASCII and UTF-8, but does not do any encoding of its own.
  *
  * !! MUTATES BINARY STRING !!
- *
- * @param  {BinaryString} binStr - destination to write to
- * @param  {string} str - string to write
  */
-const writeString = (binStr, str) => {
+const writeString = (binStr: BinaryString, str: string) => {
     if (!str) {
         return;
     }
@@ -103,12 +91,9 @@ const writeString = (binStr, str) => {
 /**
  * Write date byte-by-byte as a 32-bit integer.
  *
- * !! MUTATE BINARY STRING !!
- *
- * @param  {BinaryString} binStr
- * @param  {Number} ts
+ * !! MUTATES BINARY STRING !!
  */
-const writeDate = (binStr, ts) => {
+const writeDate = (binStr: BinaryString, ts: number) => {
     const num = serializeValue(TYPE_TS, ts) | 0;
     const bytes = new Array(4);
     bytes[3] = (num >>  0) & 0xff;
@@ -119,17 +104,18 @@ const writeDate = (binStr, ts) => {
 };
 
 
+type BinaryClue = {
+  text: string;
+  index: number;
+  type: 0 | 1;
+};
+
 /**
  * Write clue content to binary string.
  *
  * !! MUTATES BINARY STRING !!
- *
- * @param  {BinaryString} binaryString
- * @param  {string} options.text
- * @param  {number} options.index
- * @param  {ClueTypeFlag} options.type
  */
-const writeBinaryClue = (binaryString, { text, index, type }) => {
+const writeBinaryClue = (binaryString: BinaryString, { text, index, type }: BinaryClue) => {
     binaryString.write(index, 10);
     binaryString.write(type, 1);
     const length = text.length;
@@ -140,9 +126,8 @@ const writeBinaryClue = (binaryString, { text, index, type }) => {
 
 /**
  * Write Crux object as binary string.
- * @return {string} - base64 encoded binary string
  */
-export const write = puzzle => {
+export const write = (puzzle: CruxPuzzle) => {
     const content = puzzle.content;
     const clues = puzzle.clues;
     const width = puzzle.width;
@@ -168,8 +153,8 @@ export const write = puzzle => {
         const down = clue.down;
         const hasAcross = isDefined(across);
         const hasDown = isDefined(down);
-        numClues += hasAcross + hasDown;
-        const ret = { across: null, down: null };
+        numClues += Number(hasAcross) + Number(hasDown);
+        const ret = { across: null, down: null } as {across: null | string, down: null | string};
 
         if (hasAcross) {
             const encoded = utf8.encode(across);

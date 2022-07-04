@@ -1,7 +1,8 @@
 import type { Direction } from './gridMeta';
 import { moveCursor } from './gridMeta';
 import {fill} from "../lib/gridiron";
-import type {CellType, GridCell, IProgressStats} from '../lib/gridiron';
+import type {IProgressStats} from '../lib/gridiron';
+import type {CellType, GridCell} from '../lib/crux';
 import type {Dispatch, GetState} from '../store'
 import type {WordBank} from '../lib/readcross/WordBank';
 

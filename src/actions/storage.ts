@@ -3,8 +3,8 @@ import { storageClient } from '../lib/index';
 import UUID from 'pure-uuid';
 import type {AutoSaveState} from '../reducers/autosave';
 import type {Dispatch, GetState, State} from '../store';
-import type {GridCell} from '../lib/gridiron';
-import type {Clue} from '../reducers/grid';
+import type {CruxPuzzle, GridCell, Clue} from '../lib/crux';
+import type {GridState} from '../reducers/grid';
 
 
 
@@ -75,12 +75,32 @@ export const exportGridShape = (name: string) => {
         const {width, height} = grid
         // Create empty copy of content and write.
         const content = grid.content
-            .map(cell => ({ type: cell.type }));
+            .map((cell, i) => {
+              if (cell.type === 'BLOCK') {
+                return { type: cell.type, startOfWord: false };
+              } else {
+                return {
+                  type: cell.type,
+                  startOfWord: i === 0,
+                  startClueIdx: 0,
+                  acrossWord: 0,
+                  downWord: 0,
+                  value: '',
+                };
+              }
+            });
         const bitmap = crux.write({
+            id: '',
             content,
             clues: [],
             width,
-            height
+            height,
+            author: '',
+            title: '',
+            copyright: '',
+            description: '',
+            dateCreated: 0,
+            lastModified: 0,
         });
         const uuid = new UUID(4);
         storageClient
@@ -182,7 +202,7 @@ export type RequestPuzzleIndex = typeof REQUEST_PUZZLE_INDEX;
 /**
  * Receive the puzzle index.
  */
-const receivePuzzleIndexSuccess = (data: ReadonlyArray<Puzzle>) => ({
+const receivePuzzleIndexSuccess = (data: ReadonlyArray<CruxPuzzle>) => ({
   type: 'RECEIVE_PUZZLE_INDEX_SUCCESS',
   data,
 } as const);
@@ -206,23 +226,6 @@ const receivePuzzleIndexError = (error: Error) => ({
 export type ReceivePuzzleIndexError = ReturnType<typeof receivePuzzleIndexError>;
 
 
-// TODO XXX Move to Crux
-export type Puzzle = Readonly<{
-  id: string;
-  content: GridCell[];
-  clues: Clue[];
-  annotations: null;
-  author: string;
-  title: string;
-  copyright: string;
-  description: string;
-  dateCreated: number;
-  lastModified: number;
-  height: number;
-  width: number;
-}>;
-
-
 /**
  * Fetch all puzzles (TODO paging)
  */
@@ -238,7 +241,7 @@ export const fetchPuzzleIndex = () => {
                 const data = index.map(({ bitmap, key }) => {
                    const puz = crux.read(bitmap);
                    puz.id = key;
-                   return puz as Puzzle;
+                   return puz
                 });
                 dispatch(receivePuzzleIndexSuccess(data));
             })
@@ -307,7 +310,7 @@ export const loadPuzzle = (uuid: string) => {
  */
 const doSaveGridNow = (dispatch: Dispatch, { grid }: State) => {
     storageClient
-        .save('puzzle', grid.id.format(), crux.write(grid))
+        .save('puzzle', grid.id, crux.write(grid))
         .then(() => {
             dispatch({ type: 'AUTOSAVE_GRID_SUCCESS' });
         })
@@ -353,7 +356,7 @@ export const autoSaveStart = () => AUTOSAVE_GRID_START;
 /**
  * Report a successful grid save.
  */
-export const autoSaveSuccess = (state: AutoSaveState) => ({
+export const autoSaveSuccess = (state: GridState) => ({
     type: 'AUTOSAVE_GRID_SUCCESS',
     state
 } as const);

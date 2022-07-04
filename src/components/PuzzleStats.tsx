@@ -3,9 +3,9 @@ import { pure } from 'recompose';
 import { connect } from 'react-redux';
 import './PuzzleStats.scss';
 import { isDefined } from '../lib/isDefined';
-import type {GridCell} from '../lib/gridiron';
+import type {GridCell, Clue} from '../lib/crux';
 import type { State } from '../store';
-import type { GridState, Clue } from '../reducers/grid';
+import type { GridState } from '../reducers/grid';
 
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');

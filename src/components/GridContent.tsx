@@ -17,7 +17,7 @@ import { Direction } from '../actions/gridMeta';
 import type { CellUpdates } from '../actions/gridSemantic';
 import type { GridState } from '../reducers/grid';
 import type { State, Dispatch } from '../store';
-import { GridCell as TGridCell, CellType } from '../lib/gridiron';
+import { GridCell as TGridCell, CellType } from '../lib/crux';
 import * as Keys from '../lib/keys';
 import './GridContent.scss';
 

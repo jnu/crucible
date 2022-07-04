@@ -5,7 +5,7 @@ import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import { hideCellContext, updateCell } from '../actions';
-import { CellType } from '../lib/gridiron';
+import { CellType } from '../lib/crux';
 import type {GridState} from '../reducers/grid';
 import type {State, Dispatch} from '../store';
 import './CellContextMenu.scss';

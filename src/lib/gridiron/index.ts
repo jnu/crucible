@@ -7,7 +7,7 @@ import {GridCell, IProgressStats, GridIronResponse, IWorkerMessage, IGridIronSol
 import {Deferred} from "../deferred";
 
 // Re-export useful types.
-export {CellType, GridCell, IProgressStats} from './types';
+export {IProgressStats} from './types';
 
 
 function _sendAutoFillMessageToWorker(worker: Worker,

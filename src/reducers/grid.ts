@@ -1,8 +1,10 @@
 import UUID from 'pure-uuid';
 
 import { isDefined } from '../lib/isDefined';
-import {fill, CellType} from '../lib/gridiron';
-import type {GridCell, IProgressStats} from '../lib/gridiron';
+import {fill} from '../lib/gridiron';
+import type {IProgressStats} from '../lib/gridiron';
+import {CellType} from '../lib/crux';
+import type {GridCell, Clue} from '../lib/crux';
 import {Direction} from '../actions/gridMeta';
 import type {ToggleSymmetricalGrid, SelectCell, SetCursorDirection, HideMenu, ShowMenu, MoveCursor} from '../actions/gridMeta';
 import type {
@@ -26,6 +28,11 @@ import type {Action} from '../actions';
  *     - Explore auto-adjusting other things on block entering
  */
 
+export type GridClue = Clue & {
+  acrossStartIdx: number | null;
+  downStartIdx: number | null;
+};
+
 /**
  * Represent state of the grid store.
  */
@@ -33,7 +40,7 @@ export type GridState = Readonly<{
   width: number;
   height: number;
   content: GridCell[];
-  clues: Clue[];
+  clues: GridClue[];
   title: string;
   author: string;
   description: string;
@@ -41,7 +48,7 @@ export type GridState = Readonly<{
   dateCreated: number;
   lastModified: number;
   symmetrical: boolean;
-  id: UUID;
+  id: string;
   cursor: number | null;
   cursorDirection: Direction;
   menuCell: number | null;
@@ -66,15 +73,6 @@ const BLOCK_CELL = {
     startClueIdx: undefined,
 } as const;
 
-/**
- * Represent a cell that has clues that can go both across and down.
- */
-export type Clue = Readonly<{
-  across: string | null;
-  acrossStartIdx: number | null;
-  down: string | null;
-  downStartIdx: number | null;
-}>;
 
 /**
  * Structure to help figure out at which cell a clue begins.
@@ -88,7 +86,7 @@ export const updateGridContent = (content: ReadonlyArray<GridCell>, clues: Reado
     const n = height * width;
     const clueAcrossProjection: ClueProjection = {};
     const clueDownProjection: ClueProjection = {};
-    const newClues: Clue[] = [];
+    const newClues: GridClue[] = [];
     const newContent = new Array<GridCell>(n);
 
     // Fill in missing cells
@@ -241,7 +239,7 @@ export const updateGridContent = (content: ReadonlyArray<GridCell>, clues: Reado
     });
 
 
-    return { clues: newClues, content: newContent } as const;
+    return { clues: newClues, content: newContent };
 };
 
 
@@ -295,7 +293,7 @@ const createNewGrid = (): GridState => {
         dateCreated: ts,
         lastModified: ts,
         symmetrical: true,
-        id: id,
+        id: id.format(),
 
         // UX State
         cursor: null,
@@ -484,7 +482,7 @@ export const rMoveCursor = (state: GridState, action: MoveCursor) => {
  */
 export const rReplaceGrid = (_state: GridState, action: ReplaceGrid) => {
     const { grid, id } = action;
-    const newGrid = {...createNewGrid(), ...grid};
+    let newGrid = {...createNewGrid()};
 
     if (grid) {
         const { content, clues } = updateGridContent(
@@ -498,12 +496,11 @@ export const rReplaceGrid = (_state: GridState, action: ReplaceGrid) => {
         // no metadata is present yet (which it isn't when restoring from
         // a file). Just overwrite for now. TODO fix update procedure.
         // updated.set('clues', originalClues);
-        newGrid.content = content;
-        newGrid.clues = clues;
+        newGrid = {...newGrid, ...grid, content, clues}
     }
 
     if (id) {
-        newGrid.id = new UUID(id);
+        newGrid.id = id;
     }
 
     return newGrid;

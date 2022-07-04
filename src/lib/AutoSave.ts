@@ -1,4 +1,3 @@
-import UUID from 'pure-uuid';
 import {IStorageClient} from './StorageClient';
 
 const crux = require<any>('./crux');
@@ -13,11 +12,11 @@ interface IAutoSaveOpts<T> {
     storageClient: IStorageClient;
     onSaveStart?: () => void;
     onSaveSuccess?: (state: T) => void;
-    onSaveError?: () => void;
+    onSaveError?: (e: Error) => void;
 }
 
 
-export class AutoSave<T extends {id: UUID, [k: string]: any}> {
+export class AutoSave<T extends {id: string, [k: string]: any}> {
 
     public pollInterval: number = 5000;
 
@@ -29,7 +28,7 @@ export class AutoSave<T extends {id: UUID, [k: string]: any}> {
 
     public onSaveSuccess: (state: T) => void;
 
-    public onSaveError: () => void;
+    public onSaveError: (e: Error) => void;
 
     private _interval: number | null = null;
 
@@ -87,7 +86,7 @@ export class AutoSave<T extends {id: UUID, [k: string]: any}> {
         const id = state.id;
 
         this.storageClient
-            .save('puzzle', id.format(), { ts, bitmap })
+            .save('puzzle', id, { ts, bitmap })
             .then(() => {
                 this._lastState = state;
                 this._lastBitmap = bitmap;

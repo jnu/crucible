@@ -3,10 +3,10 @@ import type { Action } from '../actions';
 /**
  * Represent state of the automatic saving feature.
  */
-export type AutoSaveState = Readonly<{
+export type AutoSaveState<T> = Readonly<{
   lastSaved: number | null;
   isSaving: boolean;
-  lastState: AutoSaveState | null;
+  lastState: T | null;
   lastError: Error | null;
 }>;
 
@@ -14,7 +14,7 @@ export type AutoSaveState = Readonly<{
 /**
  * Blank state for the "autosave" store.
  */
-const DEFAULT_AUTOSAVE_STATE: AutoSaveState = {
+const DEFAULT_AUTOSAVE_STATE: AutoSaveState<null> = {
     lastSaved: null,
     isSaving: false,
     lastState: null,

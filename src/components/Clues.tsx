@@ -6,8 +6,8 @@ import {
     focusCell,
     setDirection
 } from '../actions';
-import type {Clue} from '../reducers/grid';
-import type { GridCell } from '../lib/gridiron';
+import type { GridCell } from '../lib/crux';
+import type { GridClue } from '../reducers/grid';
 import type { State, Dispatch } from '../store';
 import './Clues.scss';
 
@@ -35,13 +35,13 @@ type CluesViewProps = Readonly<{
   leftOffset: number;
   topOffset: number;
   cursor: number | null;
-  clues: Clue[];
+  clues: GridClue[];
   content: GridCell[];
 }>;
 
 class CluesView extends React.Component<CluesViewProps> {
 
-    onClickClue(clue: Clue, type: Direction) {
+    onClickClue(clue: GridClue, type: Direction) {
         const { dispatch } = this.props;
         const field = type.toLowerCase() === 'across' ? 'acrossStartIdx' : 'downStartIdx';
         const cell = clue[field];

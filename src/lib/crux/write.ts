@@ -1,12 +1,12 @@
 import { getCruxFileInterface } from './versions';
+import type {AnyCruxVersion } from './versions';
+import type {CruxPuzzle} from './types';
 
 
 /**
  * Format a puzzle as binary data. Binary data will be base64-encoded.
- * @param  {CruxObject} puzzle
- * @return {string}
  */
-export const write = (puzzle, version = null) => {
+export const write = (puzzle: CruxPuzzle, version: AnyCruxVersion | null = null): string => {
     // Use latest version unless explicitly told not to.
     const rw = getCruxFileInterface(version);
 

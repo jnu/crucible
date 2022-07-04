@@ -3,7 +3,7 @@ import { pure } from 'recompose';
 import { connect } from 'react-redux';
 import { List } from 'react-virtualized';
 import { isDefined } from '../lib/isDefined';
-import type {GridCell} from '../lib/gridiron';
+import type {GridCell} from '../lib/crux';
 import type {GridState} from '../reducers/grid';
 import type {WordBank} from '../lib/readcross/WordBank';
 import type {WordlistState, Wordlist} from '../reducers/wordlist';

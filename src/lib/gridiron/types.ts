@@ -1,25 +1,11 @@
 import {IJSONWordIndex} from "../readcross/WordBank";
+import {GridContentCell, GridBlockCell} from "../crux";
 
-/**
- * Type of the cell in a grid (block squares or content squares).
- */
-export enum CellType {
-  Content = 'CONTENT',
-  Block = 'BLOCK',
-}
 
 /**
  * A content cell, i.e. a square in the grid containing a letter.
- * TODO(jnu) move to shared location when converting other things to TS.
  */
-export interface IGridContentCell {
-    type: CellType.Content;
-    startClueIdx: number;
-    acrossWord: number;
-    downWord: number;
-    value: string;
-    annotation?: string;
-    startOfWord: boolean;
+export type IGridContentCell = GridContentCell & {
     _id?: string;
     _acrossWordRef?: IGridWord;
     _downWordRef?: IGridWord;
@@ -27,21 +13,11 @@ export interface IGridContentCell {
 
 /**
  * A block (i.e., non-content cell).
- * TODO(jnu) move to shared location when converting other things to TS.
  */
-export interface IGridBlockCell {
-    type: CellType.Block;
-    value: void;
-    acrossWord: void;
-    downWord: void;
-    startClueIdx: void;
-    annotation: void;
-    startOfWord: boolean;
-}
+export type IGridBlockCell = GridBlockCell;
 
 /**
- * Either a content cell or a block cell.
- * TODO(jnu) move to shared location when converting other things to TS.
+ * Use a slightly modified grid cell during iteration.
  */
 export type GridCell = IGridContentCell | IGridBlockCell;
 
