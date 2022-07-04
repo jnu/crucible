@@ -263,23 +263,6 @@ export const WordWizard = () => {
     dispatch(autoFillGrid(wordlist));
   };
 
-  /**
-   * Check if potential matches in state might have changed. Assume that
-   * potential matches are deterministic given wordlist state and nextQuery.
-   */
-  const _areMatchesCurrent = (
-    wordlist: WordlistState,
-    nextQuery: WordQuery,
-  ) => {
-    return (
-      query &&
-      nextQuery &&
-      query.word === nextQuery.word &&
-      wordlist === wordlist &&
-      serializeCrosses(query.crosses) === serializeCrosses(nextQuery.crosses)
-    );
-  };
-
   useEffect(() => {
     const nextQuery = getCurrentWord(grid);
     // No current word means no query; reset to initial state.
@@ -287,35 +270,25 @@ export const WordWizard = () => {
       resetState();
       return;
     }
-    // If potential matches might've changed, need to recomputed.
-    if (!_areMatchesCurrent(wordlist, nextQuery)) {
-      const searchPromise = searchWordLists(wordlist.lists, nextQuery);
 
-      // Set "now searching" state
-      setFetching(true);
-      setMatches([]);
-      setQuery(nextQuery);
-      setError(null);
+    // Set "now searching" state
+    setFetching(true);
+    setMatches([]);
+    setQuery(nextQuery);
+    setError(null);
 
-      // Update state when promise returns.
-      searchPromise
-        .then((foundMatches) => {
-          // Only update if state is current, otherwise drop.
-          if (_areMatchesCurrent(wordlist, nextQuery)) {
-            setMatches(foundMatches);
-            setError(null);
-            setFetching(false);
-          }
-        })
-        .catch((error) => {
-          // Only update if state is current, otherwise drop.
-          if (_areMatchesCurrent(wordlist, nextQuery)) {
-            setFetching(false);
-            setMatches([]);
-            setError(error);
-          }
-        });
-    }
+    // Update state when promise returns.
+    searchWordLists(wordlist.lists, nextQuery)
+      .then((foundMatches) => {
+        setMatches(foundMatches);
+        setError(null);
+        setFetching(false);
+      })
+      .catch((error) => {
+        setFetching(false);
+        setMatches([]);
+        setError(error);
+      });
   }, [grid, wordlist]);
 
   // Render matches in a virtualized list for performance
