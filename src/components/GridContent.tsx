@@ -139,11 +139,11 @@ export const GridContent = () => {
   };
 
   // Handle left click on a cell
-  const onRequestCellContext = (index: number) => {
+  const onRequestCellContext = (index: number, x: number, y: number) => {
     if (autoFilling) {
       return;
     }
-    dispatch(requestCellContext(index));
+    dispatch(requestCellContext(index, x, y));
   };
 
   // Mouse click listener
@@ -163,10 +163,8 @@ export const GridContent = () => {
 
     // Focus event
     if (gridContentRoot.current.contains(target as HTMLElement)) {
-      console.log('SETTING KEY LISTENENR');
       setKeyListener();
     } else {
-      console.log('REMOVING KEY LISTENER');
       removeKeyListener();
     }
   };

@@ -62,12 +62,14 @@ export const moveCursor = (delta: number) =>
 export type MoveCursor = ReturnType<typeof moveCursor>;
 
 /**
- * Request a context menu for the cell at the given index.
+ * Request a context menu for the cell at the given index, at the given coords.
  */
-export const requestCellContext = (index: number) =>
+export const requestCellContext = (index: number, x: number, y: number) =>
   ({
     type: 'SHOW_MENU',
     index,
+    x,
+    y,
   } as const);
 
 /**

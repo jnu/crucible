@@ -12,7 +12,7 @@ export type GridCellProps = {
   size: number;
   index: number;
   onFocus: (i: number, e: React.MouseEvent<HTMLDivElement>) => void;
-  onRequestContext: (i: number) => void;
+  onRequestContext: (i: number, x: number, y: number) => void;
   onDoubleClick: (i: number, e: React.MouseEvent<HTMLDivElement>) => void;
   onLoseContext: () => void;
 };
@@ -41,7 +41,7 @@ export class GridCell extends React.Component<GridCellProps> {
       document.removeEventListener('click', globalClickHandler);
     };
     document.addEventListener('click', globalClickHandler);
-    onRequestContext(index);
+    onRequestContext(index, e.clientX, e.clientY);
   }
 
   doDoubleClick(e: React.MouseEvent<HTMLDivElement>) {
