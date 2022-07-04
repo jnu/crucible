@@ -61,6 +61,9 @@ export class GridCell extends React.Component<GridCellProps> {
     if (highlight) {
       cns.push('GridCell-highlight');
     }
+    if ((cell.acrossWordLength || 0) < 3 || (cell.downWordLength || 0) < 3) {
+      cns.push('GridCell-invalid');
+    }
     return cns.join(' ');
   }
 

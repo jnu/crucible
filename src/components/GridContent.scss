@@ -1,57 +1,61 @@
 @import 'constants';
 
 .GridContent {
-    border: thin solid $dark;
-    position: relative;
-    display: inline-block;
+  border: thin solid $dark;
+  position: relative;
+  display: inline-block;
 }
 
 .GridCell {
-    display: inline-block;
-    border: thin solid $dark;
-    z-index: $zIndexDefaultCell;
+  display: inline-block;
+  border: thin solid $dark;
+  z-index: $zIndexDefaultCell;
 
-    &.GridCell-highlight {
-        background-color: $lightAmber;
-    }
+  &.GridCell-highlight {
+    background-color: $lightAmber;
+  }
+
+  &.GridCell-focused {
+    background-color: $amber;
+    z-index: $zIndexFocusedCell;
+  }
+
+  &.GridCell-invalid {
+    background-color: $lightRed;
+  }
+
+  &.GridCell-type-block {
+    border: thin solid $dark;
+    background-color: $dark;
 
     &.GridCell-focused {
-        background-color: $amber;
-        z-index: $zIndexFocusedCell
+      background-color: $medium;
     }
-
-    &.GridCell-type-block {
-        border: thin solid $dark;
-        background-color: $dark;
-
-        &.GridCell-focused {
-            background-color: $medium;
-        }
-    }
+  }
 }
 
 .GridCell_value {
-    width: calc(100% - 2px);
-    height: calc(100% - 2px);
-    color: $dark;
-    border: 0;
-    outline: none;
-    position: absolute;
-    left: 1px;
-    top: 5px;
-    font-size: 18px;
-    text-align: center;
-    padding: 0;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  color: $dark;
+  border: 0;
+  outline: none;
+  position: absolute;
+  left: 1px;
+  top: 5px;
+  font-size: 18px;
+  text-align: center;
+  padding: 0;
 }
 
 .GridCell_clueIdx {
-    font-family: arial, sans-serif;
-    color: $medium;
-    z-index: $zIndexClueIndex;
-    font-size: 8px;
-    position: absolute;
-    left: 1px;
-    top: 1px;
-    pointer-events: none;
-    user-select: none;
+  font-family: arial, sans-serif;
+  color: $medium;
+  z-index: $zIndexClueIndex;
+  font-size: 8px;
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  pointer-events: none;
+  user-select: none;
 }

@@ -51,6 +51,8 @@ export type GridCellNotes = {
   acrossWord?: number;
   downWord?: number;
   annotation?: string;
+  acrossWordLength?: number;
+  downWordLength?: number;
 };
 
 /**
@@ -100,6 +102,8 @@ type ClueProjection = {[idx: number]: number};
 
 /**
  * Grow/shrink the grid based on new size, filling in empty cells as needed.
+ *
+ * This also adds annotations to the cells to aid rendering.
  */
 export const updateGridContent = (
   content: ReadonlyArray<GridCell>,
@@ -113,7 +117,11 @@ export const updateGridContent = (
   const newClues: GridClue[] = [];
   const newContent = new Array<GridCell>(n);
 
-  // Fill in missing cells
+  // Fill in missing cells and add metadata.
+  const wordLengthCounters = {
+    across: new Map<number, number>(),
+    down: new Map<number, number>(),
+  };
   const rowAboveWords = new Array(width);
   let cellLeftWord: number | null = null;
   let colIdx = 0;
@@ -150,6 +158,13 @@ export const updateGridContent = (
             ? newClues.length
             : cellLeftWord
           : cellLeftWord) || 0;
+      // Tally the number of times this word is referenced ... that will end
+      // up being the length of the word, which is useful metadata.
+      wordLengthCounters.across.set(
+        acrossWord,
+        (wordLengthCounters.across.get(acrossWord) || 0) + 1,
+      );
+
       // Do same determination for down words.
       const cellAboveWord = rowAboveWords[colIdx];
       const firstOpenDown = !isDefined(cellAboveWord);
@@ -161,6 +176,10 @@ export const updateGridContent = (
           ? newClues.length
           : cellAboveWord
         : cellAboveWord;
+      wordLengthCounters.down.set(
+        downWord,
+        (wordLengthCounters.down.get(downWord) || 0) + 1,
+      );
 
       // Useful derived props
       const startOfWord = hasAcrossClue || hasDownClue;
@@ -249,6 +268,18 @@ export const updateGridContent = (
       colIdx = 0;
       cellLeftWord = null;
     }
+  }
+
+  // Add word length metadata back into the grid.
+  for (let i = 0; i < n; i++) {
+    const cell = newContent[i];
+    if (cell.type === CellType.Block) {
+      continue;
+    }
+
+    cell.acrossWordLength =
+      wordLengthCounters.across.get(cell.acrossWord || 0) || 0;
+    cell.downWordLength = wordLengthCounters.down.get(cell.downWord || 0) || 0;
   }
 
   // Project old clues into new clues. There are some tricky cases here where
