@@ -21,7 +21,7 @@ const PUZZLE_STATS_WIDTH = 320;
 const MIN_PUZZLE_VIEW_HEIGHT = 500;
 const MIN_PUZZLE_VIEW_WIDTH = 500;
 const CLUE_COL_MIN_WIDTH = 180;
-const CLUE_BUILDER_HEIGHT = 50;
+const CLUE_BUILDER_HEIGHT = 65;
 const WORD_WIZARD_WIDTH = 180;
 const MAR_SMALL = 20;
 const MAR_BIG = 40;
@@ -147,7 +147,7 @@ export const Layout = () => {
     height: puzzleHeight,
     width: puzzleWidth,
     marginLeft: puzzlePadLeft,
-    marginTop: puzzlePadTop,
+    paddingTop: puzzlePadTop,
   } as const;
   const clueBuilderStyle = {
     height: CLUE_BUILDER_HEIGHT,

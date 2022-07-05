@@ -1,36 +1,45 @@
 @import 'constants';
 
-
 .PuzzleCounts {
-    width: 300px;
-    font-size: 12px;
-    margin-left: $marMed;
+  width: 300px;
+  font-size: 12px;
+  margin-left: $marMed;
 
-    .PuzzleCounts_List {
-        list-style: none;
-        column-count: auto;
-        column-gap: 5px;
-        column-width: 40px;
-        margin: 0;
-        padding: 0;
+  .PuzzleCounts_List {
+    list-style: none;
+    column-count: auto;
+    column-gap: 5px;
+    column-width: 40px;
+    margin: 0;
+    padding: 0;
 
-        hr {
-            border-style: solid;
-            border-width: 1px 0 0 0;
-            border-color: $light;
-        }
+    hr {
+      border-style: solid;
+      border-width: 1px 0 0 0;
+      border-color: $light;
     }
+  }
 
-    .PuzzleCounts_Item_letter {
-        display: inline-block;
-        width: 15px;
-        text-align: center;
-        color: $medium;
-    }
+  .PuzzleCounts_Item_letter {
+    display: inline-block;
+    width: 15px;
+    text-align: center;
+    color: $medium;
+  }
 
-    .PuzzleCounts_Item_count {
-        display: inline-block;
-        text-align: right;
-        width: 15px;
+  .PuzzleCounts_Item_count {
+    display: inline-block;
+    text-align: right;
+    width: 15px;
+
+    &.-warn {
+      color: $amber;
     }
+    &.-error {
+      color: $red;
+    }
+    &.-ok {
+      color: $blue;
+    }
+  }
 }

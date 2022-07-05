@@ -8,6 +8,10 @@ import './PuzzleStats.scss';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
+const gradeClueCount = (c: number) => {
+  return c >= 72 ? '-warn' : c >= 78 ? '-error' : '-ok';
+};
+
 /**
  * Render histogram of letter counts, cell counts, and word sums.
  */
@@ -59,7 +63,10 @@ export const PuzzleCounts = () => {
         </li>
         <li className="PuzzleCounts_Item" key="cntWords">
           <span className="PuzzleCounts_Item_letter">Σ</span>
-          <span className="PuzzleCounts_Item_count">{clueCount}</span>
+          <span
+            className={`PuzzleCounts_Item_count ${gradeClueCount(clueCount)}`}>
+            {clueCount}
+          </span>
         </li>
       </ol>
     </div>
