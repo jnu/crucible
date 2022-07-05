@@ -1,5 +1,6 @@
 import React from 'react';
-import {Direction, focusCell, setDirection} from '../actions';
+import {focusCell, setDirection} from '../actions';
+import {Direction} from '../lib/crux';
 import type {GridCell, GridClue} from '../reducers/grid';
 import type {State, Dispatch} from '../store';
 import {useDispatch, useSelector} from '../store';

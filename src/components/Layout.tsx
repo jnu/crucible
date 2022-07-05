@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {autoFillGridDismissError} from '../actions';
 import {GridContent} from './GridContent';
 import {Clues} from './Clues';
@@ -10,7 +11,7 @@ import {GridVerticalDivider, GridHorizontalDivider} from './GridDividers';
 import {LoadingAnimation} from './LoadingAnimation';
 import type {State, Dispatch} from '../store';
 import type {IProgressStats} from '../lib/gridiron';
-import {Direction} from '../actions';
+import {Direction} from '../lib/crux';
 import {useSelector, useDispatch} from '../store';
 
 import './Layout.scss';

@@ -3,9 +3,8 @@ import UUID from 'pure-uuid';
 import {isDefined} from '../lib/isDefined';
 import {fill} from '../lib/gridiron';
 import type {IProgressStats} from '../lib/gridiron';
-import {CellType} from '../lib/crux';
+import {CellType, Direction} from '../lib/crux';
 import type {Cell, Clue} from '../lib/crux';
-import {Direction} from '../actions/gridMeta';
 import type {
   ToggleSymmetricalGrid,
   ToggleGridLock,

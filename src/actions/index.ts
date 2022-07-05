@@ -6,7 +6,6 @@ export {
   moveCursor,
   requestCellContext,
   hideCellContext,
-  Direction,
 } from './gridMeta';
 
 export {

@@ -3,6 +3,34 @@ import type {GridCellNotes} from '../../reducers/grid';
 import type {BlockCell, ContentCell} from '../crux';
 
 /**
+ * Search for a given word.
+ */
+export type WordQuery = Readonly<{
+  word: string | null;
+  crosses: Crossing[];
+}>;
+
+/**
+ * Represent a crossed word.
+ */
+export type Crossing = Readonly<{
+  at: number;
+  crossIdx: number;
+  crossing: string;
+}>;
+
+/**
+ * Represent a search result. Score is the strength of match, the match is
+ * the matched word, and the hits indicate valid or invalid char positions.
+ */
+export type WordMatch = Readonly<{
+  score: number;
+  match: string;
+  hits: boolean[];
+  misses: boolean[];
+}>;
+
+/**
  * A content cell, i.e. a square in the grid containing a letter.
  */
 export type IGridContentCell = ContentCell &

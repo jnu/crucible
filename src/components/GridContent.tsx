@@ -12,7 +12,7 @@ import {
   requestCellContext,
   hideCellContext,
 } from '../actions';
-import {Direction} from '../actions/gridMeta';
+import {Direction} from '../lib/crux';
 import type {CellUpdates} from '../actions/gridSemantic';
 import type {GridState, GridCell as TGridCell} from '../reducers/grid';
 import type {State, Dispatch} from '../store';

@@ -1,10 +1,4 @@
-/**
- * Grid clue/answer direction.
- */
-export enum Direction {
-  Down = 'DOWN',
-  Across = 'ACROSS',
-}
+import {Direction} from '../lib/crux';
 
 /**
  * Toggle whether grid structure can be edited (i.e., black squares toggled).

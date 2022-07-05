@@ -7,4 +7,5 @@ export {
   ContentCell,
   BlockCell,
   Cell,
+  Direction,
 } from './types';

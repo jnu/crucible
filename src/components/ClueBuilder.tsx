@@ -1,7 +1,9 @@
 import React from 'react';
 import TextField from '@mui/material/TextField';
 import {bindAll} from 'lodash';
-import {Direction, updateClue} from '../actions';
+
+import {updateClue} from '../actions';
+import {Direction} from '../lib/crux';
 import {isDefined} from '../lib/isDefined';
 import type {State, Dispatch} from '../store';
 import {useSelector, useDispatch} from '../store';

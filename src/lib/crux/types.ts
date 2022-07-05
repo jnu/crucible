@@ -214,3 +214,11 @@ export type HeaderSchema = ReadonlyArray<HeaderSchemaEntry>;
  * Metadata about a puzzle.
  */
 export type CruxHeader = {[k: string]: CruxDataValue};
+
+/**
+ * Grid clue/answer direction.
+ */
+export enum Direction {
+  Down = 'DOWN',
+  Across = 'ACROSS',
+}

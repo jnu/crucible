@@ -1,10 +1,5 @@
 import type {Action} from '../actions';
-import type {WordBank} from '../lib/readcross/WordBank';
-
-/**
- * Represent a group of wordlists.
- */
-export type Wordlist = Readonly<{[k: string]: WordBank}>;
+import type {Wordlist} from '../lib/readcross';
 
 /**
  * State of the wordlist store.
