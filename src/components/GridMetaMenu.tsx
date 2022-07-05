@@ -24,6 +24,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Check from '@mui/icons-material/Check';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -225,7 +226,9 @@ export const GridMetaMenu = () => {
                 const {key, name} = obj;
                 return (
                   <ListItem key={key} onClick={() => importGrid(key)}>
-                    {name ? name : <span>Unnamed</span>}
+                    <ListItemButton>
+                      {name ? name : <span>Unnamed</span>}
+                    </ListItemButton>
                   </ListItem>
                 );
               })}
@@ -274,7 +277,9 @@ export const GridMetaMenu = () => {
                 const {id, title} = obj;
                 return (
                   <ListItem key={id} onClick={() => loadPuzzle(id)}>
-                    {title ? title : <span>(Untitled)</span>}
+                    <ListItemButton>
+                      {title ? title : <span>(Untitled)</span>}
+                    </ListItemButton>
                   </ListItem>
                 );
               })}
