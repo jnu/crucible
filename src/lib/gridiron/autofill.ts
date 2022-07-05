@@ -9,6 +9,9 @@ import {analyzeGrid} from './analyze';
 import type {GridAnalysis} from './analyze';
 import {Future} from '../Future';
 
+/**
+ *All valid letters in the grid.
+ */
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 /**
@@ -21,6 +24,9 @@ const clone = <T extends Object>(a: T[]) => a.map((o) => ({...o}));
  */
 export type StatsCallback = (x: IProgressStats) => void;
 
+/**
+ * Broadcast stats back to the main thread if the time is right.
+ */
 const reportStats = (
   lastReport: number,
   interval: number,
@@ -85,6 +91,10 @@ const solve = async (
   canceled: () => boolean = () => false,
 ) => {
   const cells = clone(grid);
+  // Lock all the cells that are initially filled, regardless of whether the
+  // values seem right. Just assume they are intentional.
+  const locked = cells.map((c) => c.type === 'BLOCK' || !!c.value);
+
   const t0 = Date.now();
   const stats = {
     elapsedTime: 0,
@@ -136,8 +146,10 @@ const solve = async (
     //  1) Is the grid solvable?
     //  2) How many cells are left to solve?
     //  3) What's the index of the hardest cell to fill?
-    const {solved, solvable, blankCells, hardestCellIdx} =
-      interpretAnalysis(analysis);
+    const {solved, solvable, blankCells, hardestCellIdx} = interpretAnalysis(
+      analysis,
+      locked,
+    );
 
     // Update stats and continue
     stats.leftToSolve = blankCells;
@@ -211,7 +223,7 @@ const solve = async (
 /**
  * Inspect the analysis result and generate actionable data based on it.
  */
-const interpretAnalysis = (analysis: GridAnalysis) => {
+const interpretAnalysis = (analysis: GridAnalysis, locked: boolean[]) => {
   let hardestScore = Infinity;
   let hardestIdx = -1;
   let emptyCount = 0;
@@ -220,18 +232,19 @@ const interpretAnalysis = (analysis: GridAnalysis) => {
   for (let i = 0; i < analysis.length; i++) {
     const d = analysis[i];
 
-    // Pass on blocks
-    if (d.solvability === null) {
+    // Pass on locked cells. This includes both blocks, the cells that were
+    // filled in the initial grid, and cells that have been filled with valid
+    // letters in the autofill procedure.
+    if (locked[i] || d.solvability === null || d.valid) {
       continue;
     }
 
-    // Pass on filled cells
-    if (d.filled) {
-      continue;
-    }
-
-    emptyCount += 1;
+    // Count how many cells left.
+    emptyCount += d.filled ? 0 : 1;
+    // Count how many cells are not possible to fill.
     impossibleCount += d.solvability === 0 ? 1 : 0;
+
+    // Find the least cell that seems hardest to fill.
     if (d.solvability < hardestScore) {
       hardestScore = d.solvability;
       hardestIdx = i;
