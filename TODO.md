@@ -59,9 +59,9 @@ Items may jump around and work may not be completed exactly in the planned order
   * Non-blocking with wordbank in webworker
   * Metadata (cruciverb? rex parker? other?)
 * Answer suggestions:
-  - Search through word lists
+  - ~~Search through word lists~~
   - Rank by metadata (?)
-  - Cleaner UI display of answers
+  - ~~Cleaner UI display of answers~~
 * Auto-fill grid
   - ~~Basic functional version~~
   - ~~Non-blocking in webworker~~
@@ -76,7 +76,8 @@ Items may jump around and work may not be completed exactly in the planned order
   - Load custom
   - Select, deselect
   - Context aware (crossings)
-- Grid validation (options)
+- Grid validation:
+  - bug when looking at unchecked crosses
 - Auto-fill grid
   - ~~Improve TS perf (benchmark is 2523 pats/sec, )~~
   - investigate non-determinism / solvability
