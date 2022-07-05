@@ -7,6 +7,19 @@ export enum Direction {
 }
 
 /**
+ * Toggle whether grid structure can be edited (i.e., black squares toggled).
+ */
+export const toggleGridLock = () =>
+  ({
+    type: 'TOGGLE_GRID_LOCK',
+  } as const);
+
+/**
+ * Action to toggle whether grid is locked.
+ */
+export type ToggleGridLock = ReturnType<typeof toggleGridLock>;
+
+/**
  * Toggle the option that forces symmetry when building the grid.
  */
 export const toggleSymmetricalGrid = () =>

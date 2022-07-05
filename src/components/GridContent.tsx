@@ -3,6 +3,7 @@ import {GridCell} from './GridCell';
 import {CellContextMenu} from './CellContextMenu';
 import {isDefined} from '../lib/isDefined';
 import {
+  toggleGridLock,
   updateCell,
   focusCell,
   setDirection,
@@ -38,6 +39,38 @@ const selectProps = (state: State) => {
   };
 };
 
+/**
+ * Fancy way to compute offset, accounting for locked grid.
+ */
+const getOffset = (n: 1 | -1, grid: GridState) => {
+  if (!grid.locked) {
+    return n;
+  }
+  // Skip blocks when grid is locked
+
+  const x = grid.cursorDirection === Direction.Across ? n : n * grid.width;
+  let i = n;
+  let p = (grid.cursor || 0) + x;
+  while (true) {
+    const c = grid.content[p];
+    // Break if we went out of bounds
+    if (!c) {
+      break;
+    }
+
+    // Break if the next cell is a content cell
+    if (c.type === CellType.Content) {
+      break;
+    }
+
+    // Keep searching if the next cell is a block
+    i += n;
+    p += x;
+  }
+
+  return i;
+};
+
 // Key handler
 const onKeyDown = (keyCode: number, grid: GridState, dispatch: Dispatch) => {
   const {content, cursorDirection, cursor: index} = grid;
@@ -61,25 +94,30 @@ const onKeyDown = (keyCode: number, grid: GridState, dispatch: Dispatch) => {
       return;
     case Keys.DOWN:
       return cursorDirection === Direction.Down
-        ? dispatch(moveCursor(1))
+        ? dispatch(moveCursor(getOffset(1, grid)))
         : dispatch(setDirection(Direction.Down));
     case Keys.RIGHT:
       return cursorDirection === Direction.Across
-        ? dispatch(moveCursor(1))
+        ? dispatch(moveCursor(getOffset(1, grid)))
         : dispatch(setDirection(Direction.Across));
     case Keys.UP:
       return cursorDirection === Direction.Down
-        ? dispatch(moveCursor(-1))
+        ? dispatch(moveCursor(getOffset(-1, grid)))
         : dispatch(setDirection(Direction.Down));
     case Keys.LEFT:
       return cursorDirection === Direction.Across
-        ? dispatch(moveCursor(-1))
+        ? dispatch(moveCursor(getOffset(-1, grid)))
         : dispatch(setDirection(Direction.Across));
+    case Keys.BSLASH:
+      return dispatch(toggleGridLock());
     case Keys.FSLASH: {
+      if (grid.locked) {
+        return;
+      }
       const curType = content[index]?.type;
       return dispatch(
         updateCell(index, {
-          type: curType === 'BLOCK' ? CellType.Content : CellType.Block,
+          type: curType === CellType.Block ? CellType.Content : CellType.Block,
         }),
       );
     }
@@ -93,7 +131,8 @@ const onKeyDown = (keyCode: number, grid: GridState, dispatch: Dispatch) => {
             value: value.toUpperCase(),
           }),
         );
-        return dispatch(moveCursor(1));
+
+        return dispatch(moveCursor(getOffset(1, grid)));
       }
     }
   }

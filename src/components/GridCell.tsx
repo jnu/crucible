@@ -52,15 +52,6 @@ export class GridCell extends React.Component<GridCellProps> {
   getCellClassName(cell: TGridCell, focused: boolean, highlight: boolean) {
     const annotation = cell.annotation;
     const cns = ['GridCell', `GridCell-type-${cell.type.toLowerCase()}`];
-    if (annotation) {
-      cns.push(`GridCell-annotation-${annotation}`);
-    }
-    if (focused) {
-      cns.push('GridCell-focused');
-    }
-    if (highlight) {
-      cns.push('GridCell-highlight');
-    }
     // Show visual validation for unchecked crosses and too-short words
     if (
       !isDefined(cell.acrossWord) ||
@@ -69,6 +60,15 @@ export class GridCell extends React.Component<GridCellProps> {
       (cell.downWordLength || 0) < 3
     ) {
       cns.push('GridCell-invalid');
+    }
+    if (annotation) {
+      cns.push(`GridCell-annotation-${annotation}`);
+    }
+    if (focused) {
+      cns.push('GridCell-focused');
+    }
+    if (highlight) {
+      cns.push('GridCell-highlight');
     }
     return cns.join(' ');
   }

@@ -8,6 +8,7 @@ import type {Cell, Clue} from '../lib/crux';
 import {Direction} from '../actions/gridMeta';
 import type {
   ToggleSymmetricalGrid,
+  ToggleGridLock,
   SelectCell,
   SetCursorDirection,
   HideMenu,
@@ -85,6 +86,7 @@ export type GridState = Readonly<{
   autoFilling: boolean;
   autoFillStatus: IProgressStats | null;
   autoFillError: Error | null;
+  locked: boolean;
 }>;
 
 /**
@@ -371,11 +373,22 @@ const createNewGrid = (): GridState => {
     menuX: null,
     menuY: null,
     cellSize: 30,
+    locked: false,
 
     // Autofill state
     autoFilling: false,
     autoFillStatus: null,
     autoFillError: null,
+  };
+};
+
+/**
+ * Toggle whether grid structure is locked.
+ */
+export const rToggleGridLock = (state: GridState, _action: ToggleGridLock) => {
+  return {
+    ...state,
+    locked: !state.locked,
   };
 };
 
@@ -561,7 +574,7 @@ export const rReplaceGrid = (state: GridState, action: ReplaceGrid) => {
     newGrid = createNewGrid();
   }
 
-  return {...state, ...newGrid, id};
+  return {...state, ...newGrid, id, locked: true};
 };
 
 /**
@@ -655,6 +668,8 @@ export const rAutoFillGridDismissError = (
  */
 const dispatchGridAction = (state: GridState, action: Action): GridState => {
   switch (action.type) {
+    case 'TOGGLE_GRID_LOCK':
+      return rToggleGridLock(state, action);
     case 'RESIZE':
       return rResize(state, action);
     case 'SET_CELL':

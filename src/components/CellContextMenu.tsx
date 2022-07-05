@@ -14,9 +14,8 @@ import './CellContextMenu.scss';
  */
 export const CellContextMenu = () => {
   const dispatch = useDispatch();
-  const {menuCell, menuX, menuY, content, cellSize, width} = useSelector(
-    ({grid}) => grid,
-  );
+  const {locked, menuCell, menuX, menuY, content, cellSize, width} =
+    useSelector(({grid}) => grid);
 
   const cell = content[menuCell!];
   const toggleToType =
@@ -33,7 +32,9 @@ export const CellContextMenu = () => {
       open={isDefined(menuCell)}
       onClose={() => dispatch(hideCellContext())}>
       <MenuItem
+        disabled={locked}
         onClick={() =>
+          !locked &&
           dispatch(
             updateCell(menuCell!, {
               type: toggleToType,

@@ -13,3 +13,4 @@ export const DOWN = 40;
 export const DELETE = 46;
 
 export const FSLASH = 191;
+export const BSLASH = 220;

@@ -6,6 +6,7 @@ import {
   closeMetaDialog,
   fetchGridStateIndex,
   fetchPuzzleIndex,
+  toggleGridLock as aToggleGridLock,
   toggleSymmetricalGrid as aToggleSymmetricalGrid,
   loadPuzzle as aLoadPuzzle,
   loadEmptyPuzzle,
@@ -116,6 +117,11 @@ export const GridMetaMenu = () => {
     closeDialog();
   };
 
+  const toggleGridLock = () => {
+    dispatch(aToggleGridLock());
+    closeDialog();
+  };
+
   const toggleSymmetricalGrid = () => {
     dispatch(aToggleSymmetricalGrid());
     closeDialog();
@@ -152,6 +158,14 @@ export const GridMetaMenu = () => {
           Load Grid Template
         </MenuItem>
         <MenuItem onClick={openResizeGridDialog}>Resize ...</MenuItem>
+        <MenuItem onClick={toggleGridLock}>
+          {grid.locked ? (
+            <ListItemIcon>
+              <Check />
+            </ListItemIcon>
+          ) : null}
+          Lock Grid
+        </MenuItem>
         <MenuItem onClick={toggleSymmetricalGrid}>
           {grid.symmetrical ? (
             <ListItemIcon>
