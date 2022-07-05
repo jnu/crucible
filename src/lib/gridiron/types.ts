@@ -1,6 +1,7 @@
 import {IJSONWordIndex} from '../readcross/WordBank';
 import type {GridCellNotes} from '../../reducers/grid';
 import type {BlockCell, ContentCell} from '../crux';
+import type {GridAnalysis} from './analyze';
 
 /**
  * Search for a given word.
@@ -72,6 +73,7 @@ export interface IProgressStats {
   readonly leftToSolve: number;
   readonly totalWords: number;
   readonly grid: GridCell[];
+  readonly analysis: GridAnalysis;
 }
 
 /**

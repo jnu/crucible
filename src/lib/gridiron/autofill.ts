@@ -106,6 +106,7 @@ const solve = async (
     leftToSolve: 0,
     totalWords: 0,
     grid: cells,
+    analysis: [] as GridAnalysis,
   };
 
   let _lastReported: number = 0;
@@ -157,6 +158,7 @@ const solve = async (
     stats.elapsedTime = (Date.now() - t0) / 1000;
     stats.rate = stats.visits / stats.elapsedTime;
     stats.grid = currentGrid;
+    stats.analysis = analysis;
     _lastReported = reportStats(
       _lastReported,
       updateInterval,

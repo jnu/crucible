@@ -283,9 +283,14 @@ export const GridContent = () => {
     height: height * cellSize + 2,
   };
 
+  // If the autofill process is running, show the intermediate results in the
+  // background for a cool effect. Otherwise use the normal grid.
+  const relevantContent = (autoFilling && autoFillStatus?.grid) || content;
+  const relevantAnalysis = autoFilling ? autoFillStatus?.analysis : analysis;
+
   return (
     <div className="GridContent" ref={gridContentRoot} style={gridStyle}>
-      {((autoFilling && autoFillStatus?.grid) || content).map((cell, i) => {
+      {relevantContent.map((cell, i) => {
         const y = ~~(i / width);
         const x = i % width;
         return (
@@ -295,7 +300,11 @@ export const GridContent = () => {
             index={i}
             left={x}
             top={y}
-            heat={analysis && showHeatMap ? analysis[i]?.heat : undefined}
+            heat={
+              relevantAnalysis && showHeatMap
+                ? relevantAnalysis[i]?.heat
+                : undefined
+            }
             size={cellSize}
             onFocus={onFocusCell}
             onDoubleClick={onDoubleClick}
