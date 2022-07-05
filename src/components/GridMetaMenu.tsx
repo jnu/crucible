@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   exportGridShape,
   importGridShape,
@@ -10,6 +10,7 @@ import {
   loadPuzzle as aLoadPuzzle,
   loadEmptyPuzzle,
   resize,
+  autoFillGrid,
 } from '../actions';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -29,20 +30,16 @@ import {useSelector, useDispatch} from '../store';
 import type {GridState} from '../reducers/grid';
 import type {MetaState} from '../reducers/meta';
 
+/**
+ * Tool menus and associated dialogs.
+ */
 export const GridMetaMenu = () => {
   const dispatch = useDispatch();
-  const {grid, meta} = useSelector((x) => x);
+  const {grid, meta, wordlist} = useSelector((x) => x);
   const [exportGridName, setExportGridName] = useState('');
   const [newGridWidth, setNewGridWidth] = useState(grid.width);
   const [newGridHeight, setNewGridHeight] = useState(grid.height);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (!anchorEl) {
-      return;
-    }
-    dispatch(openMetaDialog('GRID_MENU'));
-  }, [anchorEl]);
 
   const openImportGridShapeDialog = () => {
     dispatch(fetchGridStateIndex());
@@ -64,9 +61,12 @@ export const GridMetaMenu = () => {
 
   const openGridMenu = (e: React.MouseEvent) => {
     setAnchorEl(e.currentTarget as HTMLElement);
-    // NOTE: setting the anchorEl triggers the useEffect hook defined above,
-    // where the menu is actually opened. This avoids a race between setting
-    // the anchor el and opening the dialog.
+    dispatch(openMetaDialog('GRID_MENU'));
+  };
+
+  const openMagicMenu = (e: React.MouseEvent) => {
+    setAnchorEl(e.currentTarget as HTMLElement);
+    dispatch(openMetaDialog('MAGIC_MENU'));
   };
 
   const closeDialog = () => {
@@ -94,6 +94,11 @@ export const GridMetaMenu = () => {
     closeDialog();
   };
 
+  const autoFill = () => {
+    dispatch(autoFillGrid(wordlist));
+    closeDialog();
+  };
+
   const updateExportName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setExportGridName((e.target as HTMLInputElement).value);
   };
@@ -117,10 +122,12 @@ export const GridMetaMenu = () => {
   };
 
   const gridMenuOpen = meta.openDialog === 'GRID_MENU' && !!anchorEl;
+  const magicMenuOpen = meta.openDialog === 'MAGIC_MENU' && !!anchorEl;
 
   // Render the menu
   return (
     <div className="GridMetaMenu">
+      {/* GRID MENU */}
       <Button
         id="grid-menu-button"
         aria-controls={gridMenuOpen ? 'grid-menu' : undefined}
@@ -155,6 +162,26 @@ export const GridMetaMenu = () => {
         </MenuItem>
       </Menu>
 
+      {/* MAGIC MENU */}
+      <Button
+        id="magic-menu-button"
+        aria-controls={magicMenuOpen ? 'magic-menu' : undefined}
+        aria-haspopup={true}
+        aria-expanded={magicMenuOpen ? true : undefined}
+        onClick={openMagicMenu}>
+        Magic
+      </Button>
+
+      <Menu
+        MenuListProps={{'aria-labelledby': 'magic-menu-button'}}
+        anchorEl={anchorEl}
+        onClose={closeDialog}
+        id="magic-menu"
+        open={magicMenuOpen}>
+        <MenuItem onClick={autoFill}>Autofill</MenuItem>
+      </Menu>
+
+      {/* DIALOGS */}
       <Dialog
         title="Import Grid Template"
         open={meta.openDialog === 'IMPORT_GRID_SHAPE'}

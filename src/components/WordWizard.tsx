@@ -4,7 +4,6 @@ import {isDefined} from '../lib/isDefined';
 import type {GridState, GridCell} from '../reducers/grid';
 import type {WordBank} from '../lib/readcross/WordBank';
 import type {WordlistState, Wordlist} from '../reducers/wordlist';
-import {autoFillGrid} from '../actions/gridSemantic';
 import {Direction} from '../actions/gridMeta';
 import {useSelector, useDispatch} from '../store';
 import type {State, Dispatch} from '../store';
@@ -240,10 +239,15 @@ const serializeCrosses = (crosses: Crossing[]) => {
   return crosses.map((c) => c.crossing).join(',');
 };
 
+export type WordWizardProps = {
+  height: number;
+  width: number;
+};
+
 /**
  * UI for showing magically relevant words based on the current grid.
  */
-export const WordWizard = () => {
+export const WordWizard = ({height, width}: WordWizardProps) => {
   const dispatch = useDispatch();
   const {grid, wordlist} = useSelector((x) => x);
   const [query, setQuery] = useState<WordQuery | null>(null);
@@ -257,10 +261,6 @@ export const WordWizard = () => {
     setMatches([]);
     setFetching(false);
     setError(null);
-  };
-
-  const _autoFillGrid = () => {
-    dispatch(autoFillGrid(wordlist));
   };
 
   useEffect(() => {
@@ -302,8 +302,8 @@ export const WordWizard = () => {
     ) : (
       <div>
         <List
-          width={300}
-          height={90}
+          width={width}
+          height={height}
           rowCount={matches.length}
           rowHeight={15}
           rowRenderer={({key, index, style}) => {
@@ -326,10 +326,7 @@ export const WordWizard = () => {
 
   return (
     <div className="WordWizard" style={{height: '100%'}}>
-      <div>
-        <button onClick={_autoFillGrid}>Auto Fill</button>
-      </div>
-      <div>{matchesUi}</div>
+      {matchesUi}
     </div>
   );
 };

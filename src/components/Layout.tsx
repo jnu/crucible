@@ -22,6 +22,7 @@ const MIN_PUZZLE_VIEW_HEIGHT = 500;
 const MIN_PUZZLE_VIEW_WIDTH = 500;
 const CLUE_COL_MIN_WIDTH = 180;
 const CLUE_BUILDER_HEIGHT = 50;
+const WORD_WIZARD_WIDTH = 180;
 const MAR_SMALL = 20;
 const MAR_BIG = 40;
 
@@ -71,10 +72,10 @@ const dismissAutoFillError = () => {
  * Note this effectively locks the editable part of the grid for click events
  * (Keyboard events should be explicitly locked by the components themselves.)
  */
-const renderAutoFillOverlay = () => {
-  const {autoFillStatus: status, autoFillError: error} =
-    useSelector(selectProps);
-
+const renderAutoFillOverlay = ({
+  autoFillStatus: status,
+  autoFillError: error,
+}: ReturnType<typeof selectProps>) => {
   // Choose content based on init & error states.
   const hasStatus = !!status && Object.keys(status).length > 0;
   const content = error ? (
@@ -116,8 +117,8 @@ const renderAutoFillOverlay = () => {
  * Main puzzle view layout. Does a lot of response layout calculations.
  */
 export const Layout = () => {
-  const {width, height, cellSize, viewportWidth, autoFilling} =
-    useSelector(selectProps);
+  const props = useSelector(selectProps);
+  const {width, height, cellSize, viewportWidth, autoFilling} = props;
 
   // Layout computation. Puzzle is slightly larger than the sum of its
   // contents due to the border.
@@ -139,32 +140,31 @@ export const Layout = () => {
   const gridContainerStyle = {
     height: puzzleContainerHeight,
     width: puzzleContainerWidth,
-  };
+    position: 'absolute',
+    left: WORD_WIZARD_WIDTH + MAR_SMALL,
+  } as const;
   const puzzleStyle = {
     height: puzzleHeight,
     width: puzzleWidth,
     marginLeft: puzzlePadLeft,
     marginTop: puzzlePadTop,
-  };
+  } as const;
   const clueBuilderStyle = {
     height: CLUE_BUILDER_HEIGHT,
     width: puzzleContainerWidth - 2 * MAR_SMALL,
     left: MAR_SMALL,
-    position: 'relative',
   } as const;
 
   // Puzzle info styles
   const puzzleInfoStyle = {height: PUZZLE_INFO_HEIGHT} as const;
 
   // Reckon clue container styles
-  const collapseClueCols =
-    viewportWidth < puzzleContainerWidth + 2 * CLUE_COL_MIN_WIDTH;
-  const clueColHeight = collapseClueCols
-    ? puzzleContainerHeight / 2
-    : puzzleContainerHeight;
+  const clueColHeight = puzzleContainerHeight / 2;
   const clueContainerStyle = {
+    position: 'absolute',
+    left: WORD_WIZARD_WIDTH + 2 * MAR_SMALL + puzzleContainerWidth,
     height: puzzleContainerHeight,
-    width: collapseClueCols ? CLUE_COL_MIN_WIDTH : 2 * CLUE_COL_MIN_WIDTH,
+    width: CLUE_COL_MIN_WIDTH,
   } as const;
 
   const lowerHorizontTop = puzzleContainerHeight + MAR_BIG + PUZZLE_INFO_HEIGHT;
@@ -179,10 +179,10 @@ export const Layout = () => {
   } as const;
   const wordWizardStyle = {
     position: 'absolute',
-    left: 2 * MAR_BIG + PUZZLE_STATS_WIDTH,
   } as const;
 
-  const autoFillOverlay = autoFilling && renderAutoFillOverlay();
+  // Show progress overlay
+  const autoFillOverlay = autoFilling && renderAutoFillOverlay(props);
 
   return (
     <div className="Layout">
@@ -190,6 +190,17 @@ export const Layout = () => {
       <div
         className="Layout_HorizontalContainer Layout_MainBuilder"
         style={{height: puzzleContainerHeight}}>
+        <div
+          className="Layout_WordSuggestion-container Layout_VerticalContainer"
+          style={wordWizardStyle}>
+          <WordWizard
+            width={WORD_WIZARD_WIDTH}
+            height={puzzleContainerHeight}
+          />
+        </div>
+
+        <GridVerticalDivider offset={WORD_WIZARD_WIDTH + MAR_SMALL / 2} />
+
         <div
           className="Layout_GridContent-container Layout_VerticalContainer"
           style={gridContainerStyle}>
@@ -200,7 +211,13 @@ export const Layout = () => {
             <GridContent />
           </div>
         </div>
-        <GridVerticalDivider offset={puzzleContainerWidth} />
+
+        <GridVerticalDivider
+          offset={
+            puzzleContainerWidth + WORD_WIZARD_WIDTH + MAR_SMALL + MAR_SMALL / 2
+          }
+        />
+
         <div
           className="Layout_GridClues-container Layout_VerticalContainer"
           style={clueContainerStyle}>
@@ -214,16 +231,18 @@ export const Layout = () => {
           <Clues
             type={Direction.Down}
             title="Down"
-            topOffset={collapseClueCols ? clueColHeight : 0}
-            leftOffset={collapseClueCols ? 0 : CLUE_COL_MIN_WIDTH}
+            topOffset={clueColHeight}
+            leftOffset={0}
             height={clueColHeight}
           />
         </div>
         {autoFillOverlay}
       </div>
+
       <GridHorizontalDivider
         offset={puzzleContainerHeight + PUZZLE_INFO_HEIGHT + MAR_BIG / 2}
       />
+
       <div
         className="Layout_HorizontalContainer Layout_Lower-container"
         style={lowerContainerStyle}>
@@ -231,12 +250,6 @@ export const Layout = () => {
           className="Layout_PuzzleStats-container Layout_VerticalContainer"
           style={puzzleStatsStyle}>
           <PuzzleStats />
-        </div>
-        <GridVerticalDivider offset={PUZZLE_STATS_WIDTH + MAR_BIG} />
-        <div
-          className="Layout_WordSuggestion-container Layout_VerticalContainer"
-          style={wordWizardStyle}>
-          <WordWizard />
         </div>
       </div>
     </div>
