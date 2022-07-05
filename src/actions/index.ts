@@ -1,6 +1,7 @@
 export {
   toggleSymmetricalGrid,
   toggleGridLock,
+  toggleHeatMap,
   setDirection,
   focusCell,
   moveCursor,
@@ -75,6 +76,7 @@ import type {
   ShowMenu,
   MoveCursor,
   ToggleGridLock,
+  ToggleHeatMap,
 } from '../actions/gridMeta';
 import type {
   OpenMetaDialog,
@@ -106,6 +108,7 @@ export type Action =
   | ReplaceGrid
   | ToggleSymmetricalGrid
   | ToggleGridLock
+  | ToggleHeatMap
   | UpdatePuzzleInfo
   | AutoFillGridDismissError
   | AutoFillGridDone

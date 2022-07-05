@@ -8,6 +8,7 @@ import type {Cell, Clue} from '../lib/crux';
 import type {
   ToggleSymmetricalGrid,
   ToggleGridLock,
+  ToggleHeatMap,
   SelectCell,
   SetCursorDirection,
   HideMenu,
@@ -86,6 +87,7 @@ export type GridState = Readonly<{
   autoFillStatus: IProgressStats | null;
   autoFillError: Error | null;
   locked: boolean;
+  showHeatMap: boolean;
 }>;
 
 /**
@@ -373,6 +375,7 @@ const createNewGrid = (): GridState => {
     menuY: null,
     cellSize: 30,
     locked: false,
+    showHeatMap: true,
 
     // Autofill state
     autoFilling: false,
@@ -388,6 +391,16 @@ export const rToggleGridLock = (state: GridState, _action: ToggleGridLock) => {
   return {
     ...state,
     locked: !state.locked,
+  };
+};
+
+/**
+ * Toggle the heat map for grid tension.
+ */
+export const rToggleHeatMap = (state: GridState, _action: ToggleHeatMap) => {
+  return {
+    ...state,
+    showHeatMap: !state.showHeatMap,
   };
 };
 
@@ -667,6 +680,8 @@ export const rAutoFillGridDismissError = (
  */
 const dispatchGridAction = (state: GridState, action: Action): GridState => {
   switch (action.type) {
+    case 'TOGGLE_HEAT_MAP':
+      return rToggleHeatMap(state, action);
     case 'TOGGLE_GRID_LOCK':
       return rToggleGridLock(state, action);
     case 'RESIZE':

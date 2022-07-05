@@ -11,6 +11,7 @@ export type GridCellProps = {
   top: number;
   size: number;
   index: number;
+  heat?: number | null;
   onFocus: (i: number, e: React.MouseEvent<HTMLDivElement>) => void;
   onRequestContext: (i: number, x: number, y: number) => void;
   onDoubleClick: (i: number, e: React.MouseEvent<HTMLDivElement>) => void;
@@ -49,7 +50,12 @@ export class GridCell extends React.Component<GridCellProps> {
     onDoubleClick(index, e);
   }
 
-  getCellClassName(cell: TGridCell, focused: boolean, highlight: boolean) {
+  getCellClassName(
+    cell: TGridCell,
+    focused: boolean,
+    highlight: boolean,
+    heat?: number | null,
+  ) {
     const annotation = cell.annotation;
     const cns = ['GridCell', `GridCell-type-${cell.type.toLowerCase()}`];
     // Show visual validation for unchecked crosses and too-short words
@@ -60,6 +66,9 @@ export class GridCell extends React.Component<GridCellProps> {
       (cell.downWordLength || 0) < 3
     ) {
       cns.push('GridCell-invalid');
+    }
+    if (isDefined(heat)) {
+      cns.push(`GridCell-heat-${heat}`);
     }
     if (annotation) {
       cns.push(`GridCell-annotation-${annotation}`);
@@ -74,10 +83,10 @@ export class GridCell extends React.Component<GridCellProps> {
   }
 
   render() {
-    const {cell, focused, highlight, left, top, size} = this.props;
+    const {cell, focused, highlight, left, top, size, heat} = this.props;
     return (
       <div
-        className={this.getCellClassName(cell, focused, highlight)}
+        className={this.getCellClassName(cell, focused, highlight, heat)}
         onClick={this.doFocus}
         onDoubleClick={this.doDoubleClick}
         onContextMenu={this.doContextMenu}

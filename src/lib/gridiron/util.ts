@@ -1,5 +1,6 @@
 import type {GridCell, GridState} from '../../reducers/grid';
 import type {Crossing} from './types';
+import type {Wordlist} from '../readcross';
 import {isDefined} from '../isDefined';
 import {Direction} from '../crux';
 
@@ -8,6 +9,21 @@ import {Direction} from '../crux';
  */
 const serializeCrosses = (crosses: Crossing[]) => {
   return crosses.map((c) => c.crossing).join(',');
+};
+
+/**
+ * Search a set of word lists for the given word.
+ */
+export const searchAllLists = async (w: string, lists: Wordlist) => {
+  if (!w) {
+    return [];
+  }
+
+  const p = Object.values(lists).map((l) => l.search(w));
+  const results = await Promise.all(p);
+  // TODO may want to include source metadata. For now, just glom all
+  // results together no matter which list they came from.
+  return results.reduce((agg, cur) => agg.concat(cur), []);
 };
 
 /**

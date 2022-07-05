@@ -99,3 +99,6 @@ export function fill(
   // - Ability to cancel processing
   return _runAutoFillOnWorker(grid, words, statsCallback, updateInterval);
 }
+
+// Other useful exports
+export {analyzeGrid, GridAnalysis} from './analyze';

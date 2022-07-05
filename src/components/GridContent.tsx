@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {GridCell} from './GridCell';
 import {CellContextMenu} from './CellContextMenu';
 import {isDefined} from '../lib/isDefined';
@@ -12,12 +12,13 @@ import {
   requestCellContext,
   hideCellContext,
 } from '../actions';
-import {Direction} from '../lib/crux';
+import {CellType, Direction} from '../lib/crux';
+import {analyzeGrid} from '../lib/gridiron';
+import type {GridAnalysis} from '../lib/gridiron';
 import type {CellUpdates} from '../actions/gridSemantic';
 import type {GridState, GridCell as TGridCell} from '../reducers/grid';
 import type {State, Dispatch} from '../store';
 import {useSelector, useDispatch, useStore} from '../store';
-import {CellType} from '../lib/crux';
 import * as Keys from '../lib/keys';
 import './GridContent.scss';
 
@@ -25,9 +26,11 @@ import './GridContent.scss';
  * Pull relevant fields out of global state.
  */
 const selectProps = (state: State) => {
-  const {grid} = state;
+  const {grid, wordlist} = state;
 
   return {
+    showHeatMap: grid.showHeatMap,
+    wordlist: wordlist.lists,
     content: grid.content,
     width: grid.width,
     height: grid.height,
@@ -84,7 +87,7 @@ const onKeyDown = (keyCode: number, grid: GridState, dispatch: Dispatch) => {
       if (content[index]?.value) {
         return dispatch(updateCell(index, {value: ''}));
       } else {
-        return dispatch(moveCursorAndUpdate(-1, {value: ''}));
+        return dispatch(moveCursorAndUpdate(getOffset(-1, grid), {value: ''}));
       }
     case Keys.SPACE:
       return dispatch(setDirection(getNextDirection(cursorDirection)));
@@ -151,6 +154,7 @@ export const GridContent = () => {
   const store = useStore();
   const gridContentRoot = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
+  const [analysis, setAnalysis] = useState<GridAnalysis | null>(null);
   const {
     autoFilling,
     cursor,
@@ -159,7 +163,18 @@ export const GridContent = () => {
     width,
     height,
     cellSize,
+    wordlist,
+    showHeatMap,
   } = useSelector(selectProps);
+
+  // Analyze the grid when it changes to show heat viz.
+  useEffect(() => {
+    if (!showHeatMap) {
+      setAnalysis(null);
+      return;
+    }
+    analyzeGrid(content, wordlist).then((r) => setAnalysis(r));
+  }, [content, wordlist, showHeatMap]);
 
   // Handle clicking into a cell
   const onFocusCell = (index: number) => {
@@ -278,6 +293,7 @@ export const GridContent = () => {
             index={i}
             left={x}
             top={y}
+            heat={analysis && showHeatMap ? analysis[i].heat : undefined}
             size={cellSize}
             onFocus={onFocusCell}
             onDoubleClick={onDoubleClick}

@@ -1,5 +1,6 @@
 import type {Wordlist} from '../readcross';
 import type {WordQuery, Crossing} from './types';
+import {searchAllLists} from './util';
 
 /**
  * Search all word lists for the given query. The query consists of a word and
@@ -12,19 +13,10 @@ export const searchWordLists = async (lists: Wordlist, query: WordQuery) => {
 
   // TODO One-level-deep crossing queries are sort of helpful, but a little
   // confusing to work with. Do we have to validate multiple levels?
-  const allLists = Object.values(lists);
-  const searchAll = (word: string) =>
-    !word
-      ? Promise.resolve([])
-      : Promise.all(allLists.map((list) => list.search(word)))
-          // TODO may want to include source metadata. For now, just glom all
-          // results together no matter which list they came from.
-          .then((words) => words.reduce((agg, list) => agg.concat(list), []));
-
   const {word, crosses} = query;
   // Fetch all sets of all possible words at crossings
   const crossesPromise = Promise.all(
-    crosses.map(({crossing}) => searchAll(crossing)),
+    crosses.map(({crossing}) => searchAllLists(crossing, lists)),
   )
     // Create a Set of acceptable chars for each crossing
     .then((crossMatches) => {
@@ -44,7 +36,7 @@ export const searchWordLists = async (lists: Wordlist, query: WordQuery) => {
   // Fetch possible words for highlighted query, then partition into words
   // that are validated at all crossings and words that are not.
   const [naiveMatches, charsAtCrossings] = await Promise.all([
-    searchAll(word),
+    searchAllLists(word, lists),
     crossesPromise,
   ]);
 

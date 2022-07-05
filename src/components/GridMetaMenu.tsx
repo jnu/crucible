@@ -10,6 +10,7 @@ import {
   fetchPuzzleIndex,
   toggleGridLock as aToggleGridLock,
   toggleSymmetricalGrid as aToggleSymmetricalGrid,
+  toggleHeatMap as aToggleHeatMap,
   loadEmptyPuzzle,
   resize,
   autoFillGrid,
@@ -129,6 +130,11 @@ export const GridMetaMenu = () => {
     closeDialog();
   };
 
+  const toggleHeatMap = () => {
+    dispatch(aToggleHeatMap());
+    closeDialog();
+  };
+
   const gridMenuOpen = meta.openDialog === 'GRID_MENU' && !!anchorEl;
   const magicMenuOpen = meta.openDialog === 'MAGIC_MENU' && !!anchorEl;
 
@@ -194,6 +200,14 @@ export const GridMetaMenu = () => {
         onClose={closeDialog}
         id="magic-menu"
         open={magicMenuOpen}>
+        <MenuItem onClick={toggleHeatMap}>
+          {grid.showHeatMap ? (
+            <ListItemIcon>
+              <Check />
+            </ListItemIcon>
+          ) : null}
+          Show heat map
+        </MenuItem>
         <MenuItem onClick={autoFill}>Autofill</MenuItem>
       </Menu>
 

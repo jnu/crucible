@@ -11,6 +11,25 @@
   border: thin solid $dark;
   z-index: $zIndexDefaultCell;
 
+  &.GridCell-heat-0 {
+    background-color: lighten($red, 60%);
+  }
+  &.GridCell-heat-1 {
+    background-color: lighten($red, 50%);
+  }
+  &.GridCell-heat-2 {
+    background-color: lighten($red, 40%);
+  }
+  &.GridCell-heat-3 {
+    background-color: lighten($red, 30%);
+  }
+  &.GridCell-heat-4 {
+    background-color: lighten($red, 20%);
+  }
+  &.GridCell-heat-5 {
+    background-color: lighten($red, 10%);
+  }
+
   &.GridCell-highlight {
     background-color: $lightAmber;
   }

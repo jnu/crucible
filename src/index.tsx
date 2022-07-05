@@ -68,5 +68,7 @@ if (DEBUG) {
     wordlistClient: require('./lib/index').wordlistClient,
     // @ts-ignore
     crux: require('./lib/crux'),
+    // @ts-ignore
+    gridiron: require('./lib/gridiron'),
   };
 }

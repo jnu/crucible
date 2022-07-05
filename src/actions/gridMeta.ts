@@ -27,6 +27,19 @@ export const toggleSymmetricalGrid = () =>
 export type ToggleSymmetricalGrid = ReturnType<typeof toggleSymmetricalGrid>;
 
 /**
+ * Toggle the grid tension heat map.
+ */
+export const toggleHeatMap = () =>
+  ({
+    type: 'TOGGLE_HEAT_MAP',
+  } as const);
+
+/**
+ * Action to toggle tension heat map.
+ */
+export type ToggleHeatMap = ReturnType<typeof toggleHeatMap>;
+
+/**
  * Set the clue/answer direction to the given value.
  */
 export const setDirection = (direction: Direction) =>
