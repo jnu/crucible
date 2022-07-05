@@ -136,10 +136,10 @@ export const loadBitmap = (bitmap: string, id: string | null = null) => {
 /**
  * Load a clear grid.
  */
-export const loadEmptyPuzzle = () =>
+export const loadEmptyPuzzle = (uuid?: string) =>
   ({
     type: 'REPLACE_GRID',
-    id: new UUID(4).format(),
+    id: uuid || new UUID(4).format(),
   } as const);
 
 /**
@@ -160,14 +160,19 @@ export type SavedGridTemplate = Readonly<{
 /**
  * Load a grid template.
  */
-export const importGridShape = (uuid: string) => {
+export const importGridShape = (
+  uuid: string,
+  navigate: (s: string) => void,
+) => {
   return (dispatch: Dispatch, _getState: GetState) => {
     dispatch(REQUEST_IMPORT_GRID_SHAPE);
     storageClient
       .load<SavedGridTemplate>('gridShape', uuid)
       .then(({bitmap}) => {
         dispatch(RECEIVE_IMPORT_GRID_SHAPE);
-        dispatch(loadBitmap(bitmap));
+        const newId = new UUID(4).format();
+        dispatch(loadBitmap(bitmap, newId));
+        navigate(newId);
       })
       .catch((error) => {
         dispatch(RECEIVE_IMPORT_GRID_SHAPE);
@@ -313,6 +318,7 @@ export const loadPuzzle = (uuid: string) => {
         dispatch(loadBitmap(bitmap, key));
       })
       .catch((error) => {
+        dispatch(loadEmptyPuzzle(uuid));
         dispatch(receivePuzzleError(error));
       });
   };

@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+
 import {
   exportGridShape,
   importGridShape,
@@ -8,7 +10,6 @@ import {
   fetchPuzzleIndex,
   toggleGridLock as aToggleGridLock,
   toggleSymmetricalGrid as aToggleSymmetricalGrid,
-  loadPuzzle as aLoadPuzzle,
   loadEmptyPuzzle,
   resize,
   autoFillGrid,
@@ -35,6 +36,7 @@ import type {MetaState} from '../reducers/meta';
  * Tool menus and associated dialogs.
  */
 export const GridMetaMenu = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {grid, meta, wordlist} = useSelector((x) => x);
   const [exportGridName, setExportGridName] = useState('');
@@ -76,7 +78,7 @@ export const GridMetaMenu = () => {
   };
 
   const importGrid = (uuid: string) => {
-    dispatch(importGridShape(uuid));
+    dispatch(importGridShape(uuid, navigate));
     closeDialog();
   };
 
@@ -86,7 +88,7 @@ export const GridMetaMenu = () => {
   };
 
   const loadPuzzle = (uuid: string) => {
-    dispatch(aLoadPuzzle(uuid));
+    navigate(`/${uuid}`);
     closeDialog();
   };
 
