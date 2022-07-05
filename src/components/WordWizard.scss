@@ -1,13 +1,39 @@
 @import 'constants';
 
-
 .WordWizard {
+  overflow: hidden;
+  white-space: initial;
 
-    .match-hit {
-        font-weight: bold;
-    }
-    .match-miss {
-        color: $red;
-        font-weight: normal;
-    }
+  .WordWizard_placeholder {
+    padding-left: $marSmall;
+    color: $medium;
+  }
+
+  .WordWizard_header-container {
+    font-size: 18px;
+    text-align: center;
+    padding-top: 10px;
+    font-weight: bold;
+    width: 100%;
+  }
+
+  .WordWizard_spacer {
+    height: 10px;
+    border-bottom: 1px solid $medium;
+    margin: 0 25%;
+    position: relative;
+  }
+
+  .match-neutral {
+    font-weight: normal;
+    color: $dark;
+  }
+  .match-hit {
+    font-weight: normal;
+    color: $blue;
+  }
+  .match-miss {
+    color: $red;
+    font-weight: normal;
+  }
 }

@@ -9,6 +9,8 @@ import {useSelector, useDispatch} from '../store';
 import type {State, Dispatch} from '../store';
 import './WordWizard.scss';
 
+const HEADER_HEIGHT = 50;
+
 /**
  * Search for a given word.
  */
@@ -163,6 +165,7 @@ type WordMatch = Readonly<{
   score: number;
   match: string;
   hits: boolean[];
+  misses: boolean[];
 }>;
 
 /**
@@ -199,22 +202,35 @@ function searchWordLists(lists: Wordlist, query: WordQuery) {
         );
       });
     });
+
   // Fetch possible words for highlighted query, then partition into words
   // that are validated at all crossings and words that are not.
-  // TODO could rank by # of chars matched (and highlight in UI).
   return Promise.all([searchAll(word), crossesPromise])
     .then(([naiveMatches, charsAtCrossings]) => {
       return naiveMatches.map((match) => {
         let score = 0;
-        const hits = charsAtCrossings.map((chars, i) => {
-          const has = chars.has(match[i]);
-          score += has ? 1 : 0;
-          return has;
-        });
+
+        const hits = new Array(match.length);
+        const misses = new Array(match.length);
+
+        for (let i = 0; i < match.length; i++) {
+          // Mark which letters come from the actual word
+          hits[i] = match[i] === word[i];
+
+          // Mark characters that pose problematic crossings.
+          const hasCrossing = charsAtCrossings[i].has(match[i]);
+          misses[i] = !hasCrossing;
+
+          if (hasCrossing) {
+            score += 1;
+          }
+        }
+
         return {
           match,
           score,
           hits,
+          misses,
         };
       });
     })
@@ -294,26 +310,38 @@ export const WordWizard = ({height, width}: WordWizardProps) => {
   // Render matches in a virtualized list for performance
   const matchesUi =
     query === null ? (
-      <div>{/* TODO: placeholder? */}</div>
+      <div className="WordWizard_placeholder">
+        Suggestions to fill the grid will appear here as you work.
+      </div>
     ) : fetching ? (
       <div>Finding words ...</div>
     ) : error ? (
       <div>Error fetching words: {error}</div>
+    ) : matches.length === 0 ? (
+      <div className="WordWizard_placeholder">
+        No words found in the word list.
+      </div>
     ) : (
       <div>
         <List
           width={width}
-          height={height}
+          height={Math.max(height - HEADER_HEIGHT, 0)}
           rowCount={matches.length}
-          rowHeight={15}
+          rowHeight={18}
           rowRenderer={({key, index, style}) => {
-            const {match, hits} = matches[index];
+            const {match, hits, misses} = matches[index];
             return (
               <div key={key} style={style}>
                 {hits.map((hit, i) => (
                   <span
                     key={`key-${i}`}
-                    className={hit ? 'match-hit' : 'match-miss'}>
+                    className={
+                      hit
+                        ? 'match-hit'
+                        : misses[i]
+                        ? 'match-miss'
+                        : 'match-neutral'
+                    }>
                     {match[i]}
                   </span>
                 ))}
@@ -325,8 +353,14 @@ export const WordWizard = ({height, width}: WordWizardProps) => {
     );
 
   return (
-    <div className="WordWizard" style={{height: '100%'}}>
-      {matchesUi}
+    <div className="WordWizard" style={{height: '100%', width}}>
+      <div
+        style={{height: HEADER_HEIGHT}}
+        className="WordWizard_header-container">
+        <span className="WordWizard_header">Word List</span>
+        <div className="WordWizard_spacer" />
+      </div>
+      <div>{matchesUi}</div>
     </div>
   );
 };
