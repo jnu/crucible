@@ -15,12 +15,12 @@ import {Deferred} from '../deferred';
 // Re-export useful types.
 export {IProgressStats} from './types';
 
-function _sendAutoFillMessageToWorker(
+const _sendAutoFillMessageToWorker = (
   worker: Worker,
   grid: GridCell[],
   wordlists: {[key: string]: IJSONWordIndex[]},
   updateInterval: number,
-) {
+) => {
   const msg: IGridIronSolveMessage = {
     type: 'SOLVE',
     grid,
@@ -28,15 +28,24 @@ function _sendAutoFillMessageToWorker(
     updateInterval,
   };
   worker.postMessage(msg);
-}
+};
 
-function _runAutoFillOnWorker(
+let _worker: Worker | null = null;
+
+const _runAutoFillOnWorker = (
   grid: GridCell[],
   words: {[key: string]: WordBank},
   statsCallback?: (x: IProgressStats) => void,
   updateInterval: number = 2000,
-): Promise<GridCell[]> {
-  const worker = new Worker(new URL('./autofill.worker', import.meta.url));
+): Promise<GridCell[]> => {
+  // Re-use existing worker if possible
+  if (_worker) {
+    _sendCancel(_worker);
+  }
+
+  _worker = new Worker(new URL('./autofill.worker', import.meta.url));
+  const worker = _worker;
+
   const deferred = new Deferred<GridCell[]>();
 
   worker.addEventListener(
@@ -64,17 +73,19 @@ function _runAutoFillOnWorker(
   _sendAutoFillMessageToWorker(worker, grid, jsonLists, updateInterval);
 
   return deferred.promise;
-}
+};
 
-function _serializeWordLists(words: {[key: string]: WordBank}): {
+const _serializeWordLists = (words: {
+  [key: string]: WordBank;
+}): {
   [key: string]: IJSONWordIndex[];
-} {
+} => {
   const json: {[key: string]: IJSONWordIndex[]} = {};
   Object.keys(words).forEach((key) => {
     json[key] = words[key].toJSON();
   });
   return json;
-}
+};
 
 /**
  * Fill in grid content based on initial constraints (i.e., the content given
@@ -85,12 +96,12 @@ function _serializeWordLists(words: {[key: string]: WordBank}): {
  * @param {number} updateInterval
  * @returns {Promise<GridCell[]>}
  */
-export function fill(
+export const fill = (
   grid: GridCell[],
   words: {[key: string]: WordBank},
   statsCallback?: (x: IProgressStats) => void,
   updateInterval: number = 500,
-): Promise<GridCell[]> {
+): Promise<GridCell[]> => {
   // TODO(jnu)
   // - Fix update interval
   // - Write Rust implementation
@@ -98,7 +109,26 @@ export function fill(
   // - Lock so that multiple threads aren't spawned
   // - Ability to cancel processing
   return _runAutoFillOnWorker(grid, words, statsCallback, updateInterval);
-}
+};
+
+/**
+ * Send worker a message to cancel.
+ */
+const _sendCancel = (w: Worker) => {
+  w.postMessage({type: 'ABORT'});
+};
+
+/**
+ * Cancel any ongoing auto-fill job.
+ */
+export const cancel = () => {
+  if (!_worker) {
+    return;
+  }
+  _sendCancel(_worker);
+  _worker.terminate();
+  _worker = null;
+};
 
 // Other useful exports
 export {analyzeGrid, GridAnalysis} from './analyze';

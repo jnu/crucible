@@ -8,6 +8,7 @@ import {
   closeMetaDialog,
   fetchGridStateIndex,
   fetchPuzzleIndex,
+  loadPuzzle as aLoadPuzzle,
   toggleGridLock as aToggleGridLock,
   toggleSymmetricalGrid as aToggleSymmetricalGrid,
   toggleHeatMap as aToggleHeatMap,
@@ -89,12 +90,12 @@ export const GridMetaMenu = () => {
   };
 
   const loadPuzzle = (uuid: string) => {
-    navigate(`/${uuid}`);
+    dispatch(aLoadPuzzle(uuid, (s) => navigate(`/${s}`)));
     closeDialog();
   };
 
   const makeNewPuzzle = () => {
-    dispatch(loadEmptyPuzzle());
+    dispatch(loadEmptyPuzzle(undefined, (s) => navigate(`/${s}`)));
     closeDialog();
   };
 

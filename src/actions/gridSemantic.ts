@@ -1,5 +1,5 @@
 import {moveCursor} from './gridMeta';
-import {fill} from '../lib/gridiron';
+import {fill, cancel} from '../lib/gridiron';
 import type {IProgressStats} from '../lib/gridiron';
 import type {Direction, CellType, Cell} from '../lib/crux';
 import type {Dispatch, GetState} from '../store';
@@ -119,6 +119,16 @@ export const autoFillGrid = (wordList: {lists: {[key: string]: WordBank}}) => {
         dispatch(autoFillGridError(error));
       });
   };
+};
+
+/**
+ * Cancel an ongoing auto-fill job.
+ *
+ * This will trigger an error to be dispatched via the autoFillGrid thunk.
+ */
+export const autoFillGridCancel = () => {
+  cancel();
+  return autoFillGridError(new Error('canceled'));
 };
 
 /**

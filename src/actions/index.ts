@@ -17,6 +17,7 @@ export {
   updatePuzzleInfo,
   autoFillGrid,
   autoFillGridDismissError,
+  autoFillGridCancel,
 } from './gridSemantic';
 
 export {setScreenSize, openMetaDialog, closeMetaDialog} from './meta';

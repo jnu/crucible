@@ -1,350 +1,247 @@
-import {WordBank} from '../readcross/WordBank';
+import type {
+  GridCell,
+  IGridContentCell,
+  IProgressStats,
+  IGridWord,
+} from './types';
+import type {Wordlist} from '../readcross';
+import {analyzeGrid} from './analyze';
+import type {GridAnalysis} from './analyze';
 import {Future} from '../Future';
-import {v4} from '../uuid';
-import {shuffle} from '../shuffle';
-import {isDefined} from '../isDefined';
-import {GridCell, IGridContentCell, IProgressStats, IGridWord} from './types';
+
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 /**
- * A searched node in the grid that tracks its original constraint input so
- * that it can be restored when backtracking.
+ * Clone an object.
  */
-interface IGridNode {
-  word: IGridWord;
-  originalCells: IGridContentCell[];
-}
+const clone = <T extends Object>(a: T[]) => a.map((o) => ({...o}));
 
 /**
- * Structured grid; a view on the linear grid.
+ * Callback to report stats to the UI.
  */
-interface IGridInfo {
-  across: IGridWord[];
-  down: IGridWord[];
-}
+export type StatsCallback = (x: IProgressStats) => void;
 
-/**
- * Create a deep clone of the grid.
- * @param {GridCell[]} g
- * @returns {GridCell[]}
- * @private
- */
-function _clone(g: GridCell[]) {
-  return JSON.parse(JSON.stringify(g)) as GridCell[];
-}
-
-/**
- * Get an empty grid word search node.
- * @returns {IGridWord}
- * @private
- */
-function _emptyGridWord(): IGridWord {
-  return {cells: [], size: 0, choices: undefined};
-}
-
-/**
- * Concatenate the given cell onto the given words list.
- * @param {IGridWord[]} words
- * @param {IGridContentCell} cell
- * @param {number} idx
- * @private
- */
-function _addCellToGridWords(
-  words: IGridWord[],
-  cell: IGridContentCell,
-  idx: number,
-) {
-  if (!words[idx]) {
-    words[idx] = _emptyGridWord();
+const reportStats = (
+  lastReport: number,
+  interval: number,
+  statsCallback: StatsCallback | undefined,
+  stats: IProgressStats,
+) => {
+  if (!statsCallback) {
+    return 0;
   }
-  words[idx].cells.push(cell);
-  words[idx].size += 1;
-}
+
+  const now = Date.now();
+  if (now - lastReport < interval) {
+    return lastReport;
+  }
+
+  statsCallback(stats);
+
+  return now;
+};
 
 /**
- * Take the values of an object. TODO(jnu) why not Object.values?
- * @param {{[p: string]: U}} obj
- * @returns {U[]}
- * @private
+ * Get a unique hash of the current grid.
  */
-function _values<U>(obj: {[key: string]: U}): U[] {
-  return Object.keys(obj).map((k) => obj[k]);
-}
+const hashGrid = (grid: GridCell[]) => {
+  let d = '';
+  for (const c of grid) {
+    d += c.type === 'BLOCK' ? '-' : c.value || '_';
+  }
+  return d;
+};
 
 /**
- * Turn linear grid into a more structure grouped by word, sorted by size (descending).
- * @param {GridCell[]} grid
- * @returns {IGridInfo}
+ * Fill the grid, returning a cancelable Future result.
  */
-function processGrid(grid: GridCell[]): IGridInfo {
-  const acrossWords: IGridWord[] = [];
-  const downWords: IGridWord[] = [];
+export const fill = (
+  grid: GridCell[],
+  lists: Wordlist,
+  statsCallback?: (x: IProgressStats) => void,
+  updateInterval: number = 500,
+) => {
+  let canceled = false;
+  const result = solve(
+    grid,
+    lists,
+    statsCallback,
+    updateInterval,
+    () => canceled,
+  );
+  return new Future(result, () => {
+    canceled = true;
+  });
+};
 
-  for (let cell of grid) {
-    if (cell.type === 'BLOCK') {
+/**
+ * Fill the grid iteratively using the provided wordlists.
+ */
+const solve = async (
+  grid: GridCell[],
+  lists: Wordlist,
+  statsCallback?: (x: IProgressStats) => void,
+  updateInterval: number = 200,
+  canceled: () => boolean = () => false,
+) => {
+  const cells = clone(grid);
+  const t0 = Date.now();
+  const stats = {
+    elapsedTime: 0,
+    rate: 0,
+    n: 0,
+    backtracks: 0,
+    pruned: 0,
+    visits: 0,
+    leftToSolve: 0,
+    totalWords: 0,
+    grid: cells,
+  };
+
+  let _lastReported: number = 0;
+
+  const gridStack = [clone(grid)];
+
+  // The final solved puzzle
+  let solution: GridCell[] | null = null;
+  const visited = new Set<string>();
+
+  // Loop until we get a solution or we run out of ideas.
+  while (true) {
+    if (canceled()) {
+      throw new Error('job canceled');
+    }
+
+    if (gridStack.length === 0) {
+      throw new Error('no more possibilities');
+    }
+
+    // Get the best grid to examine
+    const currentGrid = gridStack[gridStack.length - 1];
+    const hash = hashGrid(currentGrid);
+
+    // Skip grid if it's been examined already.
+    if (visited.has(hash)) {
+      gridStack.pop();
       continue;
     }
 
-    // Ensure that cell has a unique ID. The ID itself is arbitrary.
-    cell._id = cell._id || v4();
+    visited.add(hash);
 
-    if (!isDefined(cell.acrossWord)) {
-      console.warn('Cell missing across word annotation!', cell);
-    } else {
-      _addCellToGridWords(acrossWords, cell, cell.acrossWord);
+    // Analyze current grid as a whole
+    const analysis = await analyzeGrid(currentGrid, lists);
+
+    // Interpret the analysis. In particular:
+    //  0) Is the grid solved?
+    //  1) Is the grid solvable?
+    //  2) How many cells are left to solve?
+    //  3) What's the index of the hardest cell to fill?
+    const {solved, solvable, blankCells, hardestCellIdx} =
+      interpretAnalysis(analysis);
+
+    // Update stats and continue
+    stats.leftToSolve = blankCells;
+    stats.visits = visited.size;
+    stats.elapsedTime = (Date.now() - t0) / 1000;
+    stats.rate = stats.visits / stats.elapsedTime;
+    stats.grid = currentGrid;
+    _lastReported = reportStats(
+      _lastReported,
+      updateInterval,
+      statsCallback,
+      stats,
+    );
+
+    // Best case, the grid is finished!
+    if (solved) {
+      solution = currentGrid;
+      break;
     }
 
-    if (!isDefined(cell.downWord)) {
-      console.warn('Cell missing down word annotation!', cell);
-    } else {
-      _addCellToGridWords(downWords, cell, cell.downWord);
-    }
-  }
-
-  // Add reference links to cells.
-  for (let cell of grid) {
-    if (cell.type === 'BLOCK') {
+    // Worse case, the grid can't be solved :(
+    if (!solvable) {
+      gridStack.pop();
+      stats.backtracks += 1;
       continue;
     }
-    if (isDefined(cell.acrossWord)) {
-      cell._acrossWordRef = acrossWords[cell.acrossWord];
+
+    // Generate new candidates at the hardest cell to solve and repeat.
+    // Prune the search space by considering only the letters that have words
+    // in the wordlist at this position.
+    const hardestCell = currentGrid[hardestCellIdx];
+    const acrossIdx = hardestCell.acrossWordPos!;
+    const downIdx = hardestCell.downWordPos!;
+    const unchecked = new Set<string>(ALPHABET);
+    for (const w of analysis[hardestCellIdx].acrossQuery.results) {
+      for (const v of analysis[hardestCellIdx].downQuery.results) {
+        const wx = w[acrossIdx];
+        const vx = v[downIdx];
+        if (wx === vx && unchecked.has(vx)) {
+          unchecked.delete(vx);
+          const newGrid = clone(currentGrid);
+          newGrid[hardestCellIdx].value = vx;
+          gridStack.push(newGrid);
+        }
+
+        // If the full alphabet is possible, just break because searching more
+        // is a waste of time.
+        if (unchecked.size === 0) {
+          break;
+        }
+      }
     }
-    if (isDefined(cell.downWord)) {
-      cell._downWordRef = downWords[cell.downWord];
+
+    // Tally how many branches we managed to prune.
+    stats.pruned += unchecked.size;
+  }
+
+  // Update stats one more time
+  stats.elapsedTime = Date.now() - t0 / 1000;
+  stats.visits = visited.size;
+  reportStats(0, updateInterval, statsCallback, stats);
+
+  // Return the solution (hopefully! might still be null)
+  if (!solution) {
+    throw new Error('no solution found');
+  }
+
+  return solution;
+};
+
+/**
+ * Inspect the analysis result and generate actionable data based on it.
+ */
+const interpretAnalysis = (analysis: GridAnalysis) => {
+  let hardestScore = Infinity;
+  let hardestIdx = -1;
+  let emptyCount = 0;
+  let impossibleCount = 0;
+
+  for (let i = 0; i < analysis.length; i++) {
+    const d = analysis[i];
+
+    // Pass on blocks
+    if (d.solvability === null) {
+      continue;
+    }
+
+    // Pass on filled cells
+    if (d.filled) {
+      continue;
+    }
+
+    emptyCount += 1;
+    impossibleCount += d.solvability === 0 ? 1 : 0;
+    if (d.solvability < hardestScore) {
+      hardestScore = d.solvability;
+      hardestIdx = i;
     }
   }
 
   return {
-    across: acrossWords.sort((a, b) => (a.size > b.size ? -1 : 1)),
-    down: downWords.sort((a, b) => (a.size > b.size ? -1 : 1)),
+    solved: emptyCount === 0 && impossibleCount === 0,
+    solvable: emptyCount > 0 && impossibleCount === 0,
+    blankCells: emptyCount,
+    hardestCellIdx: hardestIdx,
   };
-}
-
-/**
- * Get a list of words that match a give query. Uses all available word lists.
- * @param {{[p: string]: WordBank}} words
- * @param {string} query
- * @returns {Promise<string[]>}
- */
-function getWordsByQuery(words: {[key: string]: WordBank}, query: string) {
-  return Promise.all(_values(words).map((b) => b.search(query))).then(
-    (wordLists) => wordLists.reduce((agg, list) => agg.concat(list), []),
-  );
-}
-
-/**
- * Check whether the search query is satisfiable by any word list.
- * @param {{[p: string]: WordBank}} words
- * @param {string} query
- * @returns {boolean}
- */
-function testQuery(words: {[key: string]: WordBank}, query: string) {
-  return _values(words).some((list) => list.testSync(query));
-}
-
-/**
- * Formulate a search query from the grid word's cells.
- * @param {IGridWord} w
- * @returns {string}
- */
-function createSearchQuery(w: IGridWord) {
-  return w.cells.map((c) => c.value || '*').join('');
-}
-
-/**
- * Populate the grid with words that satisfy both the initial explicit
- * constraints (i.e., the fill that's in the grid already) as well as
- * the implicit contraints (i.e., that every crossing is a valid word).
- *
- * The returned future can be canceled if necessary.
- *
- * @param {GridCell[]} grid
- * @param {{[p: string]: WordBank}} words
- * @param {(x: IProgressStats) => void} statsCallback
- * @param {number} updateInterval
- * @returns {Future<GridCell[]>}
- */
-export function fill(
-  grid: GridCell[],
-  words: {[key: string]: WordBank},
-  statsCallback?: (x: IProgressStats) => void,
-  updateInterval: number = 500,
-): Future<GridCell[]> {
-  grid = _clone(grid);
-  // Extract and sort content cells from raw grid.
-  // This constructs a view on the existing (cloned) grid, so that references can be modified
-  // and the grid returned without a separate call to reconstruct the grid format.
-  const gridInfo = processGrid(grid);
-
-  // Keep a queue of nodes left to visit.
-  const queue = gridInfo.across.slice();
-  // Keep a stack of visited nodes for backtracking.
-  const parents: IGridNode[] = [];
-  // Flag that lets routine be aborted
-  let canceled = false;
-
-  // Collect some stats on performance.
-  let testedPatterns = 0;
-  let pruned = 0;
-  let backtracks = 0;
-  let visits = 0;
-  let start = Date.now();
-  let totalWords = queue.length;
-  // TODO(jnu) track size of search space and amount remaining.
-
-  // Recursive async function to solve the constraint problem.
-  function _processNext(): Promise<void> {
-    const w = queue.shift();
-    if (!w) {
-      return Promise.resolve();
-    }
-    visits += 1;
-
-    // Give a progress update occasionally.
-    if (DEBUG && statsCallback) {
-      const now = Date.now();
-      const elapsed = now - start;
-      if (now - start > updateInterval) {
-        statsCallback({
-          elapsedTime: elapsed / 1000,
-          rate: testedPatterns / (elapsed / 1000),
-          n: testedPatterns,
-          backtracks,
-          pruned,
-          visits,
-          totalWords,
-          leftToSolve: queue.length + 1,
-        });
-      }
-    }
-
-    // Get options for words
-    const wordChoicesPromise = w.choices
-      ? Promise.resolve(w.choices)
-      : getWordsByQuery(words, createSearchQuery(w)).then(shuffle);
-
-    // Choose a new word, constrained by the existing value of the word.
-    return wordChoicesPromise
-      .then((choices) => {
-        // Make sure choices are kept associated with this node.
-        w.choices = choices;
-        let newWord: string | void = undefined;
-
-        // Try to find a word to fill this position.
-        while (choices.length) {
-          // Check if the process was killed. Pick a place to do this
-          // check that will be reasonably responsive but avoid doing
-          // it on every inner loop iteration.
-          if (canceled) {
-            throw new Error('canceled');
-          }
-          let candidate = choices.shift();
-          let satisfiable = true;
-
-          // Check if this word satisfies constraints.
-          for (let i = 0; i < w.cells.length; i++) {
-            const cell = w.cells[i];
-            const downWord = cell._downWordRef;
-            if (!downWord) {
-              // TODO - is this an error?
-              continue;
-            }
-            let intersectIdx = -1;
-            let query = '';
-            let foundIntersect = false;
-
-            for (let j = 0; j < downWord.cells.length || 0; j++) {
-              const dc = downWord.cells[j];
-              if (dc._id === cell._id) {
-                foundIntersect = true;
-                query += candidate![i];
-                intersectIdx = j;
-              } else {
-                query += dc.value || '*';
-              }
-            }
-
-            // Sanity check: if the cells didn't intersect we were
-            // not searching the right cross :(
-            if (!foundIntersect) {
-              console.warn(' - Failed to find intersect of down / across!');
-            }
-
-            const ok = testQuery(words, query);
-            testedPatterns += 1;
-            if (!ok) {
-              satisfiable = false;
-              // Prune the search space: no candidate with the same
-              // character in the intersect position will have a
-              // different outcome, so remove them.
-              const badChar = candidate![intersectIdx];
-              w.choices = choices.filter(
-                (choice) => choice[intersectIdx] !== badChar,
-              );
-              const numPruned = choices.length - w.choices.length;
-              pruned += numPruned;
-              break;
-            }
-          }
-          // If the word satisfies constraints, use it.
-          if (satisfiable) {
-            newWord = candidate;
-            break;
-          }
-        }
-
-        // If word can't be found, backtrack.
-        if (!newWord) {
-          // Get the last node searched from the parents stack.
-          const parent = parents.pop();
-          // If there is no parent, the puzzle is unsolvable :(
-          // This may either mean the grid is poorly formed, the word
-          // lists are not very good, or that the initial constraints
-          // are too tight.
-          if (!parent) {
-            console.warn(
-              'There is no solution to this puzzle with the given constraints.',
-            );
-            return Promise.reject('Unsolvable');
-          }
-          backtracks += 1;
-          // Add this word back to the queue, resetting its choices.
-          w.choices = undefined;
-          queue.unshift(w);
-          // Revert the node to its original state.
-          parent.word.cells = parent.originalCells;
-          // Add the parent back into the queue for re-processing.
-          queue.unshift(parent.word);
-          return;
-        }
-
-        // Add this node to the parent stack.
-        parents.push({word: w, originalCells: w.cells.slice()});
-
-        // Write new word into cells.
-        newWord.split('').forEach((c, i) => (w.cells[i].value = c));
-      })
-      .then(_processNext);
-  }
-
-  const result = _processNext()
-    // Transform cells back into external format before returning.
-    .then(() =>
-      grid.map(
-        (c) =>
-          ({
-            type: c.type,
-            startClueIdx: c.startClueIdx,
-            acrossWord: c.acrossWord,
-            downWord: c.downWord,
-            value: c.value,
-            annotation: c.annotation,
-            startOfWord: c.startOfWord,
-          } as GridCell),
-      ),
-    );
-
-  // Return a cancelable future
-  return new Future(result, () => {
-    canceled = true;
-  });
-}
+};

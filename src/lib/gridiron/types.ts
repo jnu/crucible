@@ -71,6 +71,7 @@ export interface IProgressStats {
   readonly visits: number;
   readonly leftToSolve: number;
   readonly totalWords: number;
+  readonly grid: GridCell[];
 }
 
 /**

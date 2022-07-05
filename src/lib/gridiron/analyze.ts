@@ -32,6 +32,9 @@ const extractWordQueries = (content: GridCell[]) => {
   return queries;
 };
 
+/**
+ * Examine grid and report solvability metrics for each cell.
+ */
 export const analyzeGrid = async (content: GridCell[], lists: Wordlist) => {
   const wordQueries = extractWordQueries(content);
 
@@ -60,21 +63,61 @@ export const analyzeGrid = async (content: GridCell[], lists: Wordlist) => {
   return content.map((cell) => {
     if (cell.type === 'BLOCK') {
       return {
+        acrossQuery: {
+          query: null,
+          results: [],
+        },
+        downQuery: {
+          query: null,
+          results: [],
+        },
         acrossable: null,
         downable: null,
         heat: null,
+        solvability: null,
       };
     }
 
-    const acrossable = wordData.acrossWord.get(cell.acrossWord!)?.length || 0;
-    const downable = wordData.downWord.get(cell.downWord!)?.length || 0;
+    const acrossWords = wordData.acrossWord.get(cell.acrossWord!) || [];
+    const downWords = wordData.downWord.get(cell.downWord!) || [];
+    const acrossable = acrossWords.length;
+    const downable = downWords.length;
 
     return {
-      acrossable,
-      downable,
+      acrossQuery: {
+        query: wordQueries.acrossWord.get(cell.acrossWord!),
+        results: acrossWords,
+      },
+      downQuery: {
+        query: wordQueries.downWord.get(cell.downWord!),
+        results: downWords,
+      },
+      acrossable: acrossable,
+      downable: downable,
       heat: !cell.value ? takeTemp(acrossable, downable) : 0,
+      solvability: scoreSolvability(acrossable, downable),
+      valid: !!cell.value && acrossable > 0 && downable > 0,
+      filled: !!cell.value,
     };
   });
+};
+
+/**
+ * Compute an approximate rank of "solvability" for this cell.
+ *
+ * If either of the across / down words have no possibilities, the score is 0,
+ * meaning the cell is not solvable.
+ *
+ * If both scores have some possibilities, it's given a low score. Higher
+ * scores mean that both the across and down scores have many words that are
+ * able to fit.
+ */
+const scoreSolvability = (acrossCount: number, downCount: number) => {
+  if (acrossCount === 0 || downCount === 0) {
+    return 0;
+  }
+
+  return (Math.log(acrossCount + 1) + Math.log(downCount + 1)) / 2;
 };
 
 /**

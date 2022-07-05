@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {autoFillGridDismissError} from '../actions';
+import Button from '@mui/material/Button';
+import {autoFillGridDismissError, autoFillGridCancel} from '../actions';
 import {GridContent} from './GridContent';
 import {Clues} from './Clues';
 import {PuzzleStats} from './PuzzleStats';
@@ -60,44 +61,35 @@ const selectProps = (state: State) => {
 };
 
 /**
- * Dismiss and error message.
- */
-const dismissAutoFillError = () => {
-  const dispatch = useDispatch();
-  dispatch(autoFillGridDismissError());
-};
-
-/**
  * Renders an overlay to display updates about auto-fill progress.
  *
  * Note this effectively locks the editable part of the grid for click events
  * (Keyboard events should be explicitly locked by the components themselves.)
  */
-const renderAutoFillOverlay = ({
-  autoFillStatus: status,
-  autoFillError: error,
-}: ReturnType<typeof selectProps>) => {
+const renderAutoFillOverlay = (
+  {
+    autoFillStatus: status,
+    autoFillError: error,
+  }: ReturnType<typeof selectProps>,
+  dismissError: () => void,
+  cancel: () => void,
+) => {
   // Choose content based on init & error states.
   const hasStatus = !!status && Object.keys(status).length > 0;
   const content = error ? (
     <div>
       <p>Error: {error.message}</p>
-      <button onClick={dismissAutoFillError}>OK</button>
+      <Button onClick={dismissError}>OK</Button>
     </div>
   ) : hasStatus ? (
     <div>
       <Stat title="Elapsed time">{Math.round(status.elapsedTime)} seconds</Stat>
-      <Stat title="Patterns tested">
-        {status.n} ({Math.round(status.rate)} per second)
-      </Stat>
       <Stat title="Nodes considered">
-        {status.visits}({Math.round(status.n / status.visits)} patterns per
-        node)
+        {status.visits}({Math.round(status.rate)} per second)
       </Stat>
-      <Stat title="Words solved">{status.totalWords - status.leftToSolve}</Stat>
-      <Stat title="Total words to solve">{status.totalWords}</Stat>
+      <Stat title="Cells left to fill">{status.leftToSolve}</Stat>
       <Stat title="Pruned search patterns">{status.pruned}</Stat>
-      <Stat title="Dead ends">{status.backtracks}</Stat>
+      <Button onClick={cancel}>Cancel</Button>
     </div>
   ) : (
     <div>
@@ -109,7 +101,7 @@ const renderAutoFillOverlay = ({
     <div className="Layout_AutoFillOverlay">
       <h2 style={{textAlign: 'center'}}>Auto fill</h2>
       <div className="Layout_AutoFillOverlay-inner">{content}</div>
-      <LoadingAnimation initializing={!hasStatus} />
+      {error ? null : <LoadingAnimation initializing={!hasStatus} />}
     </div>
   );
 };
@@ -118,6 +110,7 @@ const renderAutoFillOverlay = ({
  * Main puzzle view layout. Does a lot of response layout calculations.
  */
 export const Layout = () => {
+  const dispatch = useDispatch();
   const props = useSelector(selectProps);
   const {width, height, cellSize, viewportWidth, autoFilling} = props;
 
@@ -182,8 +175,22 @@ export const Layout = () => {
     position: 'absolute',
   } as const;
 
+  /**
+   * Dismiss and error message.
+   */
+  const dismissAutoFillError = () => {
+    dispatch(autoFillGridDismissError());
+  };
+
+  const cancelAutoFill = () => {
+    dispatch(autoFillGridCancel());
+  };
+
   // Show progress overlay
-  const autoFillOverlay = autoFilling && renderAutoFillOverlay(props);
+  const autoFillOverlay =
+    autoFilling || props.autoFillError
+      ? renderAutoFillOverlay(props, dismissAutoFillError, cancelAutoFill)
+      : null;
 
   return (
     <div className="Layout">

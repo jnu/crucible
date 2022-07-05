@@ -39,6 +39,7 @@ const selectProps = (state: State) => {
     cursor: grid.cursor,
     cursorDirection: grid.cursorDirection,
     autoFilling: grid.autoFilling,
+    autoFillStatus: grid.autoFillStatus,
   };
 };
 
@@ -157,6 +158,7 @@ export const GridContent = () => {
   const [analysis, setAnalysis] = useState<GridAnalysis | null>(null);
   const {
     autoFilling,
+    autoFillStatus,
     cursor,
     cursorDirection,
     content,
@@ -283,7 +285,7 @@ export const GridContent = () => {
 
   return (
     <div className="GridContent" ref={gridContentRoot} style={gridStyle}>
-      {content.map((cell, i) => {
+      {((autoFilling && autoFillStatus?.grid) || content).map((cell, i) => {
         const y = ~~(i / width);
         const x = i % width;
         return (
@@ -293,7 +295,7 @@ export const GridContent = () => {
             index={i}
             left={x}
             top={y}
-            heat={analysis && showHeatMap ? analysis[i].heat : undefined}
+            heat={analysis && showHeatMap ? analysis[i]?.heat : undefined}
             size={cellSize}
             onFocus={onFocusCell}
             onDoubleClick={onDoubleClick}

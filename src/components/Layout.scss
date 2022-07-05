@@ -1,60 +1,59 @@
 @import 'constants';
 
-
 .Layout {
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-         -o-user-select: none;
-            user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 
 .Layout_GridContent-container {
-    overflow: visible;
-    display: inline-block;
-    text-align: center;
-    vertical-align: top;
+  overflow: visible;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
 }
 
 .Layout_GridClues-container {
-    margin-left: $marMed;
-    position: relative;
+  margin-left: $marMed;
+  position: relative;
 }
 
 .Layout_GridClues-container_col {
-    display: inline-block;
+  display: inline-block;
 }
 
 .Clues {
-    display: inline-block;
+  display: inline-block;
 }
 
 .Layout_HorizontalContainer {
-    width: 100%;
-    overflow: visible;
-    white-space: nowrap;
-    position: relative;
+  width: 100%;
+  overflow: visible;
+  white-space: nowrap;
+  position: relative;
 }
 
 .Layout_VerticalContainer {
-    display: inline-block;
-    height: 100%;
-    overflow: visible;
-    position: relative;
+  display: inline-block;
+  height: 100%;
+  overflow: visible;
+  position: relative;
 }
 
 .Layout_AutoFillOverlay {
-    padding: 5rem 2rem;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255,255,255,0.95);
-    z-index: $zIndexOverlay;
-    font-size: 1.2rem;
+  padding: 5rem 2rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.85);
+  z-index: $zIndexOverlay;
+  font-size: 1.2rem;
 }
 
 .Layout_AutoFillOverlay-inner {
-    margin: 0 5rem;
+  margin: 0 5rem;
 }

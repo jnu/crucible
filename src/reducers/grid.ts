@@ -54,6 +54,8 @@ export type GridCellNotes = {
   annotation?: string;
   acrossWordLength?: number;
   downWordLength?: number;
+  acrossWordPos?: number;
+  downWordPos?: number;
 };
 
 /**
@@ -194,6 +196,12 @@ export const updateGridContent = (
         ? downWord
         : null;
 
+      // Get the index within the word that this cell occupies for both the
+      // across and down words. This is the same as the current length of
+      // the word, so there's no need to search at all.
+      const acrossWordPos = wordLengthCounters.across.get(acrossWord!)! - 1;
+      const downWordPos = wordLengthCounters.down.get(downWord!)! - 1;
+
       let currentAcrossWord = null;
       let currentDownWord = null;
 
@@ -209,6 +217,8 @@ export const updateGridContent = (
           downWord,
           startOfWord,
           startClueIdx,
+          acrossWordPos,
+          downWordPos,
         } as const;
 
         // Mark existing clue as projected to prevent
@@ -241,6 +251,8 @@ export const updateGridContent = (
           downWord,
           startOfWord,
           startClueIdx,
+          acrossWordPos,
+          downWordPos,
         };
       }
 
@@ -641,9 +653,18 @@ export const rAutoFillGridDone = (
   state: GridState,
   action: AutoFillGridDone,
 ) => {
+  // Run the autofill through the standard analysis so it renders the same as
+  // any human fill.
+  const updated = updateGridContent(
+    action.content.slice(),
+    state.clues,
+    state.height,
+    state.width,
+  );
+
   return {
     ...state,
-    content: action.content.slice(),
+    content: updated.content,
     autoFilling: false,
     autoFillStatus: null,
     autoFillError: null,

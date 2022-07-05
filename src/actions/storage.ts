@@ -130,23 +130,33 @@ export const loadBitmap = (bitmap: string, id: string | null = null) => {
     type: 'REPLACE_GRID',
     grid,
     id,
-  } as const;
+  } as ReplaceGrid;
 };
 
 /**
  * Load a clear grid.
  */
-export const loadEmptyPuzzle = (uuid?: string) =>
-  ({
-    type: 'REPLACE_GRID',
-    id: uuid || new UUID(4).format(),
-  } as const);
+export const loadEmptyPuzzle = (uuid?: string, cb?: (s: string) => void) => {
+  return (dispatch: Dispatch, _getState: GetState) => {
+    const id = uuid || new UUID(4).format();
+    dispatch({
+      type: 'REPLACE_GRID',
+      id,
+    } as ReplaceGrid);
+    if (cb) {
+      cb(id);
+    }
+  };
+};
 
 /**
  * Action that clears and/or replaces the current grid.
  */
-export type ReplaceGrid = ReturnType<typeof loadBitmap> &
-  ReturnType<typeof loadEmptyPuzzle>;
+export type ReplaceGrid = {
+  type: 'REPLACE_GRID';
+  id: string;
+  grid?: CruxPuzzle;
+};
 
 /**
  * Serialized grid template.
@@ -308,7 +318,7 @@ export type SavedPuzzle = Readonly<{
 /**
  * Load a puzzle with the given UUID.
  */
-export const loadPuzzle = (uuid: string) => {
+export const loadPuzzle = (uuid: string, cb?: (s: string) => void) => {
   return (dispatch: Dispatch, _getState: GetState) => {
     dispatch(REQUEST_PUZZLE);
     storageClient
@@ -316,6 +326,9 @@ export const loadPuzzle = (uuid: string) => {
       .then(({key, bitmap}) => {
         dispatch(RECEIVE_PUZZLE_SUCCESS);
         dispatch(loadBitmap(bitmap, key));
+        if (cb) {
+          cb(key);
+        }
       })
       .catch((error) => {
         dispatch(loadEmptyPuzzle(uuid));
