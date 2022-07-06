@@ -24,7 +24,5 @@ export const muiCrucibleTheme = {
       paper: muiColors.common.white,
     },
     divider: muiColors.grey[300],
-    //pickerHeaderColor: muiColors.cyan500,
-    //clockCircleColor: alpha(muiColors.darkBlack, 0.07),
   },
 } as const;

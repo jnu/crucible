@@ -1,6 +1,9 @@
 import React from 'react';
 
+import LockIcon from '@mui/icons-material/Lock';
 import Button from '@mui/material/Button';
+
+import * as muiColors from '@mui/material/colors';
 import {autoFillGridDismissError, autoFillGridCancel} from '../actions';
 import {GridContent} from './GridContent';
 import {Clues} from './Clues';
@@ -49,6 +52,7 @@ const Stat = ({title, children}: StatProps) => (
 const selectProps = (state: State) => {
   const {grid, screen} = state;
   return {
+    locked: grid.locked,
     width: grid.width,
     height: grid.height,
     cellSize: grid.cellSize,
@@ -148,6 +152,11 @@ export const Layout = () => {
     width: puzzleContainerWidth - 2 * MAR_SMALL,
     left: MAR_SMALL,
   } as const;
+  const iconBlockStyle = {
+    position: 'absolute',
+    right: MAR_SMALL,
+    top: CLUE_BUILDER_HEIGHT / 2,
+  } as const;
 
   // Puzzle info styles
   const puzzleInfoStyle = {height: PUZZLE_INFO_HEIGHT} as const;
@@ -214,6 +223,14 @@ export const Layout = () => {
           style={gridContainerStyle}>
           <div>
             <ClueBuilder style={clueBuilderStyle} />
+          </div>
+          <div style={iconBlockStyle}>
+            <LockIcon
+              fontSize="medium"
+              style={{
+                fill: props.locked ? muiColors.red[600] : muiColors.grey[400],
+              }}
+            />
           </div>
           <div style={puzzleStyle}>
             <GridContent />
