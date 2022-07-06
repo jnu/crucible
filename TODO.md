@@ -80,7 +80,7 @@ Items may jump around and work may not be completed exactly in the planned order
   - bug when looking at unchecked crosses
 - Auto-fill grid
   - ~~Improve TS perf (benchmark is 2523 pats/sec, )~~
-  - investigate non-determinism / solvability
+  - ~~investigate non-determinism / solvability~~
   - error handling for non-solvable case
   - parallelize ts solution
   - ~~better looking stats output~~
@@ -93,7 +93,8 @@ Items may jump around and work may not be completed exactly in the planned order
 - Puzzle difficulty grade (this depends on clues as well as answers / grid though)
 - Auto-fill grid
   - measure search space and progress through this space
-  - performance / progress viz
+  - check solvability and backtrack sooner
+  - ~~performance / progress viz~~
   - About page explaining how progress viz works
   - Make auto-fill buttons and errors look nicer
 

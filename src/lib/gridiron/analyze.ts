@@ -2,6 +2,7 @@ import type {GridCell} from '../../reducers/grid';
 import type {Wordlist} from '../readcross';
 import {isDefined} from '../isDefined';
 import {searchAllLists} from './util';
+import {LRUCache} from '../LRUCache';
 
 const WILDCARD = '*';
 
@@ -33,6 +34,11 @@ const extractWordQueries = (content: GridCell[]) => {
 };
 
 /**
+ * Wordbank query cache.
+ */
+const Q_CACHE = new LRUCache<string[], string>(1e6);
+
+/**
  * Examine grid and report solvability metrics for each cell.
  */
 export const analyzeGrid = async (content: GridCell[], lists: Wordlist) => {
@@ -49,10 +55,16 @@ export const analyzeGrid = async (content: GridCell[], lists: Wordlist) => {
   for (const key of WORD_KEYS) {
     const queries = wordQueries[key];
     for (const [id, q] of queries.entries()) {
-      const promise = searchAllLists(q, lists).then((result) => {
-        wordData[key].set(id, result);
-      });
-      p.push(promise);
+      const cached = Q_CACHE.getByKey(q);
+      if (cached) {
+        wordData[key].set(id, cached);
+      } else {
+        const promise = searchAllLists(q, lists).then((result) => {
+          Q_CACHE.addByKey(q, result);
+          wordData[key].set(id, result);
+        });
+        p.push(promise);
+      }
     }
   }
 
@@ -113,11 +125,9 @@ export const analyzeGrid = async (content: GridCell[], lists: Wordlist) => {
  * able to fit.
  */
 const scoreSolvability = (acrossCount: number, downCount: number) => {
-  if (acrossCount === 0 || downCount === 0) {
-    return 0;
-  }
-
-  return (Math.log(acrossCount + 1) + Math.log(downCount + 1)) / 2;
+  // The number is arbitrary. A good heuristic is just the number of available
+  // solutions (take the min of both directions).
+  return Math.min(acrossCount, downCount);
 };
 
 /**
@@ -136,11 +146,11 @@ const takeTemp = (acrossCount: number, downCount: number) => {
     return 5;
   } else if (n < 5) {
     return 4;
-  } else if (n < 10) {
-    return 3;
   } else if (n < 20) {
-    return 2;
+    return 3;
   } else if (n < 50) {
+    return 2;
+  } else if (n < 100) {
     return 1;
   }
 

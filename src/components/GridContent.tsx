@@ -31,6 +31,7 @@ const selectProps = (state: State) => {
   return {
     showHeatMap: grid.showHeatMap,
     wordlist: wordlist.lists,
+    wordlistReady: wordlist.ready,
     content: grid.content,
     width: grid.width,
     height: grid.height,
@@ -166,17 +167,18 @@ export const GridContent = () => {
     height,
     cellSize,
     wordlist,
+    wordlistReady,
     showHeatMap,
   } = useSelector(selectProps);
 
   // Analyze the grid when it changes to show heat viz.
   useEffect(() => {
-    if (!showHeatMap) {
+    if (!showHeatMap || !wordlistReady) {
       setAnalysis(null);
       return;
     }
     analyzeGrid(content, wordlist).then((r) => setAnalysis(r));
-  }, [content, wordlist, showHeatMap]);
+  }, [content, wordlist, showHeatMap, wordlistReady]);
 
   // Handle clicking into a cell
   const onFocusCell = (index: number) => {

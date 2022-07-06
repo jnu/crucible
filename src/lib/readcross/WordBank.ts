@@ -58,7 +58,7 @@ export class WordBank {
   // Word tries by length
   private _indexes: AbstractFixedLengthWordIndex[];
 
-  constructor(words?: string[] | {[key: number]: string}, cacheSize = 10) {
+  constructor(words?: string[] | {[key: number]: string}, cacheSize = 1e6) {
     this._indexes = [];
     this._cache = new LRUCache(cacheSize);
     if (words) {
