@@ -1,0 +1,13 @@
+{
+  "nyt16Year": {
+    "field": 1,
+    "col": "\t",
+    "row": "\r"
+  },
+  "broda": {
+    "field": 0,
+    "col": ";",
+    "row": "\n",
+    "maxLen": 21
+  }
+}
