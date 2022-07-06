@@ -1,18 +1,18 @@
 // Auto-generated module loader. Do not edit.
 
-import {chunks} from './manifest.2022-07-06T20:05:13.373Z';
+import {chunks} from './manifest.2022-07-06T01:45:25.193Z';
 
 /**
  * Timestamp (ms) when wordlist was last updated.
  * @type number
  */
-export {ts} from './manifest.2022-07-06T20:05:13.373Z';
+export {ts} from './manifest.2022-07-06T01:45:25.193Z';
 
 /**
  * ID of wordlist.
  * @type {string}
  */
-export const id = 'nyt16Year';
+export const id = 'broda';
 
 /**
  * Get a promise resolving with packed wordlist DAWG, binned by word length.

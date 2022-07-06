@@ -1,5 +1,6 @@
 {
   "nyt16Year": {
+    "maxLen": 24,
     "field": 1,
     "col": "\t",
     "row": "\r"

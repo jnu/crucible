@@ -1,7 +1,7 @@
 import {WordBank} from './WordBank';
-import {BrowserStorageClient} from '../BrowserStorageClient';
+import type {IStorageClient} from '../StorageClient';
 
-import * as wl_nyt16Year from 'data/dist/nyt16Year';
+import * as wl_broda from 'data/dist/broda';
 import {IDawgs} from 'data/common';
 
 /**
@@ -15,7 +15,7 @@ import {IDawgs} from 'data/common';
  *
  * @type {{ [key: string]: () => Promise<{[key: number]: String}>}}
  */
-const PREMADE_LISTS = [wl_nyt16Year].reduce((agg, mod) => {
+const PREMADE_LISTS = [wl_broda].reduce((agg, mod) => {
   const id = mod.id;
   const load = mod.load;
   let loader = load;
@@ -32,7 +32,7 @@ const PREMADE_LISTS = [wl_nyt16Year].reduce((agg, mod) => {
 const WORDLIST_KEY = 'wordlist';
 
 interface IWordListClientParams {
-  local: BrowserStorageClient;
+  local: IStorageClient;
 }
 
 interface ICacheEntry<T> {
@@ -45,7 +45,7 @@ interface ICacheEntry<T> {
  * TODO saving custom wordlists?
  */
 export class WordListClient {
-  private _cache: BrowserStorageClient;
+  private _cache: IStorageClient;
 
   private _requests: {[key: string]: Promise<WordBank> | null};
 

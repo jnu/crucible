@@ -18,6 +18,9 @@ const Trie = require('tiny-trie').Trie;
 
 const config = require('./processConfig.json');
 
+// Only consider words that are alphabetic.
+const LEGAL_WORDS = /^A-Z$/;
+
 /**
  * Shift the next line from the string. Pass the string in a box
  * (single-element array) to track the mutation.

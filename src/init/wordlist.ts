@@ -1,4 +1,4 @@
-import * as wl_nyt16Year from 'data/dist/nyt16Year';
+import * as wl_broda from 'data/dist/broda';
 import {loadWordList} from '../actions';
 import type {Store} from '../store';
 
@@ -6,5 +6,5 @@ import type {Store} from '../store';
  * Initialize Crucible.
  */
 export function init(store: Store) {
-  store.dispatch(loadWordList(wl_nyt16Year.id));
+  store.dispatch(loadWordList(wl_broda.id));
 }

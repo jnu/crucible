@@ -23,9 +23,6 @@ interface IWordListChunks {
   readonly 19: Promise<{default: string}>;
   readonly 20: Promise<{default: string}>;
   readonly 21: Promise<{default: string}>;
-  readonly 22: Promise<{default: string}>;
-  readonly 23: Promise<{default: string}>;
-  readonly 24: Promise<{default: string}>;
 }
 
 interface IWordListDawgs extends IDawgs {
@@ -50,9 +47,6 @@ interface IWordListDawgs extends IDawgs {
   readonly 19: string;
   readonly 20: string;
   readonly 21: string;
-  readonly 22: string;
-  readonly 23: string;
-  readonly 24: string;
 }
 
 export declare const ts: number;
