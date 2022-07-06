@@ -1,26 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <!-- Always reload HTML. -->
-        <meta http-equiv="cache-control" content="no-cache" />
-        <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
-        <meta http-equiv="pragma" content="no-cache" />
+  <head>
+    <meta charset="utf-8" />
+    <!-- Always reload HTML. -->
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
 
-        <title>Crucible</title>
-        <link href="https://fonts.googleapis.com/css?family=Radley|UnifrakturMaguntia" rel="stylesheet">
-        <link rel="icon"
-              type="image/x-icon"
-              href="/favicon.ico?<%=htmlWebpackPlugin.options.ts%>">
-        <% for (var i = 0; i < htmlWebpackPlugin.files.css.length; i++) { %>
-        <link rel="stylesheet" type="text/css" href="/<%=htmlWebpackPlugin.files.css[i] %>"></script>
-        <% } %>
-    </head>
-    <body>
-        <main id="root"></main>
+    <title>Crucible</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Radley|UnifrakturMaguntia"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/favicon.ico?<%=htmlWebpackPlugin.options.ts%>"
+    />
+    <% for (var i = 0; i < htmlWebpackPlugin.files.css.length; i++) { %>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/<%=htmlWebpackPlugin.files.css[i] %>"
+    />
+    <% } %>
+  </head>
+  <style type="text/css">
+    .hidden {
+      visibility: hidden;
+      opacity: 0;
+    }
+  </style>
+  <body class="hidden">
+    <main id="root"></main>
 
-        <% for (var i = 0; i < htmlWebpackPlugin.files.js.length; i++) { %>
-        <script src="/<%=htmlWebpackPlugin.files.js[i] %>" charset="utf8"></script>
-        <% } %>
-    </body>
+    <% for (var i = 0; i < htmlWebpackPlugin.files.js.length; i++) { %>
+    <script src="/<%=htmlWebpackPlugin.files.js[i] %>" charset="utf8"></script>
+    <% } %>
+  </body>
 </html>

@@ -1,33 +1,49 @@
 @import 'constants';
 
-*, html {
-    box-sizing: border-box;
-    font-family: 'Radley', serif;
-    color: $dark;
+*,
+html {
+  box-sizing: border-box;
+  font-family: 'Radley', serif;
+  color: $dark;
 }
 
 body {
-    width: 100%;
-    margin: 0;
-    padding: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
+.-loading {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  .caption {
+    line-height: 3;
+  }
+}
 
 .Puzzle {
-    position: relative;
-    border-top: 2px solid $dark;
+  position: relative;
+  border-top: 2px solid $dark;
 }
 
 @media (min-width: 900px) {
-    .AppWidth- {
-        margin: 0 auto;
-        width: 900px;
-    }
+  .AppWidth- {
+    margin: 0 auto;
+    width: 900px;
+  }
 }
 
 @media (max-width: 900px) {
-    .AppWidth- {
-        margin: 0;
-        width: 100%;
-    }
+  .AppWidth- {
+    margin: 0;
+    width: 100%;
+  }
 }

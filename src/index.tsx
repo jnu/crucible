@@ -55,6 +55,8 @@ initWordList(store);
 // Render the app.
 const root = createRoot(document.getElementById('root')!);
 root.render(<App store={store} />);
+// Show content
+document.body.classList.remove('hidden');
 
 // Install debug utils for local development.
 if (DEBUG) {

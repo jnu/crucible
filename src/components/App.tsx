@@ -7,11 +7,12 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
+import {ThemeProvider, createTheme} from '@mui/material/styles';
 
 import type {Store} from '../store';
 import {useSelector, useDispatch} from '../store';
 import {loadPuzzle} from '../actions';
-import {ThemeProvider, createTheme} from '@mui/material/styles';
 import {muiCrucibleTheme} from './muiCrucibleTheme';
 import {Layout} from './Layout';
 import {Header} from './Header';
@@ -28,7 +29,10 @@ const _Inner = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {puzzleId} = useParams();
-  const currentPuzzleId = useSelector(({grid}) => grid.id);
+  const {currentPuzzleId, loading} = useSelector(({grid, wordlist}) => ({
+    currentPuzzleId: grid.id,
+    loading: wordlist.fetching.size > 0,
+  }));
 
   // Make sure the puzzle displayed matches anything shown in the URL.
   useEffect(() => {
@@ -47,11 +51,20 @@ const _Inner = () => {
   }, [puzzleId, currentPuzzleId]);
 
   return (
-    <div className="AppWidth-">
-      <Header />
-      <div className="Puzzle">
-        <Layout />
-      </div>
+    <div className={`AppWidth- ${loading ? '-loading' : ''}`}>
+      {loading ? (
+        <>
+          <CircularProgress />
+          <div className="caption">Loading ...</div>
+        </>
+      ) : (
+        <>
+          <Header />
+          <div className="Puzzle">
+            <Layout />
+          </div>
+        </>
+      )}
     </div>
   );
 };
