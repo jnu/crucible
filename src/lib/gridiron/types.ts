@@ -86,10 +86,14 @@ export interface IWebWorker {
   addEventListener: (type: string, handler: (event: any) => void) => void;
 }
 
+export interface IGridIronInitMessage {
+  readonly type: 'INIT';
+  readonly wordlists: {[key: string]: IJSONWordIndex[]};
+}
+
 export interface IGridIronSolveMessage {
   readonly type: 'SOLVE';
   readonly grid: GridCell[];
-  readonly wordlists: {[key: string]: IJSONWordIndex[]};
   readonly updateInterval: number;
 }
 
@@ -97,7 +101,21 @@ export interface IGridIronAbortMessage {
   readonly type: 'ABORT';
 }
 
-export type GridIronMessage = IGridIronSolveMessage | IGridIronAbortMessage;
+export interface IGridIronSmokeTestMessage {
+  readonly type: 'SMOKE_TEST';
+  readonly grid: GridCell[];
+  readonly duration: number;
+}
+
+export type GridIronMessage =
+  | IGridIronSolveMessage
+  | IGridIronAbortMessage
+  | IGridIronSmokeTestMessage
+  | IGridIronInitMessage;
+
+interface IGridIronReadyResponse {
+  readonly type: 'READY';
+}
 
 interface IGridIronErrorResponse {
   readonly type: 'ERROR';
@@ -114,10 +132,17 @@ interface IGridIronProgressResponse {
   readonly data: IProgressStats;
 }
 
+interface IGridIronSmokeTestResponse {
+  readonly type: 'SMOKE_TEST';
+  readonly solvable: boolean;
+}
+
 export type GridIronResponse =
+  | IGridIronReadyResponse
   | IGridIronErrorResponse
   | IGridIronSolutionResponse
-  | IGridIronProgressResponse;
+  | IGridIronProgressResponse
+  | IGridIronSmokeTestResponse;
 
 export interface IWorkerMessage<T> {
   data: T;

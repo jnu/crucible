@@ -25,6 +25,8 @@ import type {
   AutoFillGridDone,
   AutoFillGridStatsUpdate,
   AutoFillGridError,
+  RequestSmokeTest,
+  ReceiveSmokeTestResult,
 } from '../actions/gridSemantic';
 import type {ReplaceGrid} from '../actions/storage';
 import type {Action} from '../actions';
@@ -90,6 +92,9 @@ export type GridState = Readonly<{
   autoFillError: Error | null;
   locked: boolean;
   showHeatMap: boolean;
+  doSmokeTest: boolean;
+  smokeTesting: boolean;
+  smokeTestResult: boolean;
 }>;
 
 /**
@@ -393,6 +398,43 @@ const createNewGrid = (): GridState => {
     autoFilling: false,
     autoFillStatus: null,
     autoFillError: null,
+
+    // Smoke test state
+    doSmokeTest: true,
+    smokeTesting: false,
+    smokeTestResult: false,
+  };
+};
+
+/**
+ * Mark the smoke test as started.
+ */
+export const rRequestSmokeTest = (
+  state: GridState,
+  _action: RequestSmokeTest,
+) => {
+  if (!state.doSmokeTest) {
+    return state;
+  }
+
+  return {
+    ...state,
+    smokeTesting: true,
+    smokeTestResult: false,
+  };
+};
+
+/**
+ * Store results of smoke test.
+ */
+export const rReceiveSmokeTestResult = (
+  state: GridState,
+  action: ReceiveSmokeTestResult,
+) => {
+  return {
+    ...state,
+    smokeTesting: false,
+    smokeTestResult: action.solvable,
   };
 };
 
@@ -737,6 +779,10 @@ const dispatchGridAction = (state: GridState, action: Action): GridState => {
       return rAutoFillGridError(state, action);
     case 'AUTO_FILL_GRID_DISMISS_ERROR':
       return rAutoFillGridDismissError(state, action);
+    case 'SMOKE_TEST_REQUEST':
+      return rRequestSmokeTest(state, action);
+    case 'SMOKE_TEST_RESULT':
+      return rReceiveSmokeTestResult(state, action);
     default:
       return state;
   }

@@ -67,16 +67,16 @@ export const fill = (
   statsCallback?: (x: IProgressStats) => void,
   updateInterval: number = 500,
 ) => {
-  let canceled = false;
+  const scope = {canceled: false};
   const result = solve(
     grid,
     lists,
     statsCallback,
     updateInterval,
-    () => canceled,
+    () => scope.canceled,
   );
   return new Future(result, () => {
-    canceled = true;
+    scope.canceled = true;
   });
 };
 

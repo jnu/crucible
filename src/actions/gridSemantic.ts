@@ -1,5 +1,5 @@
 import {moveCursor} from './gridMeta';
-import {fill, cancel} from '../lib/gridiron';
+import {smokeTest, fill, cancel} from '../lib/gridiron';
 import type {IProgressStats} from '../lib/gridiron';
 import type {Direction, CellType, Cell} from '../lib/crux';
 import type {Dispatch, GetState} from '../store';
@@ -189,3 +189,30 @@ export const updatePuzzleInfo = (key: string, value: string) =>
  * Action to update puzzle metadata.
  */
 export type UpdatePuzzleInfo = ReturnType<typeof updatePuzzleInfo>;
+
+/**
+ * Run a smoke test with the current grid state.
+ */
+export const runSmokeTest = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {grid, wordlist} = getState();
+    dispatch({type: 'SMOKE_TEST_REQUEST'});
+    const result = await smokeTest(grid.content, wordlist.lists);
+    dispatch({type: 'SMOKE_TEST_RESULT', solvable: result});
+  };
+};
+
+/**
+ * Action to initialize smoke test.
+ */
+export type RequestSmokeTest = {
+  type: 'SMOKE_TEST_REQUEST';
+};
+
+/**
+ * Action to store smoke test result.
+ */
+export type ReceiveSmokeTestResult = {
+  type: 'SMOKE_TEST_RESULT';
+  solvable: boolean;
+};

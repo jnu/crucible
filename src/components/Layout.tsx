@@ -1,5 +1,8 @@
 import React from 'react';
 
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import ErrorIcon from '@mui/icons-material/ReportGmailerrorred';
 import LockIcon from '@mui/icons-material/Lock';
 import Button from '@mui/material/Button';
 
@@ -52,6 +55,9 @@ const Stat = ({title, children}: StatProps) => (
 const selectProps = (state: State) => {
   const {grid, screen} = state;
   return {
+    smokeTesting: grid.smokeTesting,
+    smokeTestResult: grid.smokeTestResult,
+    doSmokeTest: grid.doSmokeTest,
     locked: grid.locked,
     width: grid.width,
     height: grid.height,
@@ -116,7 +122,16 @@ const renderAutoFillOverlay = (
 export const Layout = () => {
   const dispatch = useDispatch();
   const props = useSelector(selectProps);
-  const {width, height, cellSize, viewportWidth, autoFilling} = props;
+  const {
+    width,
+    height,
+    cellSize,
+    viewportWidth,
+    autoFilling,
+    smokeTesting,
+    doSmokeTest,
+    smokeTestResult,
+  } = props;
 
   // Layout computation. Puzzle is slightly larger than the sum of its
   // contents due to the border.
@@ -225,6 +240,17 @@ export const Layout = () => {
             <ClueBuilder style={clueBuilderStyle} />
           </div>
           <div style={iconBlockStyle}>
+            {smokeTesting ? (
+              <HourglassBottomIcon fontSize="medium" />
+            ) : smokeTestResult ? (
+              <CheckCircleOutlineIcon
+                fontSize="medium"
+                style={{fill: muiColors.green[600]}}
+              />
+            ) : (
+              <ErrorIcon fontSize="medium" style={{fill: muiColors.red[600]}} />
+            )}
+
             <LockIcon
               fontSize="medium"
               style={{

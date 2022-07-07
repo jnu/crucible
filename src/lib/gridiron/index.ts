@@ -3,6 +3,7 @@
  */
 
 import {IJSONWordIndex, WordBank} from '../readcross/WordBank';
+import type {Wordlist} from '../readcross';
 import {
   GridCell,
   IProgressStats,
@@ -15,66 +16,172 @@ import {Deferred} from '../deferred';
 // Re-export useful types.
 export {IProgressStats} from './types';
 
-const _sendAutoFillMessageToWorker = (
-  worker: Worker,
-  grid: GridCell[],
-  wordlists: {[key: string]: IJSONWordIndex[]},
-  updateInterval: number,
-) => {
-  const msg: IGridIronSolveMessage = {
-    type: 'SOLVE',
-    grid,
-    wordlists,
-    updateInterval,
-  };
-  worker.postMessage(msg);
+/**
+ * Container for a worker.
+ */
+type WorkerProcess = {
+  thread: Worker;
+  ready: Promise<void>;
 };
 
-let _worker: Worker | null = null;
+/**
+ * Background thread (null before initialization).
+ */
+let _worker: WorkerProcess | null = null;
 
-const _runAutoFillOnWorker = (
+/**
+ * Fill in grid content based on initial constraints (i.e., the content given
+ * in the input grid) and the provided word-lists.
+ */
+export const fill = async (
   grid: GridCell[],
-  words: {[key: string]: WordBank},
+  wordlist: Wordlist,
   statsCallback?: (x: IProgressStats) => void,
-  updateInterval: number = 2000,
+  updateInterval: number = 500,
 ): Promise<GridCell[]> => {
-  // Re-use existing worker if possible
-  if (_worker) {
-    _sendCancel(_worker);
+  if (_worker?.thread) {
+    _sendCancel(_worker.thread);
   }
 
-  _worker = new Worker(new URL('./autofill.worker', import.meta.url));
-  const worker = _worker;
+  const worker = await _initWorker(wordlist);
 
   const deferred = new Deferred<GridCell[]>();
 
-  worker.addEventListener(
-    'message',
-    (event: IWorkerMessage<GridIronResponse>) => {
-      switch (event.data.type) {
-        case 'SOLUTION':
-          return deferred.resolve(event.data.solution);
-        case 'ERROR':
-          return deferred.reject(new Error(event.data.message));
-        case 'PROGRESS':
-          if (statsCallback) {
-            return statsCallback(event.data.data);
-          }
-          return;
-        default:
-          throw new Error(
-            `Unknown event from worker ${JSON.stringify(event.data)}`,
-          );
-      }
-    },
-  );
+  // Set up one-time event listener to listen for results.
+  const handler = (event: IWorkerMessage<GridIronResponse>) => {
+    switch (event.data.type) {
+      case 'SOLUTION':
+        // TODO: consider job id
+        worker.removeEventListener('message', handler);
+        return deferred.resolve(event.data.solution);
+      case 'ERROR':
+        // TODO: consider job id
+        worker.removeEventListener('message', handler);
+        return deferred.reject(new Error(event.data.message));
+      case 'PROGRESS':
+        if (statsCallback) {
+          return statsCallback(event.data.data);
+        }
+        return;
+      default:
+        throw new Error(
+          `Unknown event from worker ${JSON.stringify(event.data)}`,
+        );
+    }
+  };
 
-  const jsonLists = _serializeWordLists(words);
-  _sendAutoFillMessageToWorker(worker, grid, jsonLists, updateInterval);
+  worker.addEventListener('message', handler);
+  worker.postMessage({
+    type: 'SOLVE',
+    grid,
+    updateInterval,
+  });
 
   return deferred.promise;
 };
 
+/**
+ * Run the smoke test on a worker thread.
+ */
+export const smokeTest = async (
+  grid: GridCell[],
+  words: {[key: string]: WordBank},
+  duration: number = 3000,
+) => {
+  const worker = await _initWorker(words);
+
+  const deferred = new Deferred<boolean>();
+
+  // Set up listener that will fetch result.
+  const handler = (event: IWorkerMessage<GridIronResponse>) => {
+    switch (event.data.type) {
+      case 'SMOKE_TEST':
+        // TODO: include job id
+        worker.removeEventListener('message', handler);
+        return deferred.resolve(event.data.solvable);
+      case 'ERROR':
+        // TODO: include job id
+        worker.removeEventListener('message', handler);
+        return deferred.reject(new Error(event.data.message));
+      default:
+        // Ignore
+        console.info('Ignoring message', event.data);
+    }
+  };
+
+  worker.addEventListener('message', handler);
+  worker.postMessage({
+    type: 'SMOKE_TEST',
+    grid,
+    duration,
+  });
+
+  return deferred.promise;
+};
+
+/**
+ * Cancel any ongoing auto-fill job.
+ */
+export const cancel = () => {
+  if (!_worker?.thread) {
+    return;
+  }
+
+  _sendCancel(_worker.thread);
+};
+
+/**
+ * Initialize the auto-fill worker thread.
+ */
+const _initWorker = async (wordlist: Wordlist) => {
+  if (_worker) {
+    await _worker.ready;
+    return _worker.thread;
+  }
+
+  // Deferred promise that will resolve when the worker is initialized.
+  const deferred = new Deferred<void>();
+
+  // Create a new thread.
+  // TODO: use a shared worker to make pooling easier?
+  const thread = new Worker(new URL('./autofill.worker', import.meta.url));
+
+  // Add a one-time message handler for initialization.
+  const readyHandler = (event: IWorkerMessage<GridIronResponse>) => {
+    switch (event.data.type) {
+      case 'READY':
+        thread.removeEventListener('message', readyHandler);
+        return deferred.resolve();
+      case 'ERROR':
+        thread.removeEventListener('message', readyHandler);
+        return deferred.reject(new Error(event.data.message));
+      default:
+        // ignore
+        console.warn('Unexpected message from worker:', event.data);
+    }
+  };
+
+  // Listen for the ready (or error) events.
+  thread.addEventListener('message', readyHandler);
+
+  // Send initialization signal
+  _sendInit(thread, wordlist);
+
+  // Set the singleton worker with the deferred promise that can be awaited
+  // by anyone who calls it.
+  _worker = {
+    thread: thread,
+    ready: deferred.promise,
+  };
+
+  // Now just wait for init!
+  await _worker.ready;
+  return _worker.thread;
+};
+
+/**
+ * Convert word lists to simplified JSON for marshalling to background thread.
+ */
 const _serializeWordLists = (words: {
   [key: string]: WordBank;
 }): {
@@ -88,30 +195,6 @@ const _serializeWordLists = (words: {
 };
 
 /**
- * Fill in grid content based on initial constraints (i.e., the content given
- * in the input grid) and the provided word-lists.
- * @param {GridCell[]} grid
- * @param {{[p: string]: WordBank}} words
- * @param {(x: IProgressStats) => void} statsCallback
- * @param {number} updateInterval
- * @returns {Promise<GridCell[]>}
- */
-export const fill = (
-  grid: GridCell[],
-  words: {[key: string]: WordBank},
-  statsCallback?: (x: IProgressStats) => void,
-  updateInterval: number = 500,
-): Promise<GridCell[]> => {
-  // TODO(jnu)
-  // - Fix update interval
-  // - Write Rust implementation
-  // - Graceful degradation Rust -> TS based on availability.
-  // - Lock so that multiple threads aren't spawned
-  // - Ability to cancel processing
-  return _runAutoFillOnWorker(grid, words, statsCallback, updateInterval);
-};
-
-/**
  * Send worker a message to cancel.
  */
 const _sendCancel = (w: Worker) => {
@@ -119,15 +202,14 @@ const _sendCancel = (w: Worker) => {
 };
 
 /**
- * Cancel any ongoing auto-fill job.
+ * Initialize the worker thread.
  */
-export const cancel = () => {
-  if (!_worker) {
-    return;
-  }
-  _sendCancel(_worker);
-  _worker.terminate();
-  _worker = null;
+const _sendInit = (w: Worker, wl: {[key: string]: WordBank}) => {
+  const wordlists = _serializeWordLists(wl);
+  w.postMessage({
+    type: 'INIT',
+    wordlists,
+  });
 };
 
 // Other useful exports
