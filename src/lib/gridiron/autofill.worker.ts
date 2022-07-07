@@ -41,9 +41,10 @@ const _sendResponse = (response: GridIronResponse) => {
 /**
  * Send auto-fill solution to the main thread.
  */
-const _sendSolution = (solution: GridCell[]) => {
+const _sendSolution = (solution: GridCell[], jobId: string) => {
   _sendResponse({
     type: 'SOLUTION',
+    jobId,
     solution,
   });
 };
@@ -51,9 +52,10 @@ const _sendSolution = (solution: GridCell[]) => {
 /**
  * Send smoke test results to the main thread.
  */
-const _sendSmokeTestResult = (solvable: boolean) => {
+const _sendSmokeTestResult = (solvable: boolean, jobId: string) => {
   _sendResponse({
     type: 'SMOKE_TEST',
+    jobId,
     solvable,
   });
 };
@@ -61,9 +63,10 @@ const _sendSmokeTestResult = (solvable: boolean) => {
 /**
  * Report an error to the main thread.
  */
-const _sendError = (message: string) => {
+const _sendError = (message: string, jobId: string) => {
   _sendResponse({
     type: 'ERROR',
+    jobId,
     message,
   });
 };
@@ -84,9 +87,10 @@ const _inflateWordLists = (lists: {
 /**
  * Update solve progress.
  */
-const _updateStats = (stats: IProgressStats) => {
+const _updateStats = (stats: IProgressStats, jobId: string) => {
   _sendResponse({
     type: 'PROGRESS',
+    jobId,
     data: stats,
   });
 };
@@ -94,7 +98,7 @@ const _updateStats = (stats: IProgressStats) => {
 /**
  * Run solve routine til it finishes.
  */
-const solve = (grid: GridCell[], updateInterval: number) => {
+const solve = (jobId: string, grid: GridCell[], updateInterval: number) => {
   if (ctx.fillFuture) {
     console.warn('Processing already in progress!');
     return ctx.fillFuture.promise;
@@ -104,31 +108,31 @@ const solve = (grid: GridCell[], updateInterval: number) => {
     throw new Error('worker not inited');
   }
 
-  ctx.fillFuture = fill(grid, ctx.words, _updateStats, updateInterval);
+  ctx.fillFuture = fill(jobId, grid, ctx.words, _updateStats, updateInterval);
 
   return ctx.fillFuture.promise
     .then((solution) => {
       ctx.fillFuture = null;
-      _sendSolution(solution);
+      _sendSolution(solution, jobId);
       return solution;
     })
     .catch((e) => {
-      _sendError(e instanceof Error ? e.message : '' + e);
+      _sendError(e instanceof Error ? e.message : '' + e, jobId);
     });
 };
 
 /**
  * Initialize the worker.
  */
-const init = (wordlists: {[key: string]: IJSONWordIndex[]}) => {
+const init = (jobId: string, wordlists: {[key: string]: IJSONWordIndex[]}) => {
   ctx.words = _inflateWordLists(wordlists);
-  _sendResponse({type: 'READY'});
+  _sendResponse({type: 'READY', jobId});
 };
 
 /**
  * Run smoke test to check solvability, bounded by the given interval.
  */
-const smokeTest = async (grid: GridCell[], duration: number) => {
+const smokeTest = async (jobId: string, grid: GridCell[], duration: number) => {
   if (ctx.fillFuture) {
     ctx.fillFuture.cancel();
   }
@@ -139,6 +143,7 @@ const smokeTest = async (grid: GridCell[], duration: number) => {
 
   const t0 = Date.now();
   ctx.fillFuture = fill(
+    jobId,
     grid,
     ctx.words,
     () => {
@@ -151,10 +156,10 @@ const smokeTest = async (grid: GridCell[], duration: number) => {
 
   try {
     await ctx.fillFuture.promise;
-    _sendSmokeTestResult(true);
+    _sendSmokeTestResult(true, jobId);
   } catch (e) {
     const possible = /cancel/.test((e as Error).message);
-    _sendSmokeTestResult(possible);
+    _sendSmokeTestResult(possible, jobId);
   } finally {
     ctx.fillFuture = null;
   }
@@ -176,15 +181,16 @@ const abort = () => {
  * Handle incoming messages.
  */
 const dispatch = (message: IWorkerMessage<GridIronMessage>) => {
+  const jobId = message.data.jobId;
   switch (message.data.type) {
     case 'INIT':
-      init(message.data.wordlists);
+      init(jobId, message.data.wordlists);
       break;
     case 'SOLVE':
-      solve(message.data.grid, message.data.updateInterval || 500);
+      solve(jobId, message.data.grid, message.data.updateInterval || 500);
       break;
     case 'SMOKE_TEST':
-      smokeTest(message.data.grid, message.data.duration);
+      smokeTest(jobId, message.data.grid, message.data.duration);
       break;
     case 'ABORT':
       abort();
@@ -195,11 +201,11 @@ const dispatch = (message: IWorkerMessage<GridIronMessage>) => {
 };
 
 // Install event listener to handle incoming messages from main thread.
-self.addEventListener('message', (e) => {
+self.addEventListener('message', (d) => {
   try {
-    dispatch(e);
+    dispatch(d);
   } catch (e) {
     const msg = e instanceof Error ? e.message : `${e}`;
-    _sendError(msg);
+    _sendError(d.data.jobId, msg);
   }
 });

@@ -22,12 +22,13 @@ const clone = <T extends Object>(a: T[]) => a.map((o) => ({...o}));
 /**
  * Callback to report stats to the UI.
  */
-export type StatsCallback = (x: IProgressStats) => void;
+export type StatsCallback = (x: IProgressStats, jobId: string) => void;
 
 /**
  * Broadcast stats back to the main thread if the time is right.
  */
 const reportStats = (
+  jobId: string,
   lastReport: number,
   interval: number,
   statsCallback: StatsCallback | undefined,
@@ -42,7 +43,7 @@ const reportStats = (
     return lastReport;
   }
 
-  statsCallback(stats);
+  statsCallback(stats, jobId);
 
   return now;
 };
@@ -62,13 +63,15 @@ const hashGrid = (grid: GridCell[]) => {
  * Fill the grid, returning a cancelable Future result.
  */
 export const fill = (
+  jobId: string,
   grid: GridCell[],
   lists: Wordlist,
-  statsCallback?: (x: IProgressStats) => void,
+  statsCallback?: StatsCallback,
   updateInterval: number = 500,
 ) => {
   const scope = {canceled: false};
   const result = solve(
+    jobId,
     grid,
     lists,
     statsCallback,
@@ -84,9 +87,10 @@ export const fill = (
  * Fill the grid iteratively using the provided wordlists.
  */
 const solve = async (
+  jobId: string,
   grid: GridCell[],
   lists: Wordlist,
-  statsCallback?: (x: IProgressStats) => void,
+  statsCallback?: StatsCallback,
   updateInterval: number = 200,
   canceled: () => boolean = () => false,
 ) => {
@@ -160,6 +164,7 @@ const solve = async (
     stats.grid = currentGrid;
     stats.analysis = analysis;
     _lastReported = reportStats(
+      jobId,
       _lastReported,
       updateInterval,
       statsCallback,
@@ -212,7 +217,7 @@ const solve = async (
   // Update stats one more time
   stats.elapsedTime = Date.now() - t0 / 1000;
   stats.visits = visited.size;
-  reportStats(0, updateInterval, statsCallback, stats);
+  reportStats(jobId, 0, updateInterval, statsCallback, stats);
 
   // Return the solution (hopefully! might still be null)
   if (!solution) {

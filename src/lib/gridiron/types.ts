@@ -89,22 +89,26 @@ export interface IWebWorker {
 export interface IGridIronInitMessage {
   readonly type: 'INIT';
   readonly wordlists: {[key: string]: IJSONWordIndex[]};
+  readonly jobId: string;
 }
 
 export interface IGridIronSolveMessage {
   readonly type: 'SOLVE';
   readonly grid: GridCell[];
   readonly updateInterval: number;
+  readonly jobId: string;
 }
 
 export interface IGridIronAbortMessage {
   readonly type: 'ABORT';
+  readonly jobId: string;
 }
 
 export interface IGridIronSmokeTestMessage {
   readonly type: 'SMOKE_TEST';
   readonly grid: GridCell[];
   readonly duration: number;
+  readonly jobId: string;
 }
 
 export type GridIronMessage =
@@ -115,26 +119,31 @@ export type GridIronMessage =
 
 interface IGridIronReadyResponse {
   readonly type: 'READY';
+  readonly jobId: string;
 }
 
 interface IGridIronErrorResponse {
   readonly type: 'ERROR';
   readonly message: string;
+  readonly jobId: string;
 }
 
 interface IGridIronSolutionResponse {
   readonly type: 'SOLUTION';
   readonly solution: GridCell[];
+  readonly jobId: string;
 }
 
 interface IGridIronProgressResponse {
   readonly type: 'PROGRESS';
   readonly data: IProgressStats;
+  readonly jobId: string;
 }
 
 interface IGridIronSmokeTestResponse {
   readonly type: 'SMOKE_TEST';
   readonly solvable: boolean;
+  readonly jobId: string;
 }
 
 export type GridIronResponse =
