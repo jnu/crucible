@@ -151,7 +151,7 @@ const smokeTest = async (jobId: string, grid: GridCell[], duration: number) => {
         ctx.fillFuture?.cancel();
       }
     },
-    duration,
+    250,
   );
 
   try {
