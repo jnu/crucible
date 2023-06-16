@@ -1,6 +1,8 @@
 # Crucible
 
-A crossword constructor.
+Where one might forge a crossword.
+
+<img width="800" alt="image" src="https://github.com/jnu/crucible/assets/1069899/1d7de68e-0204-4a68-826a-a6522d441cfb">
 
 # Features
 
@@ -24,6 +26,7 @@ A crossword constructor.
 - Print view
 - User account stuff
 - Advanced features (clue suggestions, improved autofill, etc)
+
 
 # Development
 
