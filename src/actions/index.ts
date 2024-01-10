@@ -18,6 +18,7 @@ export {
   autoFillGrid,
   autoFillGridDismissError,
   autoFillGridCancel,
+  runSmokeTest,
 } from './gridSemantic';
 
 export {setScreenSize, openMetaDialog, closeMetaDialog} from './meta';
@@ -68,6 +69,8 @@ import type {
   AutoFillGridDone,
   AutoFillGridStatsUpdate,
   AutoFillGridError,
+  RequestSmokeTest,
+  ReceiveSmokeTestResult,
 } from '../actions/gridSemantic';
 import type {
   ToggleSymmetricalGrid,
@@ -133,4 +136,6 @@ export type Action =
   | ScreenResize
   | RequestWordlist
   | ReceiveWordlistSuccess
-  | ReceiveWordlistError;
+  | ReceiveWordlistError
+  | RequestSmokeTest
+  | ReceiveSmokeTestResult;

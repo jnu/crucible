@@ -11,6 +11,7 @@ import {
   moveCursorAndUpdate,
   requestCellContext,
   hideCellContext,
+  runSmokeTest,
 } from '../actions';
 import {CellType, Direction} from '../lib/crux';
 import {analyzeGrid} from '../lib/gridiron';
@@ -177,6 +178,7 @@ export const GridContent = () => {
       setAnalysis(null);
       return;
     }
+    dispatch(runSmokeTest());
     analyzeGrid(content, wordlist).then((r) => setAnalysis(r));
   }, [content, wordlist, showHeatMap, wordlistReady]);
 

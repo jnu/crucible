@@ -8,91 +8,189 @@ import {
 } from './types';
 import {fill} from './autofill';
 import {WordBank, IJSONWordIndex} from '../readcross/WordBank';
+import {Wordlist} from '../readcross';
 import {Future} from '../Future';
+
+type LocalScope = {
+  fillFuture: Future<GridCell[]> | null;
+  words: Wordlist | null;
+};
 
 /**
  * HACK: Better-typed alias for the global context. See IWebWorker for info.
  */
-const ctx: IWebWorker = self as any;
+const ctx: IWebWorker & LocalScope = self as any;
 
-let fillFuture: Future<GridCell[]> | null = null;
+/**
+ * Any fill routine that's in process. (Could be null if none is ongoing.)
+ */
+ctx.fillFuture = null;
 
-function _sendResponse(response: GridIronResponse) {
+/**
+ * Word list to use for analysis / solving. (This is null before initializing.)
+ */
+ctx.words = null;
+
+/**
+ * Post a message to the main thread.
+ */
+const _sendResponse = (response: GridIronResponse) => {
   ctx.postMessage(response);
-}
+};
 
-function _sendSolution(solution: GridCell[]) {
+/**
+ * Send auto-fill solution to the main thread.
+ */
+const _sendSolution = (solution: GridCell[], jobId: string) => {
   _sendResponse({
     type: 'SOLUTION',
+    jobId,
     solution,
   });
-}
+};
 
-function _sendError(message: string) {
+/**
+ * Send smoke test results to the main thread.
+ */
+const _sendSmokeTestResult = (solvable: boolean, jobId: string) => {
+  _sendResponse({
+    type: 'SMOKE_TEST',
+    jobId,
+    solvable,
+  });
+};
+
+/**
+ * Report an error to the main thread.
+ */
+const _sendError = (message: string, jobId: string) => {
   _sendResponse({
     type: 'ERROR',
+    jobId,
     message,
   });
-}
+};
 
-function _inflateWordLists(lists: {[key: string]: IJSONWordIndex[]}): {
-  [key: string]: WordBank;
-} {
-  // TODO(jnu) ensure word banks are available here in worker context
+/**
+ * Instantiate serialized WordBanks.
+ */
+const _inflateWordLists = (lists: {
+  [key: string]: IJSONWordIndex[];
+}): Wordlist => {
   const banks: {[key: string]: WordBank} = {};
   Object.keys(lists).forEach((key) => {
     banks[key] = WordBank.fromJSON(lists[key]);
   });
   return banks;
-}
+};
 
-function _updateStats(stats: IProgressStats) {
+/**
+ * Update solve progress.
+ */
+const _updateStats = (stats: IProgressStats, jobId: string) => {
   _sendResponse({
     type: 'PROGRESS',
+    jobId,
     data: stats,
   });
-}
+};
 
-function solve(
-  grid: GridCell[],
-  wordlists: {[key: string]: IJSONWordIndex[]},
-  updateInterval: number,
-) {
-  if (fillFuture) {
-    _sendError('Processing is already started.');
-    return fillFuture.promise;
+/**
+ * Run solve routine til it finishes.
+ */
+const solve = (jobId: string, grid: GridCell[], updateInterval: number) => {
+  if (ctx.fillFuture) {
+    console.warn('Processing already in progress!');
+    return ctx.fillFuture.promise;
   }
-  const words = _inflateWordLists(wordlists);
-  fillFuture = fill(grid, words, _updateStats, updateInterval);
 
-  return fillFuture.promise
+  if (!ctx.words) {
+    throw new Error('worker not inited');
+  }
+
+  ctx.fillFuture = fill(jobId, grid, ctx.words, _updateStats, updateInterval);
+
+  return ctx.fillFuture.promise
     .then((solution) => {
-      fillFuture = null;
-      _sendSolution(solution);
+      ctx.fillFuture = null;
+      _sendSolution(solution, jobId);
       return solution;
     })
     .catch((e) => {
-      _sendError(e instanceof Error ? e.message : '' + e);
+      _sendError(e instanceof Error ? e.message : '' + e, jobId);
     });
-}
+};
 
-function abort() {
-  if (!fillFuture) {
-    _sendError('No processing is in progress.');
+/**
+ * Initialize the worker.
+ */
+const init = (jobId: string, wordlists: {[key: string]: IJSONWordIndex[]}) => {
+  ctx.words = _inflateWordLists(wordlists);
+  _sendResponse({type: 'READY', jobId});
+};
+
+/**
+ * Run smoke test to check solvability, bounded by the given interval.
+ */
+const smokeTest = async (jobId: string, grid: GridCell[], duration: number) => {
+  if (ctx.fillFuture) {
+    ctx.fillFuture.cancel();
+  }
+
+  if (!ctx.words) {
+    throw new Error('worker not inited');
+  }
+
+  const t0 = Date.now();
+  ctx.fillFuture = fill(
+    jobId,
+    grid,
+    ctx.words,
+    () => {
+      if (Date.now() - t0 > duration) {
+        ctx.fillFuture?.cancel();
+      }
+    },
+    250,
+  );
+
+  try {
+    await ctx.fillFuture.promise;
+    _sendSmokeTestResult(true, jobId);
+  } catch (e) {
+    const possible = /cancel/.test((e as Error).message);
+    _sendSmokeTestResult(possible, jobId);
+  } finally {
+    ctx.fillFuture = null;
+  }
+};
+
+/**
+ * Cancel a running job.
+ */
+const abort = () => {
+  if (!ctx.fillFuture) {
+    console.warn('Requested to abort but no job was in process.');
     return;
   }
-  fillFuture.cancel();
-  fillFuture = null;
-}
+  ctx.fillFuture.cancel();
+  ctx.fillFuture = null;
+};
 
-function dispatch(message: IWorkerMessage<GridIronMessage>) {
+/**
+ * Handle incoming messages.
+ */
+const dispatch = (message: IWorkerMessage<GridIronMessage>) => {
+  const jobId = message.data.jobId;
   switch (message.data.type) {
+    case 'INIT':
+      init(jobId, message.data.wordlists);
+      break;
     case 'SOLVE':
-      solve(
-        message.data.grid,
-        message.data.wordlists,
-        message.data.updateInterval || 500,
-      );
+      solve(jobId, message.data.grid, message.data.updateInterval || 500);
+      break;
+    case 'SMOKE_TEST':
+      smokeTest(jobId, message.data.grid, message.data.duration);
       break;
     case 'ABORT':
       abort();
@@ -100,6 +198,14 @@ function dispatch(message: IWorkerMessage<GridIronMessage>) {
     default:
       throw new Error(`Unknown event type ${JSON.stringify(message)}`);
   }
-}
+};
 
-self.addEventListener('message', dispatch);
+// Install event listener to handle incoming messages from main thread.
+self.addEventListener('message', (d) => {
+  try {
+    dispatch(d);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : `${e}`;
+    _sendError(d.data.jobId, msg);
+  }
+});
