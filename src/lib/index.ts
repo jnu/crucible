@@ -14,4 +14,5 @@ export const storageClient = new BrowserStorageClient(window.localStorage);
  */
 export const wordlistClient = new WordListClient({
   local: new MemoryStorageClient(),
+  persistent: storageClient,
 });

@@ -5,6 +5,11 @@ import * as wl_broda from 'data/dist/broda';
 import {IDawgs} from 'data/common';
 
 /**
+ * ID for the local mask wordlist.
+ */
+export const LOCAL_MASK_ID = '$mask';
+
+/**
  * Map from wordlist key to wordlist module loading function. The module loader
  * should be an async import that resolves with a hash of word length buckets
  * to packed DAWGs, which can be used to instantiate a WordBank. (This loader
@@ -33,6 +38,7 @@ const WORDLIST_KEY = 'wordlist';
 
 interface IWordListClientParams {
   local: IStorageClient;
+  persistent: IStorageClient;
 }
 
 interface ICacheEntry<T> {
@@ -47,10 +53,13 @@ interface ICacheEntry<T> {
 export class WordListClient {
   private _cache: IStorageClient;
 
+  private _store: IStorageClient;
+
   private _requests: {[key: string]: Promise<WordBank> | null};
 
   constructor(opts: IWordListClientParams) {
     this._cache = opts.local;
+    this._store = opts.persistent;
     this._requests = {};
   }
 
@@ -91,6 +100,7 @@ export class WordListClient {
     return this._cache
       .load<ICacheEntry<IDawgs>>(WORDLIST_KEY, key)
       .then((cacheHit) => cacheHit.data)
+      .catch(() => this._store.load<ICacheEntry<IDawgs>>(WORDLIST_KEY, key).then((storeHit) => storeHit.data))
       .catch(() =>
         PREMADE_LISTS[key]()
           .then((data) =>

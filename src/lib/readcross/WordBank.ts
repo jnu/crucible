@@ -52,13 +52,20 @@ export class WordBank {
     return wb;
   }
 
+  /**
+   * Whether words in the bank are allowed or banned. A masking word bank
+   * acts as a filter.
+   */
+  public mask: boolean;
+
   // Cache for recent query results
   private _cache: LRUCache<void | string[], string>;
 
   // Word tries by length
   private _indexes: AbstractFixedLengthWordIndex[];
 
-  constructor(words?: string[] | {[key: number]: string}, cacheSize = 1e6) {
+  constructor(words?: string[] | {[key: number]: string}, cacheSize = 1e6, mask = false) {
+    this.mask = mask;
     this._indexes = [];
     this._cache = new LRUCache(cacheSize);
     if (words) {

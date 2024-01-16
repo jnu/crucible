@@ -19,11 +19,17 @@ export const searchAllLists = async (w: string, lists: Wordlist) => {
     return [];
   }
 
-  const p = Object.values(lists).map((l) => l.search(w));
+  const banks = Object.values(lists).sort((a ,b) => {
+    return a.mask < b.mask ? -1 : 1;
+  });
+  const p = banks.map((l) => l.search(w));
   const results = await Promise.all(p);
   // TODO may want to include source metadata. For now, just glom all
   // results together no matter which list they came from.
-  return results.reduce((agg, cur) => agg.concat(cur), []);
+  // Masked words are excluded from results.
+  const s = new Set<string>();
+  results.forEach((r, i) => r.forEach((w) => banks[i].mask ? s.delete(w) : s.add(w)));
+  return Array.from(s);
 };
 
 /**
