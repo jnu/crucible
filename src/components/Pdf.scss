@@ -1,0 +1,11 @@
+.Pdf {
+  height: calc(100vh - 100px);
+  width: 100%;
+
+  iframe {
+    height: 100%;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #bbb;
+  }
+}

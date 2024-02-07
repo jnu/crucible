@@ -10,6 +10,11 @@ export {
 } from './gridMeta';
 
 export {
+  viewPdf,
+  viewEditor,
+} from './view';
+
+export {
   resize,
   updateCell,
   updateClue,
@@ -41,6 +46,10 @@ export {loadWordList, addWord, addCustomWord, removeWord, removeCustomWord} from
 
 // TYPES
 
+import type {
+  ViewPdf,
+  ViewEditor,
+} from './view';
 import type {
   ReplaceGrid,
   AutoSaveGridStart,
@@ -99,6 +108,8 @@ import type {
  * Discriminated union representing all possible actions.
  */
 export type Action =
+  | ViewPdf
+  | ViewEditor
   | ReplaceGrid
   | AutoSaveGridStart
   | AutoSaveSuccess
