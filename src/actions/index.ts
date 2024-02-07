@@ -37,7 +37,7 @@ export {
   loadEmptyPuzzle,
 } from './storage';
 
-export {loadWordList} from './wordlist';
+export {loadWordList, addWord, addCustomWord, removeWord, removeCustomWord} from './wordlist';
 
 // TYPES
 
@@ -91,6 +91,8 @@ import type {
   RequestWordlist,
   ReceiveWordlistSuccess,
   ReceiveWordlistError,
+  RemoveWord,
+  AddWord,
 } from '../actions/wordlist';
 
 /**
@@ -137,5 +139,7 @@ export type Action =
   | RequestWordlist
   | ReceiveWordlistSuccess
   | ReceiveWordlistError
+  | RemoveWord
+  | AddWord
   | RequestSmokeTest
   | ReceiveSmokeTestResult;

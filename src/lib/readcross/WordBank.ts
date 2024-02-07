@@ -45,9 +45,13 @@ export class WordBank {
 
   public static fromJSON(indexes: IJSONWordIndex[]) {
     const wb = new WordBank();
-    wb._indexes = indexes.map((idx) => {
+    wb._indexes = [];
+    indexes.forEach((idx, i) => {
+      if (!idx) {
+        return;
+      }
       const Cls = _typeToIdxCls(idx.type);
-      return Cls.fromJSON(idx.data);
+      wb._indexes[i] = Cls.fromJSON(idx.data);
     });
     return wb;
   }
@@ -89,7 +93,12 @@ export class WordBank {
    * @param  {String|String[]} word - single word or array of words
    */
   public insert(word: string) {
-    this._fromWordsArray(Array.isArray(word) ? word : [word]);
+    const words = Array.isArray(word) ? word : [word];
+    this._fromWordsArray(words);
+
+    // Invalidate the cache. We could do a more fine-grained invalidation
+    // here, but it's not worth the complexity.
+    this._cache.clear();
   }
 
   /**

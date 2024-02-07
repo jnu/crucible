@@ -46,6 +46,22 @@ export const wordlist = (
       const error = action.error || new Error('unknown error');
       state.fetching.delete(action.key);
       return {...state, ready: false, fetching: state.fetching, error};
+    case 'REMOVE_WORD':
+      const rList = state.lists[action.key];
+      if (!rList || !rList.mask) {
+        console.error("Unable to remove word from list");
+        return state;
+      }
+      rList.insert(action.word);
+      return {...state};
+    case 'ADD_WORD':
+      const aList = state.lists[action.key];
+      if (!aList || aList.mask) {
+        console.error("Unable to add word to list");
+        return state;
+      }
+      aList.insert(action.word);
+      return {...state};
     default:
       return state;
   }

@@ -10,6 +10,7 @@ import {Direction} from '../lib/crux';
 import {useSelector, useDispatch} from '../store';
 import type {State, Dispatch} from '../store';
 import './WordWizard.scss';
+import {removeCustomWord} from '../actions';
 
 const HEADER_HEIGHT = 50;
 
@@ -35,6 +36,15 @@ export const WordWizard = ({height, width}: WordWizardProps) => {
     setMatches([]);
     setFetching(false);
     setError(null);
+  };
+
+  // Remove a word from the custom word list.
+  const handleWordContext = (
+    e: React.MouseEvent<HTMLDivElement>,
+    word: string,
+  ) => {
+    e.preventDefault();
+    dispatch(removeCustomWord(word));
   };
 
   useEffect(() => {
@@ -89,7 +99,11 @@ export const WordWizard = ({height, width}: WordWizardProps) => {
           rowRenderer={({key, index, style}) => {
             const {match, hits, misses} = matches[index];
             return (
-              <div key={key} style={style}>
+              <div
+                key={key}
+                style={style}
+                onContextMenu={(e) => handleWordContext(e, match)}
+              >
                 {hits.map((hit, i) => (
                   <span
                     key={`key-${i}`}
@@ -99,7 +113,8 @@ export const WordWizard = ({height, width}: WordWizardProps) => {
                         : misses[i]
                         ? 'match-miss'
                         : 'match-neutral'
-                    }>
+                    }
+                  >
                     {match[i]}
                   </span>
                 ))}
@@ -114,7 +129,8 @@ export const WordWizard = ({height, width}: WordWizardProps) => {
     <div className="WordWizard" style={{height: '100%', width}}>
       <div
         style={{height: HEADER_HEIGHT}}
-        className="WordWizard_header-container">
+        className="WordWizard_header-container"
+      >
         <span className="WordWizard_header">Word List</span>
         <div className="WordWizard_spacer" />
       </div>

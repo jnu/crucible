@@ -5,11 +5,6 @@ import * as wl_broda from 'data/dist/broda';
 import {IDawgs} from 'data/common';
 
 /**
- * ID for the local mask wordlist.
- */
-export const LOCAL_MASK_ID = '$mask';
-
-/**
  * Map from wordlist key to wordlist module loading function. The module loader
  * should be an async import that resolves with a hash of word length buckets
  * to packed DAWGs, which can be used to instantiate a WordBank. (This loader
@@ -66,9 +61,10 @@ export class WordListClient {
   /**
    * Load a wordlist by key.
    * @param  {String} key
+   * @param  {Boolean} mask
    * @return {Promise<WordBank>}
    */
-  load(key: string) {
+  load(key: string, mask: boolean = false) {
     // Use request cache to glom any redundant, concurrent requests for
     // the same entity.
     let req = this._requests[key];
@@ -77,7 +73,7 @@ export class WordListClient {
       // key in the requests cache so it can be refetched. Ideally the
       // underlying fetch uses some smart cache layer (even just defer
       // to the browser).
-      req = this._requests[key] = this._fetchWordlistByKey(key)
+      req = this._requests[key] = this._fetchWordlistByKey(key, mask)
         .then((v) => {
           this._requests[key] = null;
           return v;
@@ -94,13 +90,33 @@ export class WordListClient {
    * Fetch a wordlist from cache if possible, or load asynchronously.
    * @private
    * @param  {String} key
+   * @param  {Boolean} mask
    * @return {Promise<WordBank>}
    */
-  _fetchWordlistByKey(key: string) {
+  _fetchWordlistByKey(key: string, mask: boolean = false) {
+    // Load custom wordlists from the persistent store.
+    if (key.startsWith('custom.')) {
+      return this._store
+        .load<{bitmap: string}>(WORDLIST_KEY, key)
+        .then((storeHit) => {
+          console.debug(`Wordlist ${key} found in local cache!`);
+          const raw = JSON.parse(storeHit.bitmap);
+          return WordBank.fromJSON(raw);
+        })
+        .catch((e) => {
+          console.error(`Failed to load wordlist ${key} from local cache.`, e);
+          return Promise.resolve(new WordBank());
+        })
+        .then((wb) => {
+          wb.mask = mask;
+          return wb;
+        });
+    }
+
+    // Load premade wordlists from the local cache or the remote store.
     return this._cache
       .load<ICacheEntry<IDawgs>>(WORDLIST_KEY, key)
       .then((cacheHit) => cacheHit.data)
-      .catch(() => this._store.load<ICacheEntry<IDawgs>>(WORDLIST_KEY, key).then((storeHit) => storeHit.data))
       .catch(() =>
         PREMADE_LISTS[key]()
           .then((data) =>
@@ -108,7 +124,11 @@ export class WordListClient {
           )
           .then((cached) => cached.data),
       )
-      .then((data) => new WordBank(data))
+      .then((data) => {
+        const wb = new WordBank(data);
+        wb.mask = mask;
+        return wb;
+      })
       .catch((e) => {
         console.error(`Failed to load wordlist ${key}.`, e);
         // TODO multitransport logging

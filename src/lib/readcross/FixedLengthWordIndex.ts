@@ -10,7 +10,7 @@ export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
   public static fromJSON(json: any) {
     const idx = new FixedLengthWordIndex(json.cardinality);
     idx._trie = new Trie(json.trie);
-    idx._allWords = idx._trie.search(idx._allWildPattern);
+    idx._allWords = new Set(idx._trie.search(idx._allWildPattern));
     return idx;
   }
 
@@ -20,6 +20,7 @@ export class FixedLengthWordIndex extends AbstractFixedLengthWordIndex {
     super(cardinality);
     this._wordsBuffer = [];
     this._trie = new Trie();
+    this._allWords = new Set();
   }
 
   /**

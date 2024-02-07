@@ -35,6 +35,10 @@ export class LRUCache<T, U> {
     return this._size;
   }
 
+  clear() {
+    this._items.clear();
+  }
+
   has(item: T) {
     const key = this._getKey(item);
     return this.hasKey(key);

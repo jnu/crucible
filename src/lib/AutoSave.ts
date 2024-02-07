@@ -1,10 +1,10 @@
 import {IStorageClient} from './StorageClient';
 
-const crux = require<any>('./crux');
-
 const NOOP = () => {};
 
 interface IAutoSaveOpts<T> {
+  key: string;
+  serialize: (state: T) => string;
   getState: () => T;
   pollInterval?: number;
   storageClient: IStorageClient;
@@ -13,7 +13,11 @@ interface IAutoSaveOpts<T> {
   onSaveError?: (e: Error) => void;
 }
 
-export class AutoSave<T extends {id: string; [k: string]: any}> {
+export class AutoSave<T extends {id: string}> {
+  public key: string;
+
+  public serialize: (state: T) => string;
+
   public pollInterval: number = 5000;
 
   public storageClient: IStorageClient;
@@ -33,7 +37,9 @@ export class AutoSave<T extends {id: string; [k: string]: any}> {
   private _lastState: T;
 
   constructor({
+    key,
     getState,
+    serialize,
     pollInterval,
     storageClient,
     onSaveStart,
@@ -41,7 +47,9 @@ export class AutoSave<T extends {id: string; [k: string]: any}> {
     onSaveError,
   }: IAutoSaveOpts<T>) {
     this._lastState = getState();
-    this._lastBitmap = crux.write(this._lastState);
+    this._lastBitmap = serialize(this._lastState);
+    this.key = key;
+    this.serialize = serialize;
     this.onSaveStart = onSaveStart || NOOP;
     this.onSaveSuccess = onSaveSuccess || NOOP;
     this.onSaveError = onSaveError || NOOP;
@@ -53,6 +61,8 @@ export class AutoSave<T extends {id: string; [k: string]: any}> {
 
   start() {
     if (!this._interval) {
+      this._lastState = this.getState();
+      this._lastBitmap = this.serialize(this._lastState);
       this._interval = window.setInterval(this._check, this.pollInterval);
     }
   }
@@ -75,7 +85,7 @@ export class AutoSave<T extends {id: string; [k: string]: any}> {
 
     // Test that the bitmap has actually changed as well. For a lot of
     // reasons it might not have even if the state has.
-    const bitmap = crux.write(newState);
+    const bitmap = this.serialize(newState);
     if (_lastBitmap === bitmap) {
       return;
     }
@@ -89,7 +99,7 @@ export class AutoSave<T extends {id: string; [k: string]: any}> {
     const id = state.id;
 
     this.storageClient
-      .save('puzzle', id, {ts, bitmap})
+      .save(this.key, id, {ts, bitmap})
       .then(() => {
         this._lastState = state;
         this._lastBitmap = bitmap;

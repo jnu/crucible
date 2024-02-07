@@ -12,8 +12,13 @@ import {
 } from './actions';
 import {AutoSave} from './lib/AutoSave';
 import {storageClient} from './lib/index';
-import {init as initWordList} from './init/wordlist';
+import {initWordList} from './init/wordlist';
 import {store} from './store';
+import type {Wordlist} from './lib/readcross';
+import type {WordBank} from './lib/readcross/WordBank';
+import {CUSTOM_MASK} from './const';
+
+const crux = require<any>('./lib/crux');
 
 /**
  * Maximum width of the app. Enforced by stylesheet.
@@ -31,11 +36,15 @@ window.addEventListener('resize', debounce(doResize, 50));
 // Trigger once on init.
 doResize();
 
-// Set up auto-saver
-const autosaver = new AutoSave<GridState>({
+// Set up auto-saver for puzzles
+const puzzleAutoSaver = new AutoSave<GridState>({
+  key: 'puzzle',
   getState: () => {
     const {grid} = store.getState();
     return grid;
+  },
+  serialize: (grid) => {
+    return crux.write(grid);
   },
   storageClient,
   onSaveStart: () => store.dispatch(autoSaveStart()),
@@ -46,11 +55,33 @@ const autosaver = new AutoSave<GridState>({
     store.dispatch(autoSaveError(e));
   },
 });
-autosaver.start();
+puzzleAutoSaver.start();
+
+// Set up auto-saver for word banks
+const wordBankAutoSaver = new AutoSave<{id: string; wordbank?: WordBank}>({
+  key: 'wordlist',
+  getState: () => {
+    const {wordlist} = store.getState();
+    const maskList = wordlist.lists[CUSTOM_MASK];
+    if (!maskList) {
+      return {id: CUSTOM_MASK};
+    }
+    return {id: CUSTOM_MASK, wordbank: maskList};
+  },
+  serialize: (state) => {
+    if (!state.wordbank) {
+      return '[]';
+    }
+    return JSON.stringify(state.wordbank);
+  },
+  storageClient,
+});
 
 // Init word list data.
 // TODO all things should init through functions like this.
-initWordList(store);
+initWordList(store).then(() => {
+  wordBankAutoSaver.start();
+});
 
 // Render the app.
 const root = createRoot(document.getElementById('root')!);
