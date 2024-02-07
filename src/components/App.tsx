@@ -16,6 +16,7 @@ import {loadPuzzle} from '../actions';
 import {muiCrucibleTheme} from './muiCrucibleTheme';
 import {Layout} from './Layout';
 import {Header} from './Header';
+import {Pdf} from './Pdf';
 import './App.scss';
 
 /**
@@ -29,9 +30,10 @@ const _Inner = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {puzzleId} = useParams();
-  const {currentPuzzleId, loading} = useSelector(({grid, wordlist}) => ({
+  const {currentPuzzleId, loading, display} = useSelector(({grid, wordlist, view}) => ({
     currentPuzzleId: grid.id,
     loading: wordlist.fetching.size > 0,
+    display: view.display,
   }));
 
   // Make sure the puzzle displayed matches anything shown in the URL.
@@ -61,7 +63,8 @@ const _Inner = () => {
         <>
           <Header />
           <div className="Puzzle">
-            <Layout />
+            {display === "pdf" ?
+              <Pdf /> : <Layout />}
           </div>
         </>
       )}

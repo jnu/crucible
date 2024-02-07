@@ -15,6 +15,8 @@ import {
   loadEmptyPuzzle,
   resize,
   autoFillGrid,
+  viewPdf,
+  viewEditor,
 } from '../actions';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -41,7 +43,7 @@ import type {MetaState} from '../reducers/meta';
 export const GridMetaMenu = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {grid, meta, wordlist} = useSelector((x) => x);
+  const {grid, meta, view, wordlist} = useSelector((x) => x);
   const [exportGridName, setExportGridName] = useState('');
   const [newGridWidth, setNewGridWidth] = useState(grid.width);
   const [newGridHeight, setNewGridHeight] = useState(grid.height);
@@ -73,6 +75,11 @@ export const GridMetaMenu = () => {
   const openMagicMenu = (e: React.MouseEvent) => {
     setAnchorEl(e.currentTarget as HTMLElement);
     dispatch(openMetaDialog('MAGIC_MENU'));
+  };
+
+  const openViewMenu = (e: React.MouseEvent) => {
+    setAnchorEl(e.currentTarget as HTMLElement);
+    dispatch(openMetaDialog('VIEW_MENU'));
   };
 
   const closeDialog = () => {
@@ -137,8 +144,18 @@ export const GridMetaMenu = () => {
     closeDialog();
   };
 
+  const toggleViewPdf = () => {
+    if (view.display === 'pdf') {
+      dispatch(viewEditor());
+    } else {
+      dispatch(viewPdf());
+    }
+    closeDialog();
+  }
+
   const gridMenuOpen = meta.openDialog === 'GRID_MENU' && !!anchorEl;
   const magicMenuOpen = meta.openDialog === 'MAGIC_MENU' && !!anchorEl;
+  const viewMenuOpen = meta.openDialog === 'VIEW_MENU' && !!anchorEl;
 
   // Render the menu
   return (
@@ -211,6 +228,32 @@ export const GridMetaMenu = () => {
           Show heat map
         </MenuItem>
         <MenuItem onClick={autoFill}>Autofill</MenuItem>
+      </Menu>
+
+
+      {/* VIEW MENU */}
+      <Button
+        id="view-menu-button"
+        aria-controls={viewMenuOpen ? 'view-menu' : undefined}
+        aria-haspopup={true}
+        aria-expanded={viewMenuOpen ? true : undefined}
+        onClick={openViewMenu}>
+        View
+      </Button>
+
+      <Menu
+        MenuListProps={{'aria-labelledby': 'view-menu-button'}}
+        anchorEl={anchorEl}
+        onClose={closeDialog}
+        id="view-menu"
+        open={viewMenuOpen}>
+        <MenuItem onClick={toggleViewPdf}>
+        {view.display === "pdf" ? (
+          <ListItemIcon>
+            <Check />
+          </ListItemIcon>
+        ) : null}
+        View PDF</MenuItem>
       </Menu>
 
       {/* DIALOGS */}
