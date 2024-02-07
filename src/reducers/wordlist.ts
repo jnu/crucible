@@ -1,5 +1,6 @@
 import type {Action} from '../actions';
 import type {Wordlist} from '../lib/readcross';
+import {resetQueryCache} from '../lib/gridiron';
 
 /**
  * State of the wordlist store.
@@ -53,6 +54,7 @@ export const wordlist = (
         return state;
       }
       rList.insert(action.word);
+      resetQueryCache();
       return {...state};
     case 'ADD_WORD':
       const aList = state.lists[action.key];
@@ -61,6 +63,7 @@ export const wordlist = (
         return state;
       }
       aList.insert(action.word);
+      resetQueryCache();
       return {...state};
     default:
       return state;

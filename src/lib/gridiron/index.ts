@@ -18,6 +18,7 @@ import {Deferred} from '../deferred';
 
 // Re-export useful types.
 export {IProgressStats} from './types';
+export {resetQueryCache} from './analyze';
 
 /**
  * Container for a worker.

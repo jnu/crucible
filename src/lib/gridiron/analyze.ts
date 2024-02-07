@@ -39,6 +39,13 @@ const extractWordQueries = (content: GridCell[]) => {
 const Q_CACHE = new LRUCache<string[], string>(1e6);
 
 /**
+ * Reset the query cache.
+ */
+export const resetQueryCache = () => {
+  Q_CACHE.clear();
+};
+
+/**
  * Examine grid and report solvability metrics for each cell.
  */
 export const analyzeGrid = async (content: GridCell[], lists: Wordlist) => {
